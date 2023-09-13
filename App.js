@@ -30,17 +30,24 @@ export default function App() {
   const [data, setData] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // useEffect(() => {
-  //   fetch("https://spike-auth-server.onrender.com")
-  //     .then((response) => response.json())
-  //     .then((json) => {
-  //       console.log(json);
-  //       setData(json);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // });
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    fetch("https://spike-auth-server.onrender.com", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        setData(json);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [token]);
 
   function handleSignUp() {
     createUserWithEmailAndPassword(auth, email, password)
@@ -48,6 +55,7 @@ export default function App() {
         // Signed in
         const user = userCredential.user;
         console.log(user);
+        setToken(user.stsTokenManager.accessToken);
         // ...
       })
       .catch((error) => {
@@ -75,6 +83,7 @@ export default function App() {
       <TouchableOpacity onPress={handleSignUp}>
         <Text>Sign Up</Text>
       </TouchableOpacity>
+      <Text>{data.greeting}</Text>
     </View>
   );
 }
