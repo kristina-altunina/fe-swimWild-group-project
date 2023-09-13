@@ -1,21 +1,80 @@
-import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+
+import { StatusBar } from "expo-status-bar";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyABjPb5ApAILuDCTMwHUPBh78nnCLhZmMg",
+  authDomain: "swimwild-c2ca7.firebaseapp.com",
+  projectId: "swimwild-c2ca7",
+  storageBucket: "swimwild-c2ca7.appspot.com",
+  messagingSenderId: "914299090405",
+  appId: "1:914299090405:web:0520e1a7b19dc4b219ab0c",
+  measurementId: "G-VBBKT6LJZ5",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 export default function App() {
-  const [data, setData] = useState({ articles: [{ author: "" }] });
-  useEffect(() => {
-    fetch("https://articles-api-zepx.onrender.com/api/articles")
-      .then((response) => response.json())
-      .then((json) => {
-        setData(json);
+  const [data, setData] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  // useEffect(() => {
+  //   fetch("https://spike-auth-server.onrender.com")
+  //     .then((response) => response.json())
+  //     .then((json) => {
+  //       console.log(json);
+  //       setData(json);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // });
+
+  function handleSignUp() {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(error);
+        // ..
       });
-  });
+  }
 
   return (
     <View style={styles.container}>
-      <Text>I made an app can you see {data.articles[0].author}</Text>
+      <Text>Register</Text>
+      <TextInput
+        placeholder="email"
+        value={email}
+        onChangeText={setEmail}
+      ></TextInput>
+      <TextInput
+        placeholder="password"
+        value={password}
+        onChangeText={setPassword}
+      ></TextInput>
       <StatusBar style="auto" />
+      <TouchableOpacity onPress={handleSignUp}>
+        <Text>Sign Up</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -28,5 +87,3 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
-//hello
