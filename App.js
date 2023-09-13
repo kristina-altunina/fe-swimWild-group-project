@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { StatusBar } from "expo-status-bar";
 import {
   ScrollView,
@@ -11,20 +10,11 @@ import {
 } from "react-native";
 
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "firebase/auth";
+import config from "./firebaseConfig";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyABjPb5ApAILuDCTMwHUPBh78nnCLhZmMg",
-  authDomain: "swimwild-c2ca7.firebaseapp.com",
-  projectId: "swimwild-c2ca7",
-  storageBucket: "swimwild-c2ca7.appspot.com",
-  messagingSenderId: "914299090405",
-  appId: "1:914299090405:web:0520e1a7b19dc4b219ab0c",
-  measurementId: "G-VBBKT6LJZ5",
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+const app = initializeApp(config);
+const auth = getAuth();
 
 export default function App() {
   const [data, setData] = useState("");
@@ -32,8 +22,10 @@ export default function App() {
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
 
-  useEffect(() => {
-    fetch("https://spike-auth-server.onrender.com", {
+  const connect = (token) => {
+    console.log('connect');
+    console.log(token);
+    fetch("http://127.0.0.1:3000", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -47,22 +39,40 @@ export default function App() {
       .catch((err) => {
         console.log(err);
       });
-  }, [token]);
-
+}
   function handleSignUp() {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user;
-        console.log(user);
         setToken(user.stsTokenManager.accessToken);
-        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
+  }
+
+  function handleSignIn() {
+    console.log('sign in');
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.log(userCredential);
+        const user = userCredential.user;
+        setToken(user.stsTokenManager.accessToken);
+        connect(user.stsTokenManager.accessToken);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(error);
-        // ..
+      });
+  }
+  function handleSignOut() {
+    signOut(auth)
+      .then(() => {})
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
       });
   }
 
@@ -82,6 +92,12 @@ export default function App() {
       <StatusBar style="auto" />
       <TouchableOpacity onPress={handleSignUp}>
         <Text>Sign Up</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleSignIn}>
+        <Text>Sign In</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleSignOut}>
+        <Text>Sign Out</Text>
       </TouchableOpacity>
       <Text>{data.greeting}</Text>
     </View>
