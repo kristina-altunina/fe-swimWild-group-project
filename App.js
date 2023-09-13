@@ -78,25 +78,27 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>Register</Text>
+      <Text style={styles.header}>Register</Text>
       <TextInput
+        style={styles.input}
         placeholder="email"
         value={email}
         onChangeText={setEmail}
       ></TextInput>
       <TextInput
+        style={styles.input}
         placeholder="password"
         value={password}
         onChangeText={setPassword}
       ></TextInput>
       <StatusBar style="auto" />
-      <TouchableOpacity onPress={handleSignUp}>
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text>Sign Up</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleSignIn}>
+      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
         <Text>Sign In</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleSignOut}>
+      <TouchableOpacity style={styles.button} onPress={handleSignOut}>
         <Text>Sign Out</Text>
       </TouchableOpacity>
       <Text>{data.greeting}</Text>
@@ -111,4 +113,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  header: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  input: {
+    width: "50%",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    marginBottom: 5,
+    padding: 5,
+  },
+  button: {
+    width: "50%",
+    alignItems: "center",
+    backgroundColor: "#ababab",
+    padding: 5,
+    borderRadius: 3,
+    marginBottom: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  }
+  
 });
