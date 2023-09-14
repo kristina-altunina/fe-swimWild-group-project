@@ -16,6 +16,10 @@ import {
   Poppins_200ExtraLight,
 } from "@expo-google-fonts/poppins";
 
+import { Button, Alert, Image } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { uploadToFirebase } from './firebaseConfig';
+
 // import { useFonts } from "expo-font";
 // import * as SplashScreen from "expo-splash-screen";
 
@@ -44,6 +48,8 @@ export default function App() {
     Poppins_200ExtraLight,
   };
 
+  const [permission, requestPermission] = ImagePicker.useCameraPermissions();
+  const [image, setImage] = useState(null);
   // const [fontsLoaded, fontError] = useFonts({
   //   "Poppins-Bold": require("./assets/fonts/Poppins/Poppins-Bold.ttf"),
   // });
@@ -69,6 +75,64 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+
+  // -----------------image-picker test start of line
+  function takePhoto() {
+    ImagePicker.launchCameraAsync({allowsEditing:true, mediaTypes: ImagePicker.MediaTypeOptions.All, quality:1})
+    .then((cameraResponse) => {
+      if(!cameraResponse.canceled) {
+        const {uri} = cameraResponse.assets[0];
+        const fileName = uri.split('/').at(-1)
+        uploadToFirebase(uri, fileName, (prog) => {
+          console.log(prog)
+        })
+        .then((res) => {
+          console.log(res)
+        })
+        .catch(err => {
+          Alert.alert(`Error Uploading Image ${err.message}`)
+        })
+      }
+    })
+  }
+
+  const pickImage = async () => {
+    ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    })
+    .then(res => {
+      if (!res.cancelled) {
+        setImage(res.assets[0].uri);
+        const { uri } = res.assets[0]
+        const fileName = uri.split('/').at(-1)
+        uploadToFirebase(uri, fileName, (prog) => {
+          console.log(prog)
+        })
+        .then((res) => {
+          console.log(res)
+        })
+      }
+      
+    })
+
+
+  
+  };
+
+  if(permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
+    return (
+      <View style={styles.container}>
+        <Text>Permission not granted {permission?.status}</Text>
+        <StatusBar style="auto" />
+        <Button title='Request Permission' onPress={requestPermission}></Button>
+      </View>
+    );
+  }
+
+   // -----------------image-picker test end of line
 
   const connect = (token) => {
     setShowSignOut(true);
@@ -156,6 +220,20 @@ export default function App() {
             <Text>Back</Text>
           </TouchableOpacity>
         ) : null}
+
+{/* ------image picker start of line */}
+
+<View style={styles.container}>
+      <Text>test</Text>
+      <StatusBar style="auto" />
+      <Button title='Take Picture' onPress={takePhoto}></Button>
+      <Button title="Pick an image from camera roll" onPress={pickImage} />
+      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+    </View>
+
+    {/* --------------image picker end of line */}
+          
+
       </View>
     </View>
   );
