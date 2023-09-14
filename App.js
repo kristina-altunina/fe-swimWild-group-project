@@ -18,12 +18,13 @@ import {
 
 import { Button, Alert, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { uploadToFirebase } from './firebaseConfig';
 
 // import { useFonts } from "expo-font";
 // import * as SplashScreen from "expo-splash-screen";
 
 // SplashScreen.preventAutoHideAsync();
+
+import { takePhoto, pickImage } from "./scripts/image-picker";
 
 import {
   ScrollView,
@@ -34,6 +35,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import TestPage from "./components/TestPage";
 
 export default function App() {
   const [token, setToken] = useState("");
@@ -49,7 +51,7 @@ export default function App() {
   };
 
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
-  const [image, setImage] = useState(null);
+  const [showTest, setShowTest] = useState(false) 
   // const [fontsLoaded, fontError] = useFonts({
   //   "Poppins-Bold": require("./assets/fonts/Poppins/Poppins-Bold.ttf"),
   // });
@@ -76,63 +78,7 @@ export default function App() {
     return null;
   }
 
-  // -----------------image-picker test start of line
-  function takePhoto() {
-    ImagePicker.launchCameraAsync({allowsEditing:true, mediaTypes: ImagePicker.MediaTypeOptions.All, quality:1})
-    .then((cameraResponse) => {
-      if(!cameraResponse.canceled) {
-        const {uri} = cameraResponse.assets[0];
-        const fileName = uri.split('/').at(-1)
-        uploadToFirebase(uri, fileName, (prog) => {
-          console.log(prog)
-        })
-        .then((res) => {
-          console.log(res)
-        })
-        .catch(err => {
-          Alert.alert(`Error Uploading Image ${err.message}`)
-        })
-      }
-    })
-  }
 
-  const pickImage = async () => {
-    ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    })
-    .then(res => {
-      if (!res.cancelled) {
-        setImage(res.assets[0].uri);
-        const { uri } = res.assets[0]
-        const fileName = uri.split('/').at(-1)
-        uploadToFirebase(uri, fileName, (prog) => {
-          console.log(prog)
-        })
-        .then((res) => {
-          console.log(res)
-        })
-      }
-      
-    })
-
-
-  
-  };
-
-  if(permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
-    return (
-      <View style={styles.container}>
-        <Text>Permission not granted {permission?.status}</Text>
-        <StatusBar style="auto" />
-        <Button title='Request Permission' onPress={requestPermission}></Button>
-      </View>
-    );
-  }
-
-   // -----------------image-picker test end of line
 
   const connect = (token) => {
     setShowSignOut(true);
@@ -172,6 +118,25 @@ export default function App() {
   // if (!fontsLoaded && !fontError) {
   //   return null;
   // }
+
+    // -----------------image-picker test start of line
+    if(permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
+      return (
+        <View style={styles.container}>
+          <Text>Permission not granted {permission?.status}</Text>
+          <StatusBar style="auto" />
+          <Button title='Request Permission' onPress={requestPermission}></Button>
+        </View>
+      );
+    }
+     // -----------------image-picker test end of line
+
+     function handleTest() {
+      console.log('here')
+      return (
+        <Test/>
+      )
+     }
 
   return (
     <View style={styles.app}>
@@ -221,19 +186,17 @@ export default function App() {
           </TouchableOpacity>
         ) : null}
 
+        <Button title='Go to Test Page' onPress={() => setShowTest(!showTest)}></Button>
+            {showTest ? (<TestPage/>): ''}
 {/* ------image picker start of line */}
 
-<View style={styles.container}>
+{/* <View style={styles.container}>
       <Text>test</Text>
       <StatusBar style="auto" />
       <Button title='Take Picture' onPress={takePhoto}></Button>
       <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-    </View>
-
+    </View> */}
     {/* --------------image picker end of line */}
-          
-
       </View>
     </View>
   );
