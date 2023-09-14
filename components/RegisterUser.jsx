@@ -19,7 +19,8 @@ export default RegisterUser = () => {
   const [surname, setSurname] = useState("");
   const [dob, setDob] = useState("");
   const [password, setPassword] = useState("");
-  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [focusedInput, setFocusedInput] = useState(null);
+  const [isSighUpClicked, setIsSignUpClicked] = useState(false);
 
   function handleSignUp() {
     createUserWithEmailAndPassword(auth, email, password)
@@ -28,54 +29,75 @@ export default RegisterUser = () => {
         setToken(user.stsTokenManager.accessToken);
         setShowSignOut(false);
         setUserProperties(analytics, { name: name });
+        setIsSignUpClicked(true)
       })
       .catch((error) => {});
   }
 
-  function handleInputFocus() {
-    setIsInputFocused(true)
-  }
-
-  function handleInputBlur() {
-    setIsInputFocused(false)
-  }
 
   return (
     <View style={styles["container"]}>
       <Text style={styles["container__header"]}>Register</Text>
       <TextInput
-        style={styles["container__input"]}
+        style={[styles["container__input"], focusedInput === "forename" && {
+          borderColor: colours.accent4,
+          borderWidth: 2,
+        }]}
         placeholder="Forename"
         value={forename}
         onChangeText={setForename}
+        onFocus={() => setFocusedInput("forename")}
+        onBlur={() => setFocusedInput(null)}
       ></TextInput>
       <TextInput
-        style={styles["container__input"]}
+        style={[styles["container__input"], focusedInput === "surname" && {
+          borderColor: colours.accent4,
+          borderWidth: 2,
+        }]}
         placeholder="Surname"
         value={surname}
         onChangeText={setSurname}
+        onFocus={() => setFocusedInput("surname")}
+        onBlur={() => setFocusedInput(null)}
       ></TextInput>
       <TextInput
-        style={styles["container__input"]}
+        style={[styles["container__input"], focusedInput === "dob" && {
+          borderColor: colours.accent4,
+          borderWidth: 2,
+        }]}
         placeholder="dd/mm/yyyy"
         value={dob}
         onChangeText={setDob}
+        onFocus={() => setFocusedInput("dob")}
+        onBlur={() => setFocusedInput(null)}
       ></TextInput>
       <TextInput
-        style={styles["container__input"]}
+        style={[styles["container__input"], focusedInput === "email" && {
+          borderColor: colours.accent4,
+          borderWidth: 2,
+        }]}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+        onFocus={() => setFocusedInput("email")}
+        onBlur={() => setFocusedInput(null)}
       ></TextInput>
       <TextInput
-        style={styles["container__input"]}
+        style={[styles["container__input"], focusedInput === "password" && {
+          borderColor: colours.accent4,
+          borderWidth: 2,
+        }]}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
+        onFocus={() => setFocusedInput("password")}
+        onBlur={() => setFocusedInput(null)}
         secureTextEntry
       ></TextInput>
       <StatusBar style="auto" />
-      <TouchableOpacity style={styles["button"]} onPress={handleSignUp}>
+      <TouchableOpacity style={[styles["button"], 
+      isSighUpClicked ? {backgroundColor :colours.accent3} : null]} 
+      onPress={handleSignUp}>
         <Text style={styles["button__text"]}>Sign Up</Text>
       </TouchableOpacity>
     </View>
@@ -98,7 +120,7 @@ const styles = StyleSheet.create({
   "container__input": {
     width: "70%",
     borderColor: colours.accent4,
-    borderWidth: 1.5,
+    borderWidth: 1,
     marginBottom: 15,
     padding: 5,
     color: colours.accent1,
