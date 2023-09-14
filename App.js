@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: colours.accent1,
     height: "fit-content",
-    marginTop: 50,
     color: colours.text,
   },
   header__title: {
