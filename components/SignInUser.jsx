@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
+import NavBar from "./NavBar";
 import {
   StyleSheet,
   Text,
@@ -51,7 +52,9 @@ export default SignInUser = ({ navigation, route }) => {
   }
 
 return (
-  <View style={styles["container"]}>
+  <View style={styles.app}>
+    <NavBar/>
+   <View style={styles["container"]}>
     <Text style={styles["container__header"]}>Sign In</Text>
     <TextInput
       style={[styles["container__input"], focusedInput === "email" && {
@@ -81,11 +84,17 @@ return (
     onPress={handleSignIn}>
       <Text style={styles["button__text"]}>Sign In</Text>
     </TouchableOpacity>
+   </View>
   </View>
-);
+); 
 };
 
 const styles = StyleSheet.create({
+  app: {
+    backgroundColor: colours.bg,
+    height: "100%",
+    width: "100%",
+  },
   "container": {
     flex: 1,
     width: "100%",

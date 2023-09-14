@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
+import NavBar from "./NavBar";
 import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View,SafeAreaView,
   TextInput,
   TouchableOpacity,
-  Button,
+  Button
 } from "react-native";
 
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -26,6 +28,21 @@ export default RegisterUser = ({navigation}) => {
   const [focusedInput, setFocusedInput] = useState(null);
   const [isSighUpClicked, setIsSignUpClicked] = useState(false);
 
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const showDatePicker = () => {
+    setDatePickerVisible(true);
+  };
+  
+  const hideDatePicker = () => {
+    setDatePickerVisible(false);
+  };
+
+  const handleConfirm = (date) => {
+    setSelectedDate(date);
+    hideDatePicker();
+  };
+
   function handleSignUp() {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -39,6 +56,15 @@ export default RegisterUser = ({navigation}) => {
   }
 
   return (
+<SafeAreaView style={{ flex: 1 }}>
+  <View style={{
+          padding: 20,
+          flex: 1,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+    <NavBar/>
     <View style={styles["container"]}>
       
       <Text style={styles["container__header"]}>Register</Text>
@@ -74,7 +100,18 @@ export default RegisterUser = ({navigation}) => {
         onChangeText={setDob}
         onFocus={() => setFocusedInput("dob")}
         onBlur={() => setFocusedInput(null)}
+        onPressIn={showDatePicker}
       ></TextInput>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
+          {selectedDate ? selectedDate.toLocaleDateString() : 'No date selected'}
+        </Text>
+        <DateTimePickerModal
+          date={selectedDate}
+          isVisible={datePickerVisible}
+          mode="date"
+          onConfirm={handleConfirm}
+          onCancel={hideDatePicker}
+        />
       <TextInput
         style={[styles["container__input"], focusedInput === "email" && {
           borderColor: colours.accent4,
@@ -105,9 +142,16 @@ export default RegisterUser = ({navigation}) => {
         <Text style={styles["button__text"]}>Sign Up</Text>
       </TouchableOpacity>
     </View>
+   </View>
+  </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
+  app: {
+    backgroundColor: colours.bg,
+    height: "100%",
+    width: "100%",
+  },
   "container": {
     flex: 1,
     width: "100%",

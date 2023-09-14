@@ -1,12 +1,23 @@
-
+import { colours } from "./styles/base";
 import RegisterUser from "./components/RegisterUser";
 import SignInUser from "./components/SignInUser";
 import Profile from "./components/Profile";
+import NavBar from "./components/NavBar";
+import {
+  useFonts,
+  Poppins_600SemiBold,
+  Poppins_900Black,
+  Poppins_500Medium,
+  Poppins_300Light_Italic,
+  Poppins_200ExtraLight,
+} from "@expo-google-fonts/poppins";
+
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
@@ -28,43 +39,94 @@ export default function App() {
   );
 
 function HomeScreen({navigation}) {
-  return (
-    <View style={styles.container}>
-      
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            navigation.navigate('SignIn')
-          }}
-        >
-          <Text>Sign In</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            navigation.navigate('Register')}
-          }
-        >
-          <Text>Sign Up</Text>
-        </TouchableOpacity>
-     
+  let [fontsLoaded] = useFonts({
+    Poppins_600SemiBold,
+    Poppins_900Black,
+    Poppins_500Medium,
+    Poppins_300Light_Italic,
+    Poppins_200ExtraLight,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+
+  return (
+    <View style={styles.app}>
+     <NavBar/>
+      <View style={styles.container}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              navigation.navigate('SignIn')
+            }}
+          >
+            <Text>Sign In</Text>
+          </TouchableOpacity>
+        
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              navigation.navigate('Register')
+            }}
+          >
+            <Text>Sign Up</Text>
+          </TouchableOpacity>
+
+      </View>
     </View>
   );
 }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+  app: {
+    backgroundColor: colours.bg,
+    height: "100%",
+    width: "100%",
   },
   header: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 15,
+    backgroundColor: colours.accent1,
+    height: "fit-content",
+    color: colours.text,
+    marginTop: 50,
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  header__titleContainer: {
+    margin: 10,
+  },
+  header__title: {
+    fontSize: 32,
+    fontFamily: "Poppins_900Black",
+    color: colours.text,
+  },
+  header__titleAccent: {
+    color: colours.accent4,
+  },
+  header__buttons: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    justifyContent: "space-around",
+  },
+  header__button: {
+    marginRight: 20,
+  },
+  header__buttonText: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 20,
+    color: colours.bg,
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     width: "50%",
@@ -86,4 +148,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
 

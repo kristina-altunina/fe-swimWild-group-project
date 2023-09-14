@@ -12,6 +12,7 @@ import {
 import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
+import NavBar from "./NavBar";
 
 export default Profile = ({ navigation, route }) => {
  const data = route.params.data.greeting
@@ -28,16 +29,24 @@ export default Profile = ({ navigation, route }) => {
       }
 
 return (
-    <View style={styles["container"]}>
-       <Text>{data}</Text>
-      <TouchableOpacity style={styles["button"]} onPress={handleSignOut}>
-          <Text style={styles["button__text"]}>Sign Out</Text>
-        </TouchableOpacity>
+    <View style={styles.app}>
+    <NavBar/>
+        <View style={styles["container"]}>
+        <Text>{data}</Text>
+        <TouchableOpacity style={styles["button"]} onPress={handleSignOut}>
+            <Text style={styles["button__text"]}>Sign Out</Text>
+            </TouchableOpacity>
+        </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+    app: {
+        backgroundColor: colours.bg,
+        height: "100%",
+        width: "100%",
+      },
     "container": {
       flex: 1,
       width: "100%",
