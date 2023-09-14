@@ -7,19 +7,15 @@ import { auth } from "./firebaseConfig";
 import { colours } from "./styles/base";
 import RegisterUser from "./components/RegisterUser";
 import SignInUser from "./components/SignInUser";
+
 import {
   useFonts,
-  Poppins_900Black,
   Poppins_600SemiBold,
+  Poppins_900Black,
   Poppins_500Medium,
   Poppins_300Light_Italic,
   Poppins_200ExtraLight,
 } from "@expo-google-fonts/poppins";
-
-// import { useFonts } from "expo-font";
-// import * as SplashScreen from "expo-splash-screen";
-
-// SplashScreen.preventAutoHideAsync();
 
 import {
   ScrollView,
@@ -36,31 +32,10 @@ export default function App() {
   const [showSignOut, setShowSignOut] = useState(false);
   const [option, setOption] = useState("");
   const [data, setData] = useState("");
-  const fonts = {
-    Poppins_900Black,
-    Poppins_600SemiBold,
-    Poppins_500Medium,
-    Poppins_300Light_Italic,
-    Poppins_200ExtraLight,
-  };
-
-  // const [fontsLoaded, fontError] = useFonts({
-  //   "Poppins-Bold": require("./assets/fonts/Poppins/Poppins-Bold.ttf"),
-  // });
-
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (fontsLoaded || fontError) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [fontsLoaded, fontError]);
-
-  // if (!fontsLoaded && !fontError) {
-  //   return null;
-  // }
 
   let [fontsLoaded] = useFonts({
-    Poppins_900Black,
     Poppins_600SemiBold,
+    Poppins_900Black,
     Poppins_500Medium,
     Poppins_300Light_Italic,
     Poppins_200ExtraLight,
@@ -105,20 +80,25 @@ export default function App() {
       });
   }
 
-  // if (!fontsLoaded && !fontError) {
-  //   return null;
-  // }
-
   return (
     <View style={styles.app}>
       <View style={styles.header}>
-        <Text style={styles.header__title}>Swim Wild</Text>
-        <View style={styles.header__nav}></View>
+        <View style={styles.header__titleContainer}>
+          <Text style={styles.header__title}>
+            Swim <Text style={styles.header__titleAccent}>Wild</Text>
+          </Text>
+        </View>
+        <View style={styles.header__buttons}>
+          <TouchableOpacity style={styles.header__button}>
+            <Text style={styles.header__buttonText}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.header__button}>
+            <Text style={styles.header__buttonText}>Sign In</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.container}>
-        {option === "signin" && !data ? (
-          <SignInUser fonts={fonts} connect={connect} />
-        ) : null}
+        {option === "signin" && !data ? <SignInUser connect={connect} /> : null}
         {option === "" && !data ? (
           <TouchableOpacity
             style={styles.button}
@@ -129,7 +109,7 @@ export default function App() {
             <Text>Sign In</Text>
           </TouchableOpacity>
         ) : null}
-        {option === "signup" && !data ? <RegisterUser font={fonts} /> : null}
+        {option === "signup" && !data ? <RegisterUser /> : null}
         {option === "" && !data ? (
           <TouchableOpacity
             style={styles.button}
@@ -171,10 +151,37 @@ const styles = StyleSheet.create({
     backgroundColor: colours.accent1,
     height: "fit-content",
     color: colours.text,
+    marginTop: 50,
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  header__titleContainer: {
+    margin: 10,
   },
   header__title: {
     fontSize: 32,
     fontFamily: "Poppins_900Black",
+    color: colours.text,
+  },
+  header__titleAccent: {
+    color: colours.accent4,
+  },
+  header__buttons: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    justifyContent: "space-around",
+  },
+  header__button: {
+    marginRight: 20,
+  },
+  header__buttonText: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 20,
+    color: colours.bg,
   },
   container: {
     flex: 1,
