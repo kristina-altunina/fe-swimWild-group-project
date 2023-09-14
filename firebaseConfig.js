@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signOut } from "firebase/auth";
 
 const config = {
-  apiKey: "AIzaSyABjPb5ApAILuDCTMwHUPBh78nnCLhZmMg",
-  authDomain: "swimwild-c2ca7.firebaseapp.com",
-  projectId: "swimwild-c2ca7",
-  storageBucket: "swimwild-c2ca7.appspot.com",
-  messagingSenderId: "914299090405",
-  appId: "1:914299090405:web:0520e1a7b19dc4b219ab0c",
-  measurementId: "G-VBBKT6LJZ5",
+  apiKey: "AIzaSyCuOS-sD421ooU-M41VcsKKSSQbz_Xxw1Q",
+authDomain: "swimwild-f10cb.firebaseapp.com",
+projectId: "swimwild-f10cb",
+storageBucket: "swimwild-f10cb.appspot.com",
+messagingSenderId: "22401308409",
+appId: "1:22401308409:web:506a5a49fd9811075a7428",
+measurementId: "G-5YJ95BFBDC"
 };
 
 const app = initializeApp(config);

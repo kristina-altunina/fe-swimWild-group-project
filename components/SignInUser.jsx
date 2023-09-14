@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -11,17 +10,36 @@ import {
 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
+import { colours } from "../styles/base";
 
-export default SignInUser = ({ connect }) => {
+export default SignInUser = ({ navigation, route }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
+  const [focusedInput, setFocusedInput] = useState(null);
+
+  const connect = (token) => {
+    setToken(token);
+      fetch("https://swim-wild-kristina.onrender.com", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((json) => {
+            console.log(json);
+            navigation.navigate('Profile',
+             {data: json})
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+    };
 
   function handleSignIn() {
-    console.log("sign in");
-    console.log(password);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential);
         const user = userCredential.user;
         setEmail("");
         setPassword("");
@@ -32,59 +50,73 @@ export default SignInUser = ({ connect }) => {
       });
   }
 
-  return (
-    <View>
-      <Text style={styles.header}>Sign In</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="email"
-        value={email}
-        onChangeText={setEmail}
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        placeholder="password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      ></TextInput>
-      <StatusBar style="auto" />
-      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
-        <Text>Sign In</Text>
-      </TouchableOpacity>
-    </View>
-  );
+return (
+  <View style={styles["container"]}>
+    <Text style={styles["container__header"]}>Sign In</Text>
+    <TextInput
+      style={[styles["container__input"], focusedInput === "email" && {
+        borderColor: colours.accent4,
+        borderWidth: 2,
+      }]}
+      placeholder="Email"
+      value={email}
+      onChangeText={setEmail}
+      onFocus={() => setFocusedInput("email")}
+      onBlur={() => setFocusedInput(null)}
+    ></TextInput>
+    <TextInput
+      style={[styles["container__input"], focusedInput === "password" && {
+        borderColor: colours.accent4,
+        borderWidth: 2,
+      }]}
+      placeholder="Password"
+      value={password}
+      onChangeText={setPassword}
+      onFocus={() => setFocusedInput("password")}
+      onBlur={() => setFocusedInput(null)}
+      secureTextEntry
+    ></TextInput>
+    <StatusBar style="auto" />
+    <TouchableOpacity style={styles["button"]} 
+    onPress={handleSignIn}>
+      <Text style={styles["button__text"]}>Sign In</Text>
+    </TouchableOpacity>
+  </View>
+);
 };
 
 const styles = StyleSheet.create({
-  container: {
+  "container": {
     flex: 1,
-    backgroundColor: "#fff",
+    width: "100%",
+    backgroundColor: colours.bg,
     alignItems: "center",
     justifyContent: "center",
   },
-  header: {
-    fontSize: 16,
+  "container__header": {
+    fontSize: 30,
     fontWeight: "bold",
-    marginBottom: 15,
+    marginBottom: 20,
+    color: colours.accent1,
   },
-  input: {
-    width: "50%",
-    borderColor: "#ccc",
+  "container__input": {
+    width: "70%",
+    borderColor: colours.accent4,
     borderWidth: 1,
-    marginBottom: 5,
+    marginBottom: 15,
     padding: 5,
+    color: colours.accent1,
   },
-  button: {
-    width: "50%",
+  "button": {
+    width: "40%",
     alignItems: "center",
-    backgroundColor: "#ababab",
-    padding: 5,
-    borderRadius: 3,
+    backgroundColor: colours.accent2,
+    padding: 15,
+    borderRadius: 5,
     marginBottom: 5,
   },
-  buttonText: {
+  "button__text": {
     color: "#fff",
     fontWeight: "bold",
-  },
+  }
 });

@@ -7,13 +7,17 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Button,
 } from "react-native";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
 
-export default RegisterUser = () => {
+export default RegisterUser = ({navigation}) => {
   const [email, setEmail] = useState("");
   const [forename, setForename] = useState("");
   const [surname, setSurname] = useState("");
@@ -34,9 +38,9 @@ export default RegisterUser = () => {
       .catch((error) => {});
   }
 
-
   return (
     <View style={styles["container"]}>
+      
       <Text style={styles["container__header"]}>Register</Text>
       <TextInput
         style={[styles["container__input"], focusedInput === "forename" && {

@@ -1,104 +1,57 @@
-import { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
-
-import { signOut } from "firebase/auth";
-import { auth } from "./firebaseConfig";
 
 import RegisterUser from "./components/RegisterUser";
 import SignInUser from "./components/SignInUser";
-
+import Profile from "./components/Profile";
 import {
-  ScrollView,
   StyleSheet,
   Text,
   View,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
 
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+const Stack = createNativeStackNavigator();
+
 export default function App() {
-  const [token, setToken] = useState("");
-  const [showSignOut, setShowSignOut] = useState(false);
-  const [option, setOption] = useState("");
-  const [data, setData] = useState("");
-
-  const connect = (token) => {
-    setShowSignOut(true);
-    setToken(token);
-    setOption("");
-    console.log("connect");
-    console.log(token);
-    fetch("https://swim-wild-kristina.onrender.com", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        console.log(json);
-        setData(json);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  function handleSignOut() {
-    signOut(auth)
-      .then(() => {
-        console.log("sign out");
-        setShowSignOut(false);
-        setData("");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      });
-  }
 
   return (
+<NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
+        <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
+        <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+
+function HomeScreen({navigation}) {
+  return (
     <View style={styles.container}>
-      {option === "signin" && !data ? <SignInUser connect={connect} /> : null}
-      {option === "" && !data ? (
+      
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            setOption("signin");
+            navigation.navigate('SignIn')
           }}
         >
           <Text>Sign In</Text>
         </TouchableOpacity>
-      ) : null}
-      {option === "signup" && !data ? <RegisterUser /> : null}
-      {option === "" && !data ? (
+
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            setOption("signup");
-          }}
+            navigation.navigate('Register')}
+          }
         >
           <Text>Sign Up</Text>
         </TouchableOpacity>
-      ) : null}
-      <Text>{data.greeting}</Text>
-      {showSignOut ? (
-        <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-          <Text>Sign Out</Text>
-        </TouchableOpacity>
-      ) : null}
-      {option !== "" && !data ? (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            setOption("");
-          }}
-        >
-          <Text>Back</Text>
-        </TouchableOpacity>
-      ) : null}
+     
     </View>
   );
+}
 }
 
 const styles = StyleSheet.create({
@@ -134,4 +87,3 @@ const styles = StyleSheet.create({
   },
 });
 
-("");
