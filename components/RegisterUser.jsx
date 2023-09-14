@@ -9,15 +9,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import config from "../firebaseConfig";
-
-const app = initializeApp(config);
-const auth = getAuth();
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 
 export default RegisterUser = () => {
-
   const [email, setEmail] = useState("");
   const [forename, setForename] = useState("");
   const [surname, setSurname] = useState("");
@@ -29,29 +24,28 @@ export default RegisterUser = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         setToken(user.stsTokenManager.accessToken);
-        setShowSignOut(false)
+        setShowSignOut(false);
         setUserProperties(analytics, { name: name });
       })
-      .catch((error) => {
-      });
+      .catch((error) => {});
   }
 
-return (
+  return (
     <View>
       <Text style={styles.header}>Register</Text>
-      <TextInput 
+      <TextInput
         style={styles.input}
         placeholder="forename"
         value={forename}
         onChangeText={setForename}
       ></TextInput>
-      <TextInput 
+      <TextInput
         style={styles.input}
         placeholder="surname"
         value={surname}
         onChangeText={setSurname}
       ></TextInput>
-       <TextInput 
+      <TextInput
         style={styles.input}
         placeholder="dd/mm/yyyy"
         value={dob}
@@ -76,36 +70,36 @@ return (
       </TouchableOpacity>
     </View>
   );
-}
+};
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#fff",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    header: {
-      fontSize: 16,
-      fontWeight: "bold",
-      marginBottom: 15,
-    },
-    input: {
-      width: "50%",
-      borderColor: "#ccc",
-      borderWidth: 1,
-      marginBottom: 5,
-      padding: 5,
-    },
-    button: {
-      width: "50%",
-      alignItems: "center",
-      backgroundColor: "#ababab",
-      padding: 5,
-      borderRadius: 3,
-      marginBottom: 5,
-    },
-    buttonText: {
-      color: "#fff",
-      fontWeight: "bold",
-    }
-  });
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  input: {
+    width: "50%",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    marginBottom: 5,
+    padding: 5,
+  },
+  button: {
+    width: "50%",
+    alignItems: "center",
+    backgroundColor: "#ababab",
+    padding: 5,
+    borderRadius: 3,
+    marginBottom: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+});
