@@ -1,5 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
-import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
 
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig";
@@ -16,26 +15,18 @@ import {
   Poppins_200ExtraLight,
 } from "@expo-google-fonts/poppins";
 
-import { Button, Alert, Image } from 'react-native';
+import { Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-// import { useFonts } from "expo-font";
-// import * as SplashScreen from "expo-splash-screen";
-
-// SplashScreen.preventAutoHideAsync();
-
-import { takePhoto, pickImage } from "./scripts/image-picker";
-
 import {
-  ScrollView,
   StyleSheet,
   Text,
   View,
-  TextInput,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 import TestPage from "./components/TestPage";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 export default function App() {
   const [token, setToken] = useState("");
@@ -50,21 +41,6 @@ export default function App() {
     Poppins_200ExtraLight,
   };
 
-  const [permission, requestPermission] = ImagePicker.useCameraPermissions();
-  const [showTest, setShowTest] = useState(false) 
-  // const [fontsLoaded, fontError] = useFonts({
-  //   "Poppins-Bold": require("./assets/fonts/Poppins/Poppins-Bold.ttf"),
-  // });
-
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (fontsLoaded || fontError) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [fontsLoaded, fontError]);
-
-  // if (!fontsLoaded && !fontError) {
-  //   return null;
-  // }
 
   let [fontsLoaded] = useFonts({
     Poppins_900Black,
@@ -77,8 +53,6 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
-
-
 
   const connect = (token) => {
     setShowSignOut(true);
@@ -115,90 +89,71 @@ export default function App() {
       });
   }
 
-  // if (!fontsLoaded && !fontError) {
-  //   return null;
-  // }
-
-    // -----------------image-picker test start of line
-    if(permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
-      return (
-        <View style={styles.container}>
-          <Text>Permission not granted {permission?.status}</Text>
-          <StatusBar style="auto" />
-          <Button title='Request Permission' onPress={requestPermission}></Button>
+  function HomeScreen({navigation}) {
+    return (
+      <View style={styles.app}>
+          <View style={styles.header}>
+            <Text style={styles.header__title}>Swim Wild</Text>
+          <View style={styles.header__nav}></View>
         </View>
-      );
-    }
-     // -----------------image-picker test end of line
+        <View style={styles.container}>
+          {option === "signin" && !data ? (
+            <SignInUser fonts={fonts} connect={connect} />
+          ) : null}
+          {option === "" && !data ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                setOption("signin");
+              }}
+            >
+              <Text>Sign In</Text>
+            </TouchableOpacity>
+          ) : null}
+          {option === "signup" && !data ? <RegisterUser font={fonts} /> : null}
+          {option === "" && !data ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                setOption("signup");
+              }}
+            >
+              <Text>Sign Up</Text>
+            </TouchableOpacity>
+          ) : null}
+          <Text>{data.greeting}</Text>
+          {showSignOut ? (
+            <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+              <Text>Sign Out</Text>
+            </TouchableOpacity>
+          ) : null}
+          {option !== "" && !data ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                setOption("");
+              }}
+            >
+              <Text>Back</Text>
+            </TouchableOpacity>
+          ) : null}
 
-     function handleTest() {
-      console.log('here')
-      return (
-        <Test/>
-      )
-     }
+          <Button title='Go to Test Page' onPress={() => navigation.navigate("Test Page")}></Button>
+        </View>
+      </View>
+    )
+  }
+
+  const Stack = createNativeStackNavigator();
 
   return (
-    <View style={styles.app}>
-      <View style={styles.header}>
-        <Text style={styles.header__title}>Swim Wild</Text>
-        <View style={styles.header__nav}></View>
-      </View>
-      <View style={styles.container}>
-        {option === "signin" && !data ? (
-          <SignInUser fonts={fonts} connect={connect} />
-        ) : null}
-        {option === "" && !data ? (
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              setOption("signin");
-            }}
-          >
-            <Text>Sign In</Text>
-          </TouchableOpacity>
-        ) : null}
-        {option === "signup" && !data ? <RegisterUser font={fonts} /> : null}
-        {option === "" && !data ? (
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              setOption("signup");
-            }}
-          >
-            <Text>Sign Up</Text>
-          </TouchableOpacity>
-        ) : null}
-        <Text>{data.greeting}</Text>
-        {showSignOut ? (
-          <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-            <Text>Sign Out</Text>
-          </TouchableOpacity>
-        ) : null}
-        {option !== "" && !data ? (
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              setOption("");
-            }}
-          >
-            <Text>Back</Text>
-          </TouchableOpacity>
-        ) : null}
-
-        <Button title='Go to Test Page' onPress={() => setShowTest(!showTest)}></Button>
-            {showTest ? (<TestPage/>): ''}
-{/* ------image picker start of line */}
-
-{/* <View style={styles.container}>
-      <Text>test</Text>
-      <StatusBar style="auto" />
-      <Button title='Take Picture' onPress={takePhoto}></Button>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-    </View> */}
-    {/* --------------image picker end of line */}
-      </View>
-    </View>
+    <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeScreen}/>
+          <Stack.Screen name="Test Page" component={TestPage}/>
+        </Stack.Navigator>
+    </NavigationContainer>
+    
   );
 }
 

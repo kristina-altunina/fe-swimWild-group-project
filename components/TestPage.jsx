@@ -6,8 +6,6 @@ import { takePhoto, pickImage } from '../scripts/image-picker';
 
 export default function TestPage() {
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
- 
-
 
   if(permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
     return (
