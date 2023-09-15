@@ -1,19 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import NavBar from "./NavBar";
 import {
-  ScrollView,
   StyleSheet,
   Text,
   View,SafeAreaView,
   TextInput,
   TouchableOpacity,
-  Button
 } from "react-native";
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";

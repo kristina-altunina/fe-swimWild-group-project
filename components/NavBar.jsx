@@ -3,7 +3,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 
 import { colours } from "../styles/base";

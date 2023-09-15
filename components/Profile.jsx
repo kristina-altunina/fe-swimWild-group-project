@@ -1,11 +1,7 @@
-import { useEffect, useState } from "react";
-  
 import {
-    ScrollView,
     StyleSheet,
     Text,
     View,
-    TextInput,
     TouchableOpacity,
   } from "react-native";
 

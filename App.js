@@ -11,14 +11,15 @@ import {
   Poppins_300Light_Italic,
   Poppins_200ExtraLight,
 } from "@expo-google-fonts/poppins";
-
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  ActivityIndicator,
+  Button
 } from "react-native";
+
+import TestPage from "./components/TestPage";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -34,6 +35,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
+        <Stack.Screen name="Test Page" component={TestPage}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -74,13 +76,14 @@ function HomeScreen({navigation}) {
           >
             <Text>Sign Up</Text>
           </TouchableOpacity>
-
+          <Button title='Go to Test Page' onPress={() => navigation.navigate("Test Page")}></Button>
       </View>
-    </View>
-  );
+      </View>
+    )
+    
+  }
 }
-}
-
+  
 const styles = StyleSheet.create({
   app: {
     backgroundColor: colours.bg,
@@ -148,5 +151,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-
