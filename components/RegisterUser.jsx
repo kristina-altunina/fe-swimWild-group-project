@@ -40,6 +40,7 @@ export default RegisterUser = ({navigation}) => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
+    setDob(date.toLocaleDateString())
     hideDatePicker();
   };
 
@@ -55,6 +56,16 @@ export default RegisterUser = ({navigation}) => {
       .catch((error) => {});
   }
 
+  function handleImageUpload() {
+    const imagePickerSettings = {
+      title: 'Select Profile Photo',
+      storage: {
+        skipBackup: true,
+        path: 'images'
+      }
+    }
+  }
+
   return (
 <SafeAreaView style={{ flex: 1 }}>
   <View style={{
@@ -65,14 +76,14 @@ export default RegisterUser = ({navigation}) => {
           alignItems: 'center',
         }}>
     <NavBar/>
-    <View style={styles["container"]}>
+    <View style={styles.container}>
       
-      <Text style={styles["container__header"]}>Register</Text>
+      <Text style={styles.header}>Register</Text>
       <TextInput
-        style={[styles["container__input"], focusedInput === "forename" && {
-          borderColor: colours.accent4,
-          borderWidth: 2,
-        }]}
+        style={[
+          styles.input,
+          focusedInput === "forename" && styles.input_focused,
+        ]}
         placeholder="Forename"
         value={forename}
         onChangeText={setForename}
@@ -80,10 +91,10 @@ export default RegisterUser = ({navigation}) => {
         onBlur={() => setFocusedInput(null)}
       ></TextInput>
       <TextInput
-        style={[styles["container__input"], focusedInput === "surname" && {
-          borderColor: colours.accent4,
-          borderWidth: 2,
-        }]}
+        style={[
+          styles.input, 
+          focusedInput === "surname" && styles.input_focused,
+        ]}
         placeholder="Surname"
         value={surname}
         onChangeText={setSurname}
@@ -91,10 +102,10 @@ export default RegisterUser = ({navigation}) => {
         onBlur={() => setFocusedInput(null)}
       ></TextInput>
       <TextInput
-        style={[styles["container__input"], focusedInput === "dob" && {
-          borderColor: colours.accent4,
-          borderWidth: 2,
-        }]}
+        style={[
+          styles.input, 
+          focusedInput === "dob" && styles.input_focused,
+        ]}
         placeholder="dd/mm/yyyy"
         value={dob}
         onChangeText={setDob}
@@ -102,9 +113,6 @@ export default RegisterUser = ({navigation}) => {
         onBlur={() => setFocusedInput(null)}
         onPressIn={showDatePicker}
       ></TextInput>
-      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
-          {selectedDate ? selectedDate.toLocaleDateString() : 'No date selected'}
-        </Text>
         <DateTimePickerModal
           date={selectedDate}
           isVisible={datePickerVisible}
@@ -113,10 +121,10 @@ export default RegisterUser = ({navigation}) => {
           onCancel={hideDatePicker}
         />
       <TextInput
-        style={[styles["container__input"], focusedInput === "email" && {
-          borderColor: colours.accent4,
-          borderWidth: 2,
-        }]}
+        style={[
+          styles.input, 
+          focusedInput === "email" && styles.input_focused,
+        ]}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
@@ -124,10 +132,10 @@ export default RegisterUser = ({navigation}) => {
         onBlur={() => setFocusedInput(null)}
       ></TextInput>
       <TextInput
-        style={[styles["container__input"], focusedInput === "password" && {
-          borderColor: colours.accent4,
-          borderWidth: 2,
-        }]}
+        style={[
+          styles.input, 
+          focusedInput === "password" && styles.input_focused,
+        ]}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
@@ -135,11 +143,14 @@ export default RegisterUser = ({navigation}) => {
         onBlur={() => setFocusedInput(null)}
         secureTextEntry
       ></TextInput>
+      <TouchableOpacity style={styles.upload} onPress={handleImageUpload}>
+        <Text style={styles.upload__text}>Select Profile Photo</Text>
+      </TouchableOpacity>
       <StatusBar style="auto" />
-      <TouchableOpacity style={[styles["button"], 
-      isSighUpClicked ? {backgroundColor :colours.accent3} : null]} 
+      <TouchableOpacity style={[styles.button, 
+      isSighUpClicked ? styles.button__accent : null]} 
       onPress={handleSignUp}>
-        <Text style={styles["button__text"]}>Sign Up</Text>
+        <Text style={styles.button__text}>Sign Up</Text>
       </TouchableOpacity>
     </View>
    </View>
@@ -152,28 +163,33 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
-  "container": {
+  container: {
     flex: 1,
     width: "100%",
     backgroundColor: colours.bg,
     alignItems: "center",
     justifyContent: "center",
+    padding: 20
   },
-  "container__header": {
+  header: {
     fontSize: 30,
     fontWeight: "bold",
     marginBottom: 20,
     color: colours.accent1,
   },
-  "container__input": {
-    width: "70%",
+  input: {
+    width: "100%",
     borderColor: colours.accent4,
     borderWidth: 1,
     marginBottom: 15,
-    padding: 5,
+    padding: 10,
     color: colours.accent1,
   },
-  "button": {
+  input_focused: {
+  borderColor: colours.accent4,
+  borderWidth: 2,
+  },
+  button: {
     width: "40%",
     alignItems: "center",
     backgroundColor: colours.accent2,
@@ -181,7 +197,23 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 5,
   },
-  "button__text": {
+  button__accent: {
+    backgroundColor: colours.accent3,
+  },
+  button__text: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  upload: {
+    width: "60%",
+    alignItems: "center",
+    backgroundColor: colours.accent4,
+    padding: 15,
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  upload__text: {
+    alignItems: "center",
     color: "#fff",
     fontWeight: "bold",
   },
