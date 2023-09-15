@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import NavBar from "./NavBar";
 import {
@@ -21,8 +21,10 @@ export default RegisterUser = ({navigation}) => {
   const [nickname, setNickname] = useState("");
   const [dob, setDob] = useState("");
   const [password, setPassword] = useState("");
+  const [validated, setValidated] = useState(false)
   const [focusedInput, setFocusedInput] = useState(null);
   const [isSighUpClicked, setIsSignUpClicked] = useState(false);
+  const [passwordError, setPasswordError] = useState("")
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [datePickerVisible, setDatePickerVisible] = useState(false);
@@ -33,6 +35,9 @@ export default RegisterUser = ({navigation}) => {
   const hideDatePicker = () => {
     setDatePickerVisible(false);
   };
+  const dateNow = new Date()
+  const minimumDate = new Date(dateNow.getFullYear()-18, dateNow.getMonth(), dateNow.getDay())
+  console.log(minimumDate);
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
@@ -47,15 +52,15 @@ export default RegisterUser = ({navigation}) => {
     .then((resolvedPromises) => {
       const userCredential = resolvedPromises[0];
       const user = userCredential.user;
-      console.log('User', user);
-        setShowSignOut(false);
-        setIsSignUpClicked(true)
-        swimWildSignUp(user.stsTokenManager.accessToken)
+      swimWildSignUp(user.stsTokenManager.accessToken, user.uid)
     })
-      .catch((error) => {});
+      .catch((error) => {
+        console.error("Error", error);
+      });
   }
 
 function swimWildSignUp(token, uid) {
+  console.log("inside swimWildSignUp, uid", uid);
       const data = {
         uid: uid,
         name: fullname,
@@ -92,6 +97,24 @@ function swimWildSignUp(token, uid) {
     }
   }
 
+  useEffect(() => {
+    validateForm()
+  }, [fullname, nickname, dob, email, password])
+
+  function validateForm() {
+    setPasswordError("")
+    console.log(password);
+    if (password === "" || password.length <= 5) {
+      setPasswordError("Password must contain minimum of 6 characters")
+    }
+
+    if (fullname !== "" && nickname !== "" && dob !== "" && email !== "" && password !== "") {
+      setValidated(true);
+    } else {
+      setValidated(false)
+    }
+  }
+
   return (
 <SafeAreaView style={{ flex: 1 }}>
   <View style={{
@@ -112,7 +135,7 @@ function swimWildSignUp(token, uid) {
         ]}
         placeholder="Full Name"
         value={fullname}
-        onChangeText={setFullName}
+        onChangeText={(value) => {setFullName(value)}}
         onFocus={() => setFocusedInput("fullname")}
         onBlur={() => setFocusedInput(null)}
       ></TextInput>
@@ -123,7 +146,7 @@ function swimWildSignUp(token, uid) {
         ]}
         placeholder="Nickname"
         value={nickname}
-        onChangeText={setNickname}
+        onChangeText={(value) => {setNickname(value)}}
         onFocus={() => setFocusedInput("nickname")}
         onBlur={() => setFocusedInput(null)}
       ></TextInput>
@@ -134,12 +157,13 @@ function swimWildSignUp(token, uid) {
         ]}
         placeholder="dd/mm/yyyy"
         value={dob}
-        onChangeText={setDob}
+        onChangeText={(value) => {setDob(value)}}
         onFocus={() => setFocusedInput("dob")}
         onBlur={() => setFocusedInput(null)}
         onPressIn={showDatePicker}
       ></TextInput>
         <DateTimePickerModal
+          maximumDate={new Date("2005-09-15")}
           date={selectedDate}
           isVisible={datePickerVisible}
           mode="date"
@@ -153,7 +177,7 @@ function swimWildSignUp(token, uid) {
         ]}
         placeholder="Email"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(value) => {setEmail(value)}}
         onFocus={() => setFocusedInput("email")}
         onBlur={() => setFocusedInput(null)}
       ></TextInput>
@@ -164,16 +188,17 @@ function swimWildSignUp(token, uid) {
         ]}
         placeholder="Password"
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(value) => {setPassword(value)}}
         onFocus={() => setFocusedInput("password")}
         onBlur={() => setFocusedInput(null)}
         secureTextEntry
       ></TextInput>
+      <Text>{passwordError}</Text>
       <TouchableOpacity style={styles.upload} onPress={handleImageUpload}>
         <Text style={styles.upload__text}>Select Profile Photo</Text>
       </TouchableOpacity>
       <StatusBar style="auto" />
-      <TouchableOpacity style={[styles.button, 
+      <TouchableOpacity disabled={!validated} style={[styles.button, 
       isSighUpClicked ? styles.button__accent : null]} 
       onPress={handleSignUp}>
         <Text style={styles.button__text}>Sign Up</Text>
