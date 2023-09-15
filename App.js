@@ -16,6 +16,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Button
 } from "react-native";
 
 import TestPage from "./components/TestPage";
@@ -34,6 +35,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
+        <Stack.Screen name="Test Page" component={TestPage}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -74,24 +76,14 @@ function HomeScreen({navigation}) {
           >
             <Text>Sign Up</Text>
           </TouchableOpacity>
-
+          <Button title='Go to Test Page' onPress={() => navigation.navigate("Test Page")}></Button>
       </View>
       </View>
     )
     
   }
 }
-
-  {/* return (
-    <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomeScreen}/>
-          <Stack.Screen name="Test Page" component={TestPage}/>
-        </Stack.Navigator>
-    </NavigationContainer>
-    
-  ); */}
-
+  
 const styles = StyleSheet.create({
   app: {
     backgroundColor: colours.bg,
@@ -159,8 +151,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-{/* registerRootComponent(App)
-
-
-export default App */}
