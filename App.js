@@ -11,8 +11,6 @@ import {
   Poppins_300Light_Italic,
   Poppins_200ExtraLight,
 } from "@expo-google-fonts/poppins";
-import { registerRootComponent } from "expo";
-
 import {
   StyleSheet,
   Text,
@@ -20,12 +18,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import TestPage from "./components/TestPage";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-function App() {
+export default function App() {
 
   return (
 <NavigationContainer>
@@ -76,10 +76,21 @@ function HomeScreen({navigation}) {
           </TouchableOpacity>
 
       </View>
-    </View>
-  );
+      </View>
+    )
+    
+  }
 }
-}
+
+  {/* return (
+    <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeScreen}/>
+          <Stack.Screen name="Test Page" component={TestPage}/>
+        </Stack.Navigator>
+    </NavigationContainer>
+    
+  ); */}
 
 const styles = StyleSheet.create({
   app: {
@@ -149,7 +160,7 @@ const styles = StyleSheet.create({
   },
 });
 
-registerRootComponent(App)
+{/* registerRootComponent(App)
 
 
-export default App
+export default App */}
