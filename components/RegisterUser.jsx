@@ -17,8 +17,8 @@ import { colours } from "../styles/base";
 
 export default RegisterUser = ({navigation}) => {
   const [email, setEmail] = useState("");
-  const [forename, setForename] = useState("");
-  const [surname, setSurname] = useState("");
+  const [fullname, setFullName] = useState("");
+  const [nickname, setNickname] = useState("");
   const [dob, setDob] = useState("");
   const [password, setPassword] = useState("");
   const [focusedInput, setFocusedInput] = useState(null);
@@ -41,16 +41,46 @@ export default RegisterUser = ({navigation}) => {
   };
 
   function handleSignUp() {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        setToken(user.stsTokenManager.accessToken);
+    Promise.all([
+      createUserWithEmailAndPassword(auth, email, password)
+    ])
+    .then((resolvedPromises) => {
+      const userCredential = resolvedPromises[0];
+      const user = userCredential.user;
+      console.log('User', user);
         setShowSignOut(false);
-        setUserProperties(analytics, { name: name });
         setIsSignUpClicked(true)
-      })
+        swimWildSignUp(user.stsTokenManager.accessToken)
+    })
       .catch((error) => {});
   }
+
+function swimWildSignUp(token, uid) {
+      const data = {
+        uid: uid,
+        name: fullname,
+        nickname: nickname,
+        dob: dob,
+        profileImg: null,
+      }
+
+      fetch("https://spike-auth-server.onrender.com/users", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+          },
+      body: JSON.stringify(data)
+        })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        navigation.navigate('Profile',
+          {data: json})
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+}
 
   function handleImageUpload() {
     const imagePickerSettings = {
@@ -78,23 +108,23 @@ export default RegisterUser = ({navigation}) => {
       <TextInput
         style={[
           styles.input,
-          focusedInput === "forename" && styles.input_focused,
+          focusedInput === "fullname" && styles.input_focused,
         ]}
-        placeholder="Forename"
-        value={forename}
-        onChangeText={setForename}
-        onFocus={() => setFocusedInput("forename")}
+        placeholder="Full Name"
+        value={fullname}
+        onChangeText={setFullName}
+        onFocus={() => setFocusedInput("fullname")}
         onBlur={() => setFocusedInput(null)}
       ></TextInput>
       <TextInput
         style={[
-          styles.input, 
-          focusedInput === "surname" && styles.input_focused,
+          styles.input,
+          focusedInput === "nickname" && styles.input_focused,
         ]}
-        placeholder="Surname"
-        value={surname}
-        onChangeText={setSurname}
-        onFocus={() => setFocusedInput("surname")}
+        placeholder="Nickname"
+        value={nickname}
+        onChangeText={setNickname}
+        onFocus={() => setFocusedInput("nickname")}
         onBlur={() => setFocusedInput(null)}
       ></TextInput>
       <TextInput
