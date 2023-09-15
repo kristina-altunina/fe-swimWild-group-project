@@ -11,13 +11,13 @@ import {
   Poppins_300Light_Italic,
   Poppins_200ExtraLight,
 } from "@expo-google-fonts/poppins";
+import { registerRootComponent } from "expo";
 
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
@@ -25,7 +25,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function App() {
 
   return (
 <NavigationContainer>
@@ -149,4 +149,7 @@ const styles = StyleSheet.create({
   },
 });
 
+registerRootComponent(App)
 
+
+export default App
