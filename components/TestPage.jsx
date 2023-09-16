@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { takePhoto, pickImage } from '../scripts/image-picker';
+import { confirmButtonStyles } from 'react-native-modal-datetime-picker';
 
 
 export default function TestPage() {

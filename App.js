@@ -75,8 +75,7 @@ function HomeScreen({navigation}) {
             }}
           >
             <Text>Sign Up</Text>
-          </TouchableOpacity>
-          <Button title='Go to Test Page' onPress={() => navigation.navigate("Test Page")}></Button>
+          </TouchableOpacity>          
       </View>
       </View>
     )

@@ -7,6 +7,7 @@ import {
   View,SafeAreaView,
   TextInput,
   TouchableOpacity,
+  Button
 } from "react-native";
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -14,6 +15,9 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
+
+import { pickImage } from "../scripts/image-picker";
+import * as ImagePicker from 'expo-image-picker';
 
 export default RegisterUser = ({navigation}) => {
   const [email, setEmail] = useState("");
@@ -31,6 +35,8 @@ export default RegisterUser = ({navigation}) => {
   const showDatePicker = () => {
     setDatePickerVisible(true);
   };
+
+  const [mediaPermission, requestMediaPermission] = ImagePicker.useMediaLibraryPermissions();
   
   const hideDatePicker = () => {
     setDatePickerVisible(false);
@@ -93,8 +99,13 @@ function swimWildSignUp(token, uid) {
       storage: {
         skipBackup: true,
         path: 'images'
-      }
+      } 
     }
+
+    if(mediaPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
+      return requestMediaPermission()
+    }
+    pickImage()
   }
 
   useEffect(() => {
@@ -202,7 +213,7 @@ function swimWildSignUp(token, uid) {
       isSighUpClicked ? styles.button__accent : null]} 
       onPress={handleSignUp}>
         <Text style={styles.button__text}>Sign Up</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>      
     </View>
    </View>
   </SafeAreaView>
