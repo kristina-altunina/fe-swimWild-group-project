@@ -52,7 +52,8 @@ export default RegisterUser = ({navigation}) => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    setDob(date.getDate().toString().padStart(2, "0") + "/" + (date.getMonth() + 1).toString().padStart(2, "0") + "/" + date.getFullYear());
+    setDob(date.toISOString().split('T')[0]);
+    console.log(date.toISOString());
     hideDatePicker();
   };
 
