@@ -47,7 +47,7 @@ export default RegisterUser = ({navigation}) => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    setDob(date.toLocaleDateString())
+    setDob(date.toISOString().split('T')[0]);
     hideDatePicker();
   };
 
