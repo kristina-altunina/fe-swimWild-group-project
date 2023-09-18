@@ -52,7 +52,7 @@ export default RegisterUser = ({navigation}) => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    setDob(date.toISOString().split('T')[0]);
+    setDob(date.toISOString());
     console.log(date.toISOString());
     hideDatePicker();
   };
@@ -211,15 +211,22 @@ function swimWildSignUp(token, uid) {
         secureTextEntry
       ></TextInput>
       <Text>{passwordError}</Text>
-      <TouchableOpacity style={styles.upload} onPress={handleImageUpload}>
-        <Text style={styles.upload__text}>Select Profile Photo</Text>
-      </TouchableOpacity>
+
+    <View style={styles.button__container}> 
+      <TouchableOpacity style={styles.upload__button} onPress={handleImageUpload}>
+        <Text style={styles.button__text}>Select Photo</Text>
+    </TouchableOpacity>
       <StatusBar style="auto" />
-      <TouchableOpacity disabled={!validated} style={[styles.button, 
+    <TouchableOpacity style={styles.camera__button} onPress={handleImageUpload}>
+        <Text style={styles.button__text}>Take a Photo</Text>
+    </TouchableOpacity>
+      <StatusBar style="auto" />
+    </View>
+    <TouchableOpacity disabled={!validated} style={[styles.button, 
       isSighUpClicked ? styles.button__accent : null]} 
       onPress={handleSignUp}>
         <Text style={styles.button__text}>Sign Up</Text>
-      </TouchableOpacity>      
+    </TouchableOpacity>      
     </View>
    </ScrollView>
    </View>
@@ -267,6 +274,12 @@ const styles = StyleSheet.create({
   borderColor: colours.accent4,
   borderWidth: 2,
   },
+  button__container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
+    marginBottom: 10
+  },
   button: {
     width: "40%",
     alignItems: "center",
@@ -279,20 +292,27 @@ const styles = StyleSheet.create({
     backgroundColor: colours.accent3,
   },
   button__text: {
+    alignItems: "center",
     color: "#fff",
     fontWeight: "bold",
   },
-  upload: {
-    width: "60%",
+  upload__button: {
+    flex:1,
+    marginRight: 15,
+    width: "40%",
     alignItems: "center",
     backgroundColor: colours.accent4,
-    padding: 15,
+    padding: 10,
     borderRadius: 5,
     marginBottom: 5,
   },
-  upload__text: {
+  camera__button: {
+    flex: 1,
+    width: "40%",
     alignItems: "center",
-    color: "#fff",
-    fontWeight: "bold",
-  },
+    backgroundColor: colours.accent4,
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 5,
+  }
 });
