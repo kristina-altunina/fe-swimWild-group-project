@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import NavBar from "./NavBar";
 import {
+  ScrollView,
   StyleSheet,
   Text,
   View,SafeAreaView,
   TextInput,
   TouchableOpacity,
-  Button
+  Button,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform
 } from "react-native";
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -47,7 +52,7 @@ export default RegisterUser = ({navigation}) => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    setDob(date.toISOString().split('T')[0]);
+    setDob(date.getDate().toString().padStart(2, "0") + "/" + (date.getMonth() + 1).toString().padStart(2, "0") + "/" + date.getFullYear());
     hideDatePicker();
   };
 
@@ -128,17 +133,17 @@ function swimWildSignUp(token, uid) {
 
   return (
 <SafeAreaView style={{ flex: 1 }}>
-  <View style={{
-          padding: 20,
-          flex: 1,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
+  <KeyboardAvoidingView
+  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -300} 
+  style={{flex: 1}}> 
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
+  <View style={{flex: 1}}>
     <NavBar/>
+    <ScrollView contentContainerStyle={styles.scroll}
+    keyboardShouldPersistTaps="handled">
     <View style={styles.container}>
-      
-      <Text style={styles.header}>Register</Text>
+      <Text style={[styles.header, { zIndex: 1}]}>Register</Text>
       <TextInput
         style={[
           styles.input,
@@ -215,7 +220,10 @@ function swimWildSignUp(token, uid) {
         <Text style={styles.button__text}>Sign Up</Text>
       </TouchableOpacity>      
     </View>
+   </ScrollView>
    </View>
+   </TouchableWithoutFeedback>
+   </KeyboardAvoidingView>
   </SafeAreaView>
   );
 };
@@ -224,6 +232,13 @@ const styles = StyleSheet.create({
     backgroundColor: colours.bg,
     height: "100%",
     width: "100%",
+  },
+  scroll: {
+      padding: 20,
+      flex: 1,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
   },
   container: {
     flex: 1,

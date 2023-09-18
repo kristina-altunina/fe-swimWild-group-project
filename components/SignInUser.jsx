@@ -21,7 +21,7 @@ export default SignInUser = ({ navigation, route }) => {
 
   const connect = (token) => {
     setToken(token);
-      fetch("https://swim-wild-kristina.onrender.com", {
+      fetch("https://spike-auth-server.onrender.com", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
