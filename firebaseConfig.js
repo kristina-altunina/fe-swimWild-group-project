@@ -15,11 +15,28 @@ const firebaseConfig = {
 
 console.log(firebaseConfig)
 
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 const fbApp = getApp();
 const fbStorage = getStorage();
 
-export {auth, fbApp, fbStorage}
+const refreshTokenUrl = "https://securetoken.googleapis.com/v1/token?key="
+
+async function tokenRefresh(token_refresh) {
+ const url = refreshTokenUrl + FIREBASE_API_KEY
+ const body = {grant_type: "refresh_token", refresh_token: token_refresh}
+ const response = await
+ fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body)
+        })
+if (!response.ok) {
+  throw new Error (response.status + " Error refreshing token")
+}
+const data = await response.json()
+return data;
+}
+
+
+export {auth, fbApp, fbStorage, refreshTokenUrl}

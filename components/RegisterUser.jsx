@@ -24,18 +24,22 @@ import { colours } from "../styles/base";
 import { pickImage } from "../scripts/image-picker";
 import * as ImagePicker from 'expo-image-picker';
 
+import { pad, formatDate } from "../extentions";
+
 export default RegisterUser = ({navigation}) => {
+  const dateNow = new Date()
+  const minimumDate = new Date(dateNow.getFullYear()-18, dateNow.getMonth(), dateNow.getDay())
   const [email, setEmail] = useState("");
   const [fullname, setFullName] = useState("");
   const [nickname, setNickname] = useState("");
   const [dob, setDob] = useState("");
+  const [requestedDate, setRequestedDate] = useState("");
   const [password, setPassword] = useState("");
   const [validated, setValidated] = useState(false)
   const [focusedInput, setFocusedInput] = useState(null);
   const [isSighUpClicked, setIsSignUpClicked] = useState(false);
   const [passwordError, setPasswordError] = useState("")
-
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(minimumDate);
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const showDatePicker = () => {
     setDatePickerVisible(true);
@@ -46,13 +50,11 @@ export default RegisterUser = ({navigation}) => {
   const hideDatePicker = () => {
     setDatePickerVisible(false);
   };
-  const dateNow = new Date()
-  const minimumDate = new Date(dateNow.getFullYear()-18, dateNow.getMonth(), dateNow.getDay())
-  console.log(minimumDate);
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    setDob(date.toISOString());
+    setRequestedDate(date.toISOString());
+    setDob(formatDate(date.toISOString().split('T')[0], '-'));
     console.log(date.toISOString());
     hideDatePicker();
   };
@@ -64,20 +66,21 @@ export default RegisterUser = ({navigation}) => {
     .then((resolvedPromises) => {
       const userCredential = resolvedPromises[0];
       const user = userCredential.user;
-      swimWildSignUp(user.stsTokenManager.accessToken, user.uid)
+      console.log();
+      swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid)
     })
       .catch((error) => {
         console.error("Error", error);
       });
   }
 
-function swimWildSignUp(token, uid) {
+function swimWildSignUp(token, refresh_token, uid) {
   console.log("inside swimWildSignUp, uid", uid);
       const data = {
         uid: uid,
         name: fullname,
         nickname: nickname,
-        dob: dob,
+        dob: requestedDate,
         profileImg: null,
       }
 
@@ -92,7 +95,7 @@ function swimWildSignUp(token, uid) {
       .then((json) => {
         console.log(json);
         navigation.navigate('Profile',
-          {data: json})
+          {data: json, refresh_token: refresh_token})
       })
       .catch((err) => {
         console.log(err);
@@ -120,7 +123,6 @@ function swimWildSignUp(token, uid) {
 
   function validateForm() {
     setPasswordError("")
-    console.log(password);
     if (password === "" || password.length <= 5) {
       setPasswordError("Password must contain minimum of 6 characters")
     }
@@ -172,7 +174,7 @@ function swimWildSignUp(token, uid) {
           styles.input, 
           focusedInput === "dob" && styles.input_focused,
         ]}
-        placeholder="dd/mm/yyyy"
+        placeholder="Select date of birth"
         value={dob}
         onChangeText={(value) => {setDob(value)}}
         onFocus={() => setFocusedInput("dob")}
@@ -184,6 +186,8 @@ function swimWildSignUp(token, uid) {
           date={selectedDate}
           isVisible={datePickerVisible}
           mode="date"
+          locale="en_GB"
+          timeZoneOffsetInMinutes={0}
           onConfirm={handleConfirm}
           onCancel={hideDatePicker}
         />

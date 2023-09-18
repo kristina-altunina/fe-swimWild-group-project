@@ -11,7 +11,8 @@ import { colours } from "../styles/base";
 import NavBar from "./NavBar";
 
 export default Profile = ({ navigation, route }) => {
- const data = route.params.data.greeting
+ const data = route.params.data.greeting;
+ const refreshToken = route.params.refresh_token;
  console.log(route.params, `ROUTE`)
 
     function handleSignOut() {
