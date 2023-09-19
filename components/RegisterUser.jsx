@@ -59,22 +59,17 @@ export default RegisterUser = ({navigation}) => {
     hideDatePicker();
   };
 
-  function handleSignUp() {
-    Promise.all([
-      createUserWithEmailAndPassword(auth, email, password)
-    ])
-    .then((resolvedPromises) => {
-      const userCredential = resolvedPromises[0];
-      const user = userCredential.user;
-      console.log();
-      swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid)
+  async function handleSignUp() {
+    const response = await createUserWithEmailAndPassword(auth, email, password)
+    const user = response.user
+    console.log(user);
+    await swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid)
+    .then((response) => {
+      console.log(response);
     })
-      .catch((error) => {
-        console.error("Error", error);
-      });
-  }
+    }
 
-function swimWildSignUp(token, refresh_token, uid) {
+async function swimWildSignUp(token, refresh_token, uid) {
   console.log("inside swimWildSignUp, uid", uid);
       const data = {
         uid: uid,
@@ -83,24 +78,33 @@ function swimWildSignUp(token, refresh_token, uid) {
         dob: requestedDate,
         profileImg: null,
       }
-
-      fetch("https://spike-auth-server.onrender.com/users", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-          },
-      body: JSON.stringify(data)
-        })
-      .then((response) => response.json())
-      .then((json) => {
-        console.log(json);
+      console.log(data);
+    try {
+      const response = await fetch("https://spike-auth-server.onrender.com/users", {
+           method: "POST",
+    
+           mode: "cors",
+           headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+              },
+           body: JSON.stringify(data)
+             })
+             if (!response.ok) {
+              console.log(response, "<---- THIS");
+              throw new Error (response.status + " Error refreshing token")
+            
+            }
+            console.log(response);
+           const dataJSON = await response.json()
+        console.log(dataJSON);
         navigation.navigate('Profile',
           {data: json, refresh_token: refresh_token})
-      })
-      .catch((err) => {
-        console.log(err);
-      });
 }
+catch (err){
+  console.log(err);
+}
+} 
 
   function handleImageUpload() {
     const imagePickerSettings = {
