@@ -338,9 +338,8 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: 20,
 		backgroundColor: "grey",
-		borderRadius: 5,
-		marginTop: 10,
-		marginBottom: 5,
+		borderRadius: 20,
+		marginBottom: 15,
 		overflow: "hidden",
     opacity: 0
 	},
@@ -348,14 +347,12 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: 20,
 		backgroundColor: "grey",
-		borderRadius: 5,
-		marginTop: 10,
-		marginBottom: 5,
+		borderRadius: 20,
+		marginBottom: 15,
 		overflow: "hidden"
 	},
 	progressBar: {
 		height: "100%",
 		backgroundColor: colours.accent2,
-		borderRadius: 5
 	}
 });
