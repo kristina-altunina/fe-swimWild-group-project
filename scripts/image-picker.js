@@ -2,7 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export function takePhoto() {
-  ImagePicker.launchCameraAsync({
+  return ImagePicker.launchCameraAsync({
     allowsEditing: true,
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     quality: 1,
@@ -10,11 +10,11 @@ export function takePhoto() {
     if (!cameraResponse.cancelled) {
       const { uri } = cameraResponse.assets[0];
       const fileName = uri.split("/").at(-1);
-      uploadToFirebase(uri, fileName, (prog) => {
+      return uploadToFirebase(uri, fileName, (prog) => {
         console.log(prog);
       })
-        .then((res) => {
-          console.log(res);
+        .then(({downloadURL}) => {
+          return downloadURL
         })
         .catch((err) => {
           Alert.alert(`Error Uploading Image ${err.message}`);
@@ -24,7 +24,7 @@ export function takePhoto() {
 }
 
 export function pickImage() {
-  ImagePicker.launchImageLibraryAsync({
+  return ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: true,
     aspect: [4, 3],
@@ -33,10 +33,10 @@ export function pickImage() {
     if (!res.cancelled) {
       const { uri } = res.assets[0];
       const fileName = uri.split("/").at(-1);
-      uploadToFirebase(uri, fileName, (prog) => {
+      return uploadToFirebase(uri, fileName, (prog) => {
         console.log(prog);
-      }).then((res) => {
-        console.log(res);
+      }).then(({downloadURL}) => {
+        return downloadURL
       });
     }
   });
