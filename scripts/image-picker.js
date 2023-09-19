@@ -44,39 +44,37 @@ export function pickImage(progress) {
   });
 }
 
-
 function uploadToFirebase(uri, name, onProgress) {
-    return fetch(uri)
-    .then(fetchResponse => {
-      return fetchResponse.blob()
-    })
-    .then(blob => {
-      const imageRef = ref(getStorage(), `images/${name}`);
-      const uploadTask = uploadBytesResumable(imageRef, blob);
-  
-      return new Promise((resolve, reject) => {
-        uploadTask.on('state_changed', 
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          progress && onProgress(progress);
-        }, 
-        (error) => {
-          // Handle unsuccessful uploads
-          reject(error)
-        }, 
-        () => {
-          // Handle successful uploads on complete
-          getDownloadURL(uploadTask.snapshot.ref)
-          .then((downloadURL) => {
-            console.log('File available at', downloadURL);
-            resolve({
-              downloadURL,
-              metadata: uploadTask.snapshot.metadata
-            })
-          });
-        }
-        );
-      })
-      
-    })
+	return fetch(uri)
+		.then(fetchResponse => {
+			return fetchResponse.blob()
+		})
+		.then(blob => {
+			const imageRef = ref(getStorage(), `images/${name}`);
+			const uploadTask = uploadBytesResumable(imageRef, blob);
+
+			return new Promise((resolve, reject) => {
+				uploadTask.on('state_changed',
+					(snapshot) => {
+						const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+						progress && onProgress(progress);
+					},
+					(error) => {
+						// Handle unsuccessful uploads
+						reject(error)
+					},
+					() => {
+						// Handle successful uploads on complete
+						getDownloadURL(uploadTask.snapshot.ref)
+							.then((downloadURL) => {
+								console.log('File available at', downloadURL);
+								resolve({
+									downloadURL,
+									metadata: uploadTask.snapshot.metadata
+								})
+							});
+					}
+				);
+			})
+		})
 }
