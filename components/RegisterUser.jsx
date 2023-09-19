@@ -25,20 +25,25 @@ import { pickImage, takePhoto } from "../scripts/image-picker";
 import * as ImagePicker from 'expo-image-picker';
 
 import { pad, formatDate } from "../extentions";
+import { validateEmail, validateField, validateRequired } from "../formValidator";
 
 export default RegisterUser = ({ navigation }) => {
 	const dateNow = new Date()
 	const minimumDate = new Date(dateNow.getFullYear() - 18, dateNow.getMonth(), dateNow.getDay())
-	const [email, setEmail] = useState("");
-	const [fullname, setFullName] = useState("");
-	const [nickname, setNickname] = useState("");
-	const [dob, setDob] = useState("");
+	const [email, setEmail] = useState(null);
+	const [fullname, setFullName] = useState(null);
+	const [nickname, setNickname] = useState(null);
+	const [dob, setDob] = useState(null);
 	const [requestedDate, setRequestedDate] = useState("");
-	const [password, setPassword] = useState("");
+	const [password, setPassword] = useState(null);
 	const [validated, setValidated] = useState(false)
 	const [focusedInput, setFocusedInput] = useState(null);
 	const [isSighUpClicked, setIsSignUpClicked] = useState(false);
-	const [passwordError, setPasswordError] = useState("")
+	const [passwordError, setPasswordError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [fullnameError, setFullNameError] = useState("");
+  const [nicknameError, setNicknameError] = useState("");
+  const [dobError, setDobError] = useState("");
 	const [selectedDate, setSelectedDate] = useState(minimumDate);
 	const [datePickerVisible, setDatePickerVisible] = useState(false);
 	const showDatePicker = () => {
@@ -131,18 +136,34 @@ catch (err){
 	useEffect(() => {
 		validateForm()
 	}, [fullname, nickname, dob, email, password])
-
+  
 	function validateForm() {
-		setPasswordError("")
-		if (password === "" || password.length <= 5) {
-			setPasswordError("Password must contain minimum of 6 characters")
-		}
-		if (fullname !== "" && nickname !== "" && dob !== "" && email !== "" && password !== "") {
-			setValidated(true);
-		} else {
-			setValidated(false)
-		}
-	}
+
+    console.log(fullname);
+    const emailError = validateEmail(email)
+    setEmailError(emailError)
+
+    const passwordError = validateField(password, 6, 50, "password")
+    setPasswordError(passwordError)
+
+    const fullnameError = validateField(fullname, 3, 100, "fullname")
+    setFullNameError(fullnameError)
+
+    const nicknameError = validateField(nickname, 3, 50, "nickname")
+    setNicknameError(nicknameError)
+
+    const dobError = validateRequired(dob, "dob")
+    setDobError(dobError)
+
+    if (!email || !password || !fullname || !nickname || !dob) {
+      setValidated(false)
+    } else if (emailError || passwordError || fullnameError || nicknameError || dobError) {
+      setValidated(false)
+    } else {
+      setValidated(true)
+    }
+
+}
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
@@ -168,6 +189,7 @@ catch (err){
 									onFocus={() => setFocusedInput("fullname")}
 									onBlur={() => setFocusedInput(null)}
 								></TextInput>
+                <Text>{fullnameError}</Text>
 								<TextInput
 									style={[
 										styles.input,
@@ -179,6 +201,7 @@ catch (err){
 									onFocus={() => setFocusedInput("nickname")}
 									onBlur={() => setFocusedInput(null)}
 								></TextInput>
+                <Text>{nicknameError}</Text>
 								<TextInput
 									style={[
 										styles.input,
@@ -191,6 +214,7 @@ catch (err){
 									onBlur={() => setFocusedInput(null)}
 									onPressIn={showDatePicker}
 								></TextInput>
+                <Text>{dobError}</Text>
 								<DateTimePickerModal
 									maximumDate={new Date("2005-09-15")}
 									date={selectedDate}
@@ -212,6 +236,7 @@ catch (err){
 									onFocus={() => setFocusedInput("email")}
 									onBlur={() => setFocusedInput(null)}
 								></TextInput>
+                <Text>{emailError}</Text>
 								<TextInput
 									style={[
 										styles.input,
