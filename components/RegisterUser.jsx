@@ -21,7 +21,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
 
-import { pickImage } from "../scripts/image-picker";
+import { pickImage, takePhoto } from "../scripts/image-picker";
 import * as ImagePicker from 'expo-image-picker';
 
 import { pad, formatDate } from "../extentions";
@@ -44,8 +44,10 @@ export default RegisterUser = ({navigation}) => {
   const showDatePicker = () => {
     setDatePickerVisible(true);
   };
+  const [profileImgURL, setProfileImgURL] = useState('')
 
   const [mediaPermission, requestMediaPermission] = ImagePicker.useMediaLibraryPermissions();
+  const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
   
   const hideDatePicker = () => {
     setDatePickerVisible(false);
@@ -76,7 +78,7 @@ async function swimWildSignUp(token, refresh_token, uid) {
         name: fullname,
         nickname: nickname,
         dob: requestedDate,
-        profileImg: null,
+        profileImg: profileImgURL,
       }
       console.log(data);
     try {
@@ -106,19 +108,24 @@ catch (err){
 }
 } 
 
-  function handleImageUpload() {
-    const imagePickerSettings = {
-      title: 'Select Profile Photo',
-      storage: {
-        skipBackup: true,
-        path: 'images'
-      } 
-    }
-
+  function imageUploadFromGallery() {
     if(mediaPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
       return requestMediaPermission()
     }
     pickImage()
+    .then(url => {
+      setProfileImgURL(() => url)
+    })
+  }
+
+  function imageUploadFromCamera() {
+    if(cameraPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
+      return requestCameraPermission()
+    }
+    takePhoto()
+    .then(url => {
+      setProfileImgURL(() => url)
+    })
   }
 
   useEffect(() => {
@@ -221,11 +228,11 @@ catch (err){
       <Text>{passwordError}</Text>
 
     <View style={styles.button__container}> 
-      <TouchableOpacity style={styles.upload__button} onPress={handleImageUpload}>
+      <TouchableOpacity style={styles.upload__button} onPress={imageUploadFromGallery}>
         <Text style={styles.button__text}>Select Photo</Text>
     </TouchableOpacity>
       <StatusBar style="auto" />
-    <TouchableOpacity style={styles.camera__button} onPress={handleImageUpload}>
+    <TouchableOpacity style={styles.camera__button} onPress={imageUploadFromCamera}>
         <Text style={styles.button__text}>Take a Photo</Text>
     </TouchableOpacity>
       <StatusBar style="auto" />
