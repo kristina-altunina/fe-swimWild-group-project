@@ -236,11 +236,11 @@ export default RegisterUser = ({ navigation }) => {
 									</TouchableOpacity>
 									<StatusBar style="auto" />
 								</View>
-								{isUploading && (
-									<View style={styles.progressBarContainer}>
+								{/* {isUploading && ( */}
+									<View style={isUploading ? styles.progressBarContainerShow : styles.progressBarContainerHidden}>
 										<View style={[styles.progressBar, { width: `${uploadProgress}%` }]} />
 									</View>
-								)}
+								{/* )} */}
 								<TouchableOpacity disabled={!validated} style={[styles.button,
 								isSighUpClicked ? styles.button__accent : null]}
 									onPress={handleSignUp}>
@@ -334,7 +334,17 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		marginBottom: 5,
 	},
-	progressBarContainer: {
+	progressBarContainerHidden: {
+		width: "100%",
+		height: 20,
+		backgroundColor: "grey",
+		borderRadius: 5,
+		marginTop: 10,
+		marginBottom: 5,
+		overflow: "hidden",
+    opacity: 0
+	},
+  progressBarContainerShow: {
 		width: "100%",
 		height: 20,
 		backgroundColor: "grey",
@@ -346,6 +356,6 @@ const styles = StyleSheet.create({
 	progressBar: {
 		height: "100%",
 		backgroundColor: colours.accent2,
-		borderRadius: 5,
+		borderRadius: 5
 	}
 });
