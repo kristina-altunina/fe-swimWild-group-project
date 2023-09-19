@@ -47,7 +47,6 @@ export default RegisterUser = ({ navigation }) => {
 
 	const [mediaPermission, requestMediaPermission] = ImagePicker.useMediaLibraryPermissions();
 
-
 	const [uploadProgress, setUploadProgress] = useState(0);
 	const [isUploading, setIsUploading] = useState(false);
 
@@ -77,7 +76,7 @@ export default RegisterUser = ({ navigation }) => {
 			dob: requestedDate,
 			profileImg: profileImgURL,
 		}
-		console.log(data)
+		console.log('data: ', data)
 
 		fetch("https://spike-auth-server.onrender.com/users", {
 			method: "POST",
@@ -89,7 +88,7 @@ export default RegisterUser = ({ navigation }) => {
 		})
 			.then((response) => response.json())
 			.then((json) => {
-				console.log(json);
+				console.log('json: ', json);
 				navigation.navigate('Profile',
 					{ data: json, refresh_token: refresh_token })
 			})
@@ -130,48 +129,48 @@ export default RegisterUser = ({ navigation }) => {
 		hideDatePicker();
 	};
 
-	function handleSignUp() {
-		Promise.all([
-			createUserWithEmailAndPassword(auth, email, password)
-		])
-			.then((resolvedPromises) => {
-				const userCredential = resolvedPromises[0];
-				const user = userCredential.user;
-				console.log();
-				swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid)
-			})
-			.catch((error) => {
-				console.error("Error", error);
-			});
-	}
+	// function handleSignUp() {
+	// 	Promise.all([
+	// 		createUserWithEmailAndPassword(auth, email, password)
+	// 	])
+	// 		.then((resolvedPromises) => {
+	// 			const userCredential = resolvedPromises[0];
+	// 			const user = userCredential.user;
+	// 			console.log();
+	// 			swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid)
+	// 		})
+	// 		.catch((error) => {
+	// 			console.error("Error", error);
+	// 		});
+	// }
 
-	function swimWildSignUp(token, refresh_token, uid) {
-		console.log("inside swimWildSignUp, uid", uid);
-		const data = {
-			uid: uid,
-			name: fullname,
-			nickname: nickname,
-			dob: requestedDate,
-			profileImg: null,
-		}
+	// function swimWildSignUp(token, refresh_token, uid) {
+	// 	console.log("inside swimWildSignUp, uid", uid);
+	// 	const data = {
+	// 		uid: uid,
+	// 		name: fullname,
+	// 		nickname: nickname,
+	// 		dob: requestedDate,
+	// 		profileImg: null,
+	// 	}
 
-		fetch("https://spike-auth-server.onrender.com/users", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-			body: JSON.stringify(data)
-		})
-			.then((response) => response.json())
-			.then((json) => {
-				console.log(json);
-				navigation.navigate('Profile',
-					{ data: json, refresh_token: refresh_token })
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
+	// 	fetch("https://spike-auth-server.onrender.com/users", {
+	// 		method: "POST",
+	// 		headers: {
+	// 			Authorization: `Bearer ${token}`,
+	// 		},
+	// 		body: JSON.stringify(data)
+	// 	})
+	// 		.then((response) => response.json())
+	// 		.then((json) => {
+	// 			console.log(json);
+	// 			navigation.navigate('Profile',
+	// 				{ data: json, refresh_token: refresh_token })
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log(err);
+	// 		});
+	// }
 
 	function handleImageUpload() {
 		const imagePickerSettings = {
