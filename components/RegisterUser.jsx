@@ -16,7 +16,7 @@ import {
 } from "react-native";
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
@@ -65,48 +65,39 @@ export default RegisterUser = ({navigation}) => {
     const response = await createUserWithEmailAndPassword(auth, email, password)
     const user = response.user
     console.log(user);
-    await swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid)
-    .then((response) => {
-      console.log(response);
-    })
+    swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid)
     }
 
 async function swimWildSignUp(token, refresh_token, uid) {
   console.log("inside swimWildSignUp, uid", uid);
-      const data = {
-        uid: uid,
-        name: fullname,
-        nickname: nickname,
-        dob: requestedDate,
-        profileImg: profileImgURL,
+    const data = {
+      uid: uid,
+      name: fullname,
+      nickname: nickname,
+      dob: requestedDate,
+      profileImg: profileImgURL
       }
       console.log(data);
-    try {
-      const response = await fetch("https://spike-auth-server.onrender.com/users", {
-           method: "POST",
-    
-           mode: "cors",
-           headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${token}`,
-              },
-           body: JSON.stringify(data)
-             })
-             if (!response.ok) {
-              console.log(response, "<---- THIS");
-              throw new Error (response.status + " Error refreshing token")
-            
-            }
-            console.log(response);
-           const dataJSON = await response.json()
-        console.log(dataJSON);
-        navigation.navigate('Profile',
-          {data: json, refresh_token: refresh_token})
+  try {
+    const response = await fetch("https://spike-auth-server.onrender.com/users", {
+    method: "POST",
+    headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data)
+      })
+      if (!response.ok) {
+        console.log(response.status + " Error");
+        } else {
+          const dataJSON = await response.json()
+          navigation.navigate('Profile',
+          {data: dataJSON, refresh_token: refresh_token})
+          }
 }
 catch (err){
   console.log(err);
-}
-} 
+}} 
 
   function imageUploadFromGallery() {
     if(mediaPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
@@ -114,7 +105,8 @@ catch (err){
     }
     pickImage()
     .then(url => {
-      setProfileImgURL(() => url)
+      console.log(url);
+      setProfileImgURL(url)
     })
   }
 
@@ -124,7 +116,7 @@ catch (err){
     }
     takePhoto()
     .then(url => {
-      setProfileImgURL(() => url)
+      setProfileImgURL(url)
     })
   }
 
