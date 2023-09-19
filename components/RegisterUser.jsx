@@ -48,6 +48,8 @@ export default RegisterUser = ({navigation}) => {
 
   const [mediaPermission, requestMediaPermission] = ImagePicker.useMediaLibraryPermissions();
   const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
+  const [uploadProgress, setUploadProgress] = useState(0);
+	const [isUploading, setIsUploading] = useState(false);
   
   const hideDatePicker = () => {
     setDatePickerVisible(false);
@@ -111,7 +113,10 @@ function swimWildSignUp(token, refresh_token, uid) {
     if(mediaPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
       return requestMediaPermission()
     }
-    pickImage()
+    pickImage(progress => {
+      setUploadProgress(() => progress);
+      progress >= 100 ? setIsUploading(() => false) : setIsUploading(() => true);
+    })
     .then(url => {
       setProfileImgURL(() => url)
     })
@@ -121,7 +126,10 @@ function swimWildSignUp(token, refresh_token, uid) {
     if(cameraPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
       return requestCameraPermission()
     }
-    takePhoto()
+    takePhoto(progress => {
+      setUploadProgress(() => progress);
+      progress >= 100 ? setIsUploading(() => false) : setIsUploading(() => true);
+    })
     .then(url => {
       setProfileImgURL(() => url)
     })
@@ -236,6 +244,9 @@ function swimWildSignUp(token, refresh_token, uid) {
     </TouchableOpacity>
       <StatusBar style="auto" />
     </View>
+    <View style={isUploading ? styles.progressBarContainerShow : styles.progressBarContainerHidden}>
+			<View style={[styles.progressBar, { width: `${uploadProgress}%` }]} />
+		</View>
     <TouchableOpacity disabled={!validated} style={[styles.button, 
       isSighUpClicked ? styles.button__accent : null]} 
       onPress={handleSignUp}>
@@ -328,5 +339,26 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginBottom: 5,
-  }
+  },
+  progressBarContainerHidden: {
+		width: "100%",
+		height: 20,
+		backgroundColor: "grey",
+		borderRadius: 20,
+		marginBottom: 15,
+		overflow: "hidden",
+    opacity: 0
+	},
+  progressBarContainerShow: {
+		width: "100%",
+		height: 20,
+		backgroundColor: "grey",
+		borderRadius: 20,
+		marginBottom: 15,
+		overflow: "hidden"
+	},
+	progressBar: {
+		height: "100%",
+		backgroundColor: colours.accent2,
+	}
 });

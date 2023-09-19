@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-export function takePhoto() {
+export function takePhoto(progress) {
   return ImagePicker.launchCameraAsync({
     allowsEditing: true,
     mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -12,6 +12,7 @@ export function takePhoto() {
       const fileName = uri.split("/").at(-1);
       return uploadToFirebase(uri, fileName, (prog) => {
         console.log(prog);
+		progress(prog)
       })
         .then(({downloadURL}) => {
           return downloadURL
@@ -23,7 +24,7 @@ export function takePhoto() {
   });
 }
 
-export function pickImage() {
+export function pickImage(progress) {
   return ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: true,
@@ -34,7 +35,8 @@ export function pickImage() {
       const { uri } = res.assets[0];
       const fileName = uri.split("/").at(-1);
       return uploadToFirebase(uri, fileName, (prog) => {
-        console.log(prog);
+		console.log(prog)
+		progress(prog)
       }).then(({downloadURL}) => {
         return downloadURL
       });
