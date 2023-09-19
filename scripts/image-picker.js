@@ -23,14 +23,14 @@ export function takePhoto() {
 	});
 }
 
-export function pickImage() {
+export function pickImage(onProgress) {
 	ImagePicker.launchImageLibraryAsync({
 		mediaTypes: ImagePicker.MediaTypeOptions.All,
 		allowsEditing: true,
 		aspect: [4, 3],
 		quality: 1,
 	}).then((res) => {
-		if (!res.cancelled) {
+		if (!res.canceled) {
 			const { uri } = res.assets[0];
 			const fileName = uri.split("/").at(-1);
 			uploadToFirebase(uri, fileName, onProgress)

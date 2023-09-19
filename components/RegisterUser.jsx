@@ -234,13 +234,13 @@ export default RegisterUser = ({ navigation }) => {
 									<TouchableOpacity style={styles.camera__button} onPress={handleImageUpload}>
 										<Text style={styles.button__text}>Take a Photo</Text>
 									</TouchableOpacity>
-									{isUploading && (
-										<View style={styles.progressBarContainer}>
-											<View style={[styles.progressBar, { width: `${uploadProgress}%` }]} />
-										</View>
-									)}
 									<StatusBar style="auto" />
 								</View>
+								{isUploading && (
+									<View style={styles.progressBarContainer}>
+										<View style={[styles.progressBar, { width: `${uploadProgress}%` }]} />
+									</View>
+								)}
 								<TouchableOpacity disabled={!validated} style={[styles.button,
 								isSighUpClicked ? styles.button__accent : null]}
 									onPress={handleSignUp}>
