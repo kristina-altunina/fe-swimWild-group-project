@@ -11,64 +11,142 @@ export function getAllLocations() {
     })
 }
 
-export function getLocationByID(uid) { //endpoint from backend not created yet
+export function getLocationByID(uid) {
     return instance.get(`locations/${uid}`)
     .then(({data}) => {
         return data
     })
 }
 
+
 export function test() {
 
     const userData = {
-        "_id": {
-          "$oid": "650830dcc6e566c71d559fc3"
-        },
-        "name": "Rydal, Lake District",
-        "type": "lake",
-        "loc": {
-          "type": "Point",
-          "coordinates": [
-            54.447268,
-            -2.995986
-          ]
-        },
-        "createdAt": {
-          "$date": "2023-09-18T11:13:32.961Z"
-        },
-        "updatedAt": {
-          "$date": "2023-09-18T11:13:32.961Z"
-        },
-        "__v": 0
-      }
+		"avStars": 5,
+		"outOfDepth": true,
+		"avMins": 45,
+		"avKms": 1,
+		"mostRecentTemp": {
+			"date": "0001-01-01T00:00:00.000Z",
+			"temp": null
+		},
+		"feelTemps": {
+			"average": "100%"
+		},
+		"sizes": {},
+		"shores": {
+			"muddy": "100%"
+		},
+		"bankAngles": {
+			"medium": "100%"
+		},
+		"clarities": {
+			"average": "100%"
+		}
+	}
     
-      const swim = {
-        uid: "QyqF2JQjSEY6TOqDvdaSAd99WyA2",
-        name: "The Test",
-        nickname: "test123",
-        profileImg:
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Mad_scientist_transparent_background.svg/1200px-Mad_scientist_transparent_background.svg.png",
-        date: "2023-09-02T11:00:00+0000",
-        location: {
-          name: "Rydal, Lake District",
-          id: null,
-        },
-        notes:
-          "A great swim! To the dog's grave on the main island and back. Water not too cold.",
-        stars: 5,
-        recordTemp: null,
-        feelTemp: "average",
-        mins: 45,
-        km: 1,
-        outOfDepth: true,
-        sizeKey: "large",
-        shore: "muddy",
-        bankAngle: "medium",
-        clarity: "average",
-        imgUrls: [
-          "https://upload.wikimedia.org/wikipedia/commons/b/b4/Cumbria_2007_035.jpg",
-        ],
-      };
+      const swim = [
+		{
+			"imgUrls": [],
+			"date": "2023-09-02T11:00:00.000Z",
+			"location": {
+				"name": "Rydal, Lake District",
+				"id": "650830dcc6e566c71d559fc3",
+				"_id": "650830ddc6e566c71d559fcb"
+			},
+			"notes": "A great swim! To the dog's grave on the main island and back. Water not too cold.",
+			"stars": 5,
+			"recordTemp": null,
+			"feelTemp": "average",
+			"mins": 45,
+			"km": 1,
+			"outOfDepth": true,
+			"shore": "muddy",
+			"bankAngle": "medium",
+			"clarity": "average",
+			"imageUrls": [],
+			"_id": "650830ddc6e566c71d559fca",
+			"uid": "QyqF2JQjSEY6TOqDvdaSAd99WyA2",
+			"name": "Test",
+			"nickname": "The Tester",
+			"profileImg": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Mad_scientist_transparent_background.svg/1200px-Mad_scientist_transparent_background.svg.png"
+		},
+		{
+			"imgUrls": [],
+			"date": "2023-09-02T11:00:00.000Z",
+			"location": {
+				"name": "Rydal, Lake District",
+				"id": "650830dcc6e566c71d559fc3",
+				"_id": "650977b8df685c612330c126"
+			},
+			"notes": "A great swim! To the dog's grave on the main island and back. Water not too cold.",
+			"stars": 5,
+			"recordTemp": null,
+			"feelTemp": "average",
+			"mins": 45,
+			"km": 1,
+			"outOfDepth": true,
+			"shore": "muddy",
+			"bankAngle": "medium",
+			"clarity": "average",
+			"imageUrls": [],
+			"_id": "650977b8df685c612330c125",
+			"uid": "QyqF2JQjSEY6TOqDvdaSAd99WyA2",
+			"name": "Test",
+			"nickname": "The Tester",
+			"profileImg": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Mad_scientist_transparent_background.svg/1200px-Mad_scientist_transparent_background.svg.png"
+		},
+		{
+			"imgUrls": [],
+			"date": "2023-09-02T11:00:00.000Z",
+			"location": {
+				"name": "Rydal, Lake District",
+				"id": "650830dcc6e566c71d559fc3",
+				"_id": "650977b8df685c612330c126"
+			},
+			"notes": "A great swim! To the dog's grave on the main island and back. Water not too cold.",
+			"stars": 5,
+			"recordTemp": null,
+			"feelTemp": "average",
+			"mins": 45,
+			"km": 1,
+			"outOfDepth": true,
+			"shore": "muddy",
+			"bankAngle": "medium",
+			"clarity": "average",
+			"imageUrls": [],
+			"_id": "650977b8df685c612330c125",
+			"uid": "QyqF2JQjSEY6TOqDvdaSAd99WyA2",
+			"name": "Test",
+			"nickname": "The Tester",
+			"profileImg": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Mad_scientist_transparent_background.svg/1200px-Mad_scientist_transparent_background.svg.png"
+		},
+		{
+			"imgUrls": [],
+			"date": "2023-09-02T11:00:00.000Z",
+			"location": {
+				"name": "Rydal, Lake District",
+				"id": "650830dcc6e566c71d559fc3",
+				"_id": "650977b8df685c612330c126"
+			},
+			"notes": "A great swim! To the dog's grave on the main island and back. Water not too cold.",
+			"stars": 5,
+			"recordTemp": null,
+			"feelTemp": "average",
+			"mins": 45,
+			"km": 1,
+			"outOfDepth": true,
+			"shore": "muddy",
+			"bankAngle": "medium",
+			"clarity": "average",
+			"imageUrls": [],
+			"_id": "650977b8df685c612330c125",
+			"uid": "QyqF2JQjSEY6TOqDvdaSAd99WyA2",
+			"name": "Test",
+			"nickname": "The Tester",
+			"profileImg": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Mad_scientist_transparent_background.svg/1200px-Mad_scientist_transparent_background.svg.png"
+		}
+	]
     
       const apiData = {
         tempCelsius: '15.8',
@@ -77,7 +155,7 @@ export function test() {
           maxWave: '2.66m',
           maxWavePeriod: '6.75s',
           weekForecast: {
-            dates: ['1', '2', '3', '4'],
+            dates: ['1', '2', '3', '4', '5', '6', '7'],
             wave_height_max: ['1-whm', '2-whm', '3-whm', '4-whm'],
             wave_direction_dominant: ['1-wdd', '2-wdd', '3-wdd', '4-wdd'],
             wave_period_max: ['1-wpm', '2-wpm', '3-wpm', '4-wpm'],
@@ -93,10 +171,28 @@ export function test() {
         }
       }
 
+      const location = {
+          "coords": [],
+          "_id": "650830dcc6e566c71d559fc3",
+          "name": "Rydal, Lake District",
+          "type": "lake",
+          "loc": {
+              "type": "Point",
+              "coordinates": [
+                  54.447268,
+                  -2.995986
+              ]
+          },
+          "createdAt": "2023-09-18T11:13:32.961Z",
+          "updatedAt": "2023-09-18T11:13:32.961Z",
+          "__v": 0
+      }
+
       const outputForSea = {
         userData,
         apiData,
-        swims: [ swim ]
+        swims: swim,
+        location
       }
     
 

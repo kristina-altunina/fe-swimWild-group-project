@@ -1,19 +1,24 @@
 import { StyleSheet } from "react-native"
 import { colours } from "../styles/base";
+import { Dimensions } from "react-native";
+
+const windowWidth = Dimensions.get('window').width;
 
 export const styles = StyleSheet.create({
     KeyboardAvoidingView: {
         flex: 1
     },
     screen: {
-        flex: 1
+        width: '100%',
+        height: 'auto'
     },
     display: {
         flex: 1,
         backgroundColor: 'black',
         display: 'flex',
         backgroundColor: 'red', //delete after,
-        padding: '1%'
+        padding: '1%',
+        paddingBottom: 0
     },
     title: {
         width: '100%',
@@ -26,23 +31,42 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     swimBot: {
-        flex: 2,
         backgroundColor: 'blue'
     },
+    swimBotForecastDatesContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
+    },
+    swimBotForecastDates: {
+        backgroundColor: 'white',
+        paddingHorizontal: '5%'
+    },
     AveUserData: {
-        flex: 1,
         backgroundColor: 'orange'
     },
     summary: {
-        flex: 1,
         backgroundColor: 'pink'
     },
-    swimPreviewGroup: {
-        height: '30%',
+    swimReviewGroup: {
         backgroundColor: 'white'
     },
-    swimPreviewItem: {
-        flex: 1
+    swimReviewItem: {
+        height: 'auto'
+    },
+    showContent: {
+        opacity:1
+    },
+    hideContent: {
+        opacity: 0,
+        height: 0
+    },
+    profileImage: {
+        objectFit: 'contain',
+        height: 75,
+        width: 75,
+        borderRadius: 75,
+        backgroundColor: 'black'
     }
 })
 
