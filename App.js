@@ -19,10 +19,10 @@ import {
   Button
 } from "react-native";
 
-import TestPage from "./components/TestPage";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SingleLocation from "./components/SingleLocation";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,7 +35,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="Test Page" component={TestPage}/>
+        <Stack.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false, gestureEnabled: true}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -75,9 +75,10 @@ function HomeScreen({navigation}) {
             }}
           >
             <Text>Sign Up</Text>
-          </TouchableOpacity>          
+          </TouchableOpacity>
+          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650977b7df685c612330c119'})}}></Button>
       </View>
-      </View>
+    </View>
     )
     
   }
