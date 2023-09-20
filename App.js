@@ -54,7 +54,6 @@ function HomeScreen({navigation}) {
     return null;
   }
 
-
   return (
     <View style={styles.app}>
      <NavBar/>
@@ -79,7 +78,6 @@ function HomeScreen({navigation}) {
       </View>
       </View>
     )
-    
   }
 }
   

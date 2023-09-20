@@ -8,7 +8,6 @@ import {
 	View, SafeAreaView,
 	TextInput,
 	TouchableOpacity,
-	Button,
 	KeyboardAvoidingView,
 	TouchableWithoutFeedback,
 	Keyboard,
@@ -24,89 +23,71 @@ import { colours } from "../styles/base";
 import { pickImage, takePhoto } from "../scripts/image-picker";
 import * as ImagePicker from 'expo-image-picker';
 
-import { pad, formatDate } from "../extentions";
-import { validateEmail, validateField, validateRequired } from "../formValidator";
+import { getFirebaseError, formatDate } from "../extentions";
+import CustomInput from "./CustomInput";
+import { Formik, useFormik, Field } from "formik";
+import * as yup from 'yup';
 
 export default RegisterUser = ({ navigation }) => {
 	const dateNow = new Date()
 	const minimumDate = new Date(dateNow.getFullYear() - 18, dateNow.getMonth(), dateNow.getDay())
-	const [email, setEmail] = useState(null);
-	const [fullname, setFullName] = useState(null);
-	const [nickname, setNickname] = useState(null);
 	const [dob, setDob] = useState(null);
 	const [requestedDate, setRequestedDate] = useState("");
-	const [password, setPassword] = useState(null);
-	const [validated, setValidated] = useState(false)
 	const [focusedInput, setFocusedInput] = useState(null);
 	const [isSighUpClicked, setIsSignUpClicked] = useState(false);
-	const [passwordError, setPasswordError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [fullnameError, setFullNameError] = useState("");
-  const [nicknameError, setNicknameError] = useState("");
-  const [dobError, setDobError] = useState("");
 	const [selectedDate, setSelectedDate] = useState(minimumDate);
 	const [datePickerVisible, setDatePickerVisible] = useState(false);
-	const showDatePicker = () => {
+  const [profileImgURL, setProfileImgURL] = useState('');
+  const [firebaseError, setFirebaseError] = useState('');
+  const [sending, setSending] = useState(false);
+  const [genericError, setGenericError] = useState('');
+	
+    const showDatePicker = () => {
 		setDatePickerVisible(true);
 	};
 
-  const [profileImgURL, setProfileImgURL] = useState('');
   const [mediaPermission, requestMediaPermission] = ImagePicker.useMediaLibraryPermissions();
   const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
   const [uploadProgress, setUploadProgress] = useState(0);
-	const [isUploading, setIsUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   
   const hideDatePicker = () => {
     setDatePickerVisible(false);
   };
 
-  const handleConfirm = (date) => {
-    setSelectedDate(date);
-    setRequestedDate(date.toISOString());
-    setDob(formatDate(date.toISOString().split('T')[0], '-'));
-    console.log(date.toISOString());
-    hideDatePicker();
-  };
-
-  async function handleSignUp() {
-    const response = await createUserWithEmailAndPassword(auth, email, password)
-    const user = response.user
-    console.log(user);
-    swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid)
-    }
-
-async function swimWildSignUp(token, refresh_token, uid) {
+async function swimWildSignUp(token, refresh_token, uid, formData) {
   console.log("inside swimWildSignUp, uid", uid);
     const data = {
       uid: uid,
-      name: fullname,
-      nickname: nickname,
+      name: formData.fullName,
+      nickname: formData.nickname,
       dob: requestedDate,
       profileImg: profileImgURL
       }
-      console.log(data);
-  try {
-    const response = await fetch("https://spike-auth-server.onrender.com/users", {
+console.log(data);
+
+setGenericError('')
+  const response = await fetch("https://spike-auth-server.onrender.com/users", {
     method: "POST",
     headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data)
-      })
-      if (!response.ok) {
-        console.log(response.status + " Error");
-        } else {
-          const dataJSON = await response.json()
-          navigation.navigate('Profile',
-          {data: dataJSON, refresh_token: refresh_token})
-          }
-}
-catch (err){
-  console.log(err);
-}} 
+  })
+if (!response.ok) {
+  setSending(false)
+  if (response.status !== 400) {
+  setGenericError('Something went wrong. Please try again later.')
+  }
+} else {
+    const dataJSON = await response.json()
+    navigation.navigate('Profile',
+    {data: dataJSON, refresh_token: refresh_token})
+  }
+} 
 
-  function imageUploadFromGallery() {
+function imageUploadFromGallery() {
     if(mediaPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
       return requestMediaPermission()
     }
@@ -115,12 +96,11 @@ catch (err){
       progress >= 100 ? setIsUploading(() => false) : setIsUploading(() => true);
     })
     .then(url => {
-      console.log(url);
       setProfileImgURL(url)
     })
   }
 
-  function imageUploadFromCamera() {
+function imageUploadFromCamera() {
     if(cameraPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
       return requestCameraPermission()
     }
@@ -133,198 +113,208 @@ catch (err){
     })
   }
 
-	useEffect(() => {
-		validateForm()
-	}, [fullname, nickname, dob, email, password])
-  
-	function validateForm() {
+const signUpValidationSchema = yup.object().shape({
+    fullName: yup
+      .string()
+      .matches(/(\w.+\s).+/, 'Enter at least 2 names')
+      .required('Full name is required'),
+    nickname: yup
+      .string()
+      .min(3, ({ min }) => `Nickname must be at least ${min} characters`)
+      .required('Nickname is required'),
+    dob: yup    
+      .string() 
+      .required('Date of Birth is required'),
+    email: yup
+      .string()
+      .email("Please enter valid email")
+      .required('Email is required'),
+    password: yup
+      .string()
+      .matches(/\w*[a-z]\w*/,  "Password must have a small letter")
+      .matches(/\w*[A-Z]\w*/,  "Password must have a capital letter")
+      .matches(/\d/, "Password must have a number")
+      .matches(/[!@#$%^&*()\-_"=+{}; :,<.>]/, "Password must have a special character")
+      .min(6, ({ min }) => `Password must be at least ${min} characters`)
+      .required('Password is required'),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('password')], 'Passwords do not match')
+      .required('Confirm password is required'),
+  })
 
-    console.log(fullname);
-    const emailError = validateEmail(email)
-    setEmailError(emailError)
-
-    const passwordError = validateField(password, 6, 50, "password")
-    setPasswordError(passwordError)
-
-    const fullnameError = validateField(fullname, 3, 100, "fullname")
-    setFullNameError(fullnameError)
-
-    const nicknameError = validateField(nickname, 3, 50, "nickname")
-    setNicknameError(nicknameError)
-
-    const dobError = validateRequired(dob, "dob")
-    setDobError(dobError)
-
-    if (!email || !password || !fullname || !nickname || !dob) {
-      setValidated(false)
-    } else if (emailError || passwordError || fullnameError || nicknameError || dobError) {
-      setValidated(false)
-    } else {
-      setValidated(true)
-    }
-
-}
-
-	return (
-		<SafeAreaView style={{ flex: 1 }}>
-			<KeyboardAvoidingView
-				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-				keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -300}
-				style={{ flex: 1 }}>
-				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-					<View style={{ flex: 1 }}>
-						<NavBar />
-						<ScrollView contentContainerStyle={styles.scroll}
-							keyboardShouldPersistTaps="handled">
-							<View style={styles.container}>
-								<Text style={[styles.header, { zIndex: 1 }]}>Register</Text>
-								<TextInput
-									style={[
-										styles.input,
-										focusedInput === "fullname" && styles.input_focused,
-									]}
-									placeholder="Full Name"
-									value={fullname}
-									onChangeText={(value) => { setFullName(value) }}
-									onFocus={() => setFocusedInput("fullname")}
-									onBlur={() => setFocusedInput(null)}
-								></TextInput>
-                <Text>{fullnameError}</Text>
-								<TextInput
-									style={[
-										styles.input,
-										focusedInput === "nickname" && styles.input_focused,
-									]}
-									placeholder="Nickname"
-									value={nickname}
-									onChangeText={(value) => { setNickname(value) }}
-									onFocus={() => setFocusedInput("nickname")}
-									onBlur={() => setFocusedInput(null)}
-								></TextInput>
-                <Text>{nicknameError}</Text>
-								<TextInput
-									style={[
-										styles.input,
-										focusedInput === "dob" && styles.input_focused,
-									]}
-									placeholder="Select date of birth"
-									value={dob}
-									onChangeText={(value) => { setDob(value) }}
-									onFocus={() => setFocusedInput("dob")}
-									onBlur={() => setFocusedInput(null)}
-									onPressIn={showDatePicker}
-								></TextInput>
-                <Text>{dobError}</Text>
-								<DateTimePickerModal
-									maximumDate={new Date("2005-09-15")}
-									date={selectedDate}
-									isVisible={datePickerVisible}
-									mode="date"
-									locale="en_GB"
-									timeZoneOffsetInMinutes={0}
-									onConfirm={handleConfirm}
-									onCancel={hideDatePicker}
-								/>
-								<TextInput
-									style={[
-										styles.input,
-										focusedInput === "email" && styles.input_focused,
-									]}
-									placeholder="Email"
-									value={email}
-									onChangeText={(value) => { setEmail(value) }}
-									onFocus={() => setFocusedInput("email")}
-									onBlur={() => setFocusedInput(null)}
-								></TextInput>
-                <Text>{emailError}</Text>
-								<TextInput
-									style={[
-										styles.input,
-										focusedInput === "password" && styles.input_focused,
-									]}
-									placeholder="Password"
-									value={password}
-									onChangeText={(value) => { setPassword(value) }}
-									onFocus={() => setFocusedInput("password")}
-									onBlur={() => setFocusedInput(null)}
-									secureTextEntry
-								></TextInput>
-								<Text>{passwordError}</Text>
-
-    <View style={styles.button__container}> 
-      <TouchableOpacity style={styles.upload__button} onPress={imageUploadFromGallery}>
-        <Text style={styles.button__text}>Select Photo</Text>
-    </TouchableOpacity>
-      <StatusBar style="auto" />
-    <TouchableOpacity style={styles.camera__button} onPress={imageUploadFromCamera}>
-        <Text style={styles.button__text}>Take a Photo</Text>
-    </TouchableOpacity>
-      <StatusBar style="auto" />
-    </View>
-    <View style={isUploading ? styles.progressBarContainerShow : styles.progressBarContainerHidden}>
-			<View style={[styles.progressBar, { width: `${uploadProgress}%` }]} />
-		</View>
-    <TouchableOpacity disabled={!validated} style={[styles.button, 
-      isSighUpClicked ? styles.button__accent : null]} 
-      onPress={handleSignUp}>
-        <Text style={styles.button__text}>Sign Up</Text>
-    </TouchableOpacity>      
-    </View>
-   </ScrollView>
-   </View>
-   </TouchableWithoutFeedback>
-   </KeyboardAvoidingView>
-  </SafeAreaView>
+return (
+	<SafeAreaView style={{ flex: 1, backgroundColor: colours.bg }}>
+		<KeyboardAwareScrollView> 
+			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+				<View style={{ flex: 1 }}>
+				    <NavBar />
+                    <View style={styles.container}> 
+                    <ScrollView contentContainerStyle={styles.scroll}
+                        keyboardShouldPersistTaps="handled">
+                        <Text style={[styles.header, { zIndex: 0 }]}>Register</Text>
+                        <Formik
+                          validationSchema={signUpValidationSchema}
+                          initialValues={{
+                            fullName: '',
+                            nickname: '',
+                            dob: '',
+                            email: '',
+                            password: '',
+                            confirmPassword: '',
+                            profileImgURL: ''
+                          }}
+                        onSubmit={async(values) => {
+                            setFirebaseError('')
+                            setSending(true)
+                            try {
+                                const response = await createUserWithEmailAndPassword(auth, values.email, values.password)
+                                const user = response.user
+                                swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid, values)
+                            }
+                            catch(error) {
+                                setSending(false)
+                                const firebaseEmailError = getFirebaseError(error);
+                                setFirebaseError(firebaseEmailError)
+                            }
+                          }}
+                        >
+                          {({ handleSubmit, isValid, setFieldValue, errors }) => (
+                            <>
+                             <View style={{ width: "120%" }}> 
+                                <Field
+                                component={CustomInput}
+                                name="fullName"
+                                placeholder="Full Name"
+                                />
+                                <Field
+                                component={CustomInput}
+                                name="nickname"
+                                placeholder="Nickname"
+                                />
+                                <TextInput style={[styles.input, focusedInput === "dob" && styles.input_focused]}
+                                  placeholder="Select date of birth"
+                                  value={dob}
+                                  onChangeText={(value) => {setFieldValue("dob", value)}}
+                                  onFocus={() => setFocusedInput("dob")}
+                                  onBlur={() => setFocusedInput(null)}
+                                  onPressIn={showDatePicker}
+                                >
+                                  </TextInput> 
+                                  <DateTimePickerModal
+                                  maximumDate={new Date("2005-09-15")}
+                                  date={selectedDate}
+                                  isVisible={datePickerVisible}
+                                  mode="date"
+                                  locale="en_GB"
+                                  timeZoneOffsetInMinutes={0}
+                                  onConfirm={(date) => {
+                                        const val = formatDate(date.toISOString().split('T')[0], '-')
+                                        setSelectedDate(date);
+                                        setRequestedDate(date.toISOString());
+                                        setDob(val);
+                                        console.log(date.toISOString());
+                                        hideDatePicker();
+                                        setFieldValue("dob", val)
+                                    }}
+									              onCancel={hideDatePicker}
+								                />
+                                <Field
+                                component={CustomInput}
+                                name="email"
+                                placeholder="Email Address"
+                                keyboardType="email-address"
+                                />
+                                <Text style={firebaseError.length === 0 ? styles.textHide : styles.textShow}>{firebaseError}</Text>
+                                <Field
+                                component={CustomInput}
+                                name="password"
+                                placeholder="Password"
+                                secureTextEntry
+                                />
+                                <Field
+                                component={CustomInput}
+                                name="confirmPassword"
+                                placeholder="Confirm Password"
+                                secureTextEntry
+                                />
+                            <View style={styles.button__container}> 
+                                <TouchableOpacity style={styles.upload__button} onPress={imageUploadFromGallery}>
+                                    <Text style={styles.button__text}>Select Photo</Text>
+                                </TouchableOpacity>
+                                <StatusBar style="auto" />
+                                <TouchableOpacity style={styles.camera__button} onPress={imageUploadFromCamera}>
+                                    <Text style={styles.button__text}>Take a Photo</Text>
+                                </TouchableOpacity>
+                                <StatusBar style="auto" />
+                            </View>
+                            <View> 
+                                <View style={isUploading ? styles.progressBarContainerShow : styles.progressBarContainerHidden}>
+                                    <View style={[styles.progressBar, { width: `${uploadProgress}%` }]} />
+                                </View>
+                            </View>
+                            <View style={styles.button__container}> 
+                                <TouchableOpacity disabled={!isValid || sending} style={[styles.button, 
+                                    isSighUpClicked ? styles.button__accent : null]} 
+                                    onPress={handleSubmit}>
+                                    <Text style={styles.button__text}>{sending ? "Signing Up..." : "Sign Up"}</Text>
+                                </TouchableOpacity> 
+                              </View>
+                            </View>
+                          <Text style={genericError.length === 0 ? styles.textHide : styles.generic__error}>{genericError}</Text>
+                          </>
+                        )}
+                      </Formik>
+                    </ScrollView>
+                  </View>
+              </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  app: {
-    backgroundColor: colours.bg,
-    height: "100%",
-    width: "100%",
-  },
   scroll: {
-      padding: 20,
-      flex: 1,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
+    padding: 30,
+    marginTop: 30,
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     flex: 1,
-    width: "100%",
-    backgroundColor: colours.bg,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20
   },
   header: {
-    fontSize: 30,
+    fontSize: 35,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 25,
     color: colours.accent1,
   },
   input: {
     width: "100%",
     borderColor: colours.accent4,
     borderWidth: 1,
-    marginBottom: 15,
+    marginBottom: 10,
     padding: 10,
     color: colours.accent1,
   },
   input_focused: {
-  borderColor: colours.accent4,
-  borderWidth: 2,
+    borderColor: colours.accent4,
+    borderWidth: 2,
   },
   button__container: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "90%",
-    marginBottom: 10
+    justifyContent: "center",
+    marginBottom: 10,
+    alignItems: "center",
+    marginTop: 10,
   },
   button: {
-    width: "40%",
+    width: "60%",
     alignItems: "center",
     backgroundColor: colours.accent2,
     padding: 15,
@@ -340,7 +330,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   upload__button: {
-    flex:1,
+    flex: 1,
     marginRight: 15,
     width: "40%",
     alignItems: "center",
@@ -363,20 +353,39 @@ const styles = StyleSheet.create({
 		height: 20,
 		backgroundColor: "grey",
 		borderRadius: 20,
-		marginBottom: 15,
+		marginBottom: 10,
 		overflow: "hidden",
-    opacity: 0
+        opacity: 0
 	},
   progressBarContainerShow: {
 		width: "100%",
 		height: 20,
 		backgroundColor: "grey",
 		borderRadius: 20,
-		marginBottom: 15,
+		marginBottom: 10,
 		overflow: "hidden"
 	},
 	progressBar: {
 		height: "100%",
 		backgroundColor: colours.accent2,
-	}
+	},
+    textHide: {
+        width: 0,
+        height: 0,
+        overflow: "hidden",
+        opacity: 0
+    },
+    textShow: {
+        overflow: "hidden",
+        fontSize: 10,
+        color: 'red',
+        marginBottom: 10,
+    },
+    generic__error: {
+      overflow: "hidden",
+      fontSize: 10,
+      color: 'red',
+      marginTop: -7,
+      alignItems: "center"
+    },
 });
