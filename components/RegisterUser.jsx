@@ -146,7 +146,7 @@ return (
 		<KeyboardAwareScrollView> 
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View style={{ flex: 1 }}>
-				    <NavBar />
+				    <NavBar navigation={navigation} />
                     <View style={styles.container}> 
                     <ScrollView contentContainerStyle={styles.scroll}
                         keyboardShouldPersistTaps="handled">

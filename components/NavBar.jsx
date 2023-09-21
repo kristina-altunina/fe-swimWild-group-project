@@ -3,11 +3,33 @@ import {
   Text,
   View,
   TouchableOpacity,
-} from "react-native";
+} from "react-native"
 
+import { signOut } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
 
+import { isCurrentUserAuthenticated } from "../firebaseConfig";
+import { useState } from "react";
+
 export default NavBar = ({navigation}) => {
+
+ const [isAuthenticated, setIsAuthenticated] = useState(false)
+ 
+ isCurrentUserAuthenticated((isAuth)=>{
+   setIsAuthenticated(isAuth)
+ });
+
+ function handleSignOut() {
+    signOut(auth)
+      .then(() => {
+        setIsAuthenticated(false)
+        navigation.navigate('Home')
+      })
+      .catch((error) => {
+        console.log(error)
+      });
+  }
 return(
     <View style={styles.header}>
         <View style={styles.header__titleContainer}>
@@ -23,13 +45,22 @@ return(
             navigation.navigate('Home')
           }}>Home</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.header__button}
+          { isAuthenticated ? <TouchableOpacity style={styles.header__button}
+          onPress={() => {
+            handleSignOut();
+          }}
+          >
+            <Text style={styles.header__buttonText}>Sign Out</Text>
+          </TouchableOpacity>
+
+          : <TouchableOpacity style={styles.header__button}
           onPress={() => {
             navigation.navigate('SignIn')
           }}
           >
             <Text style={styles.header__buttonText}>Sign In</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> }
+         
         </View>
       </View>
 )

@@ -1,5 +1,5 @@
 import { initializeApp, getApp } from "firebase/app";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {FIREBASE_API_KEY, FIREBASE_STORAGE_BUCKET, FIREBASE_APP_ID, FIREBASE_PROJECT_ID, FIREBASE_AUTH_DOMAIN, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_MEASUREMENT_ID} from "@env"
 import { getStorage } from "firebase/storage";
 
@@ -21,10 +21,8 @@ const auth = getAuth(app);
 const fbApp = getApp();
 const fbStorage = getStorage();
 
-const refreshTokenUrl = "https://securetoken.googleapis.com/v1/token?key="
-
 async function tokenRefresh(token_refresh) {
- const url = refreshTokenUrl + FIREBASE_API_KEY
+ const url = "https://securetoken.googleapis.com/v1/token?key=" + FIREBASE_API_KEY
  const body = {grant_type: "refresh_token", refresh_token: token_refresh}
  const response = await
  fetch(url, {
@@ -35,8 +33,24 @@ if (!response.ok) {
   throw new Error (response.status + " Error refreshing token")
 }
 const data = await response.json()
+
 return data;
 }
 
+ function isCurrentUserAuthenticated(callback) {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      callback(true)
+      // ...
+    } else {
+      // User is signed out
+     callback(false)
+    }
+  });
+}
 
-export {auth, fbApp, fbStorage, refreshTokenUrl}
+
+
+
+export {auth, fbApp, fbStorage, tokenRefresh, isCurrentUserAuthenticated}
