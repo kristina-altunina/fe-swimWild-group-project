@@ -125,7 +125,7 @@ const signUpValidationSchema = yup.object().shape({
       .required('Date of Birth is required'),
     email: yup
       .string()
-      .email("Please enter valid email")
+      .email("Please enter a valid email")
       .required('Email is required'),
     password: yup
       .string()

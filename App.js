@@ -3,6 +3,7 @@ import RegisterUser from "./components/RegisterUser";
 import SignInUser from "./components/SignInUser";
 import Profile from "./components/Profile";
 import NavBar from "./components/NavBar";
+import ResetPassword from "./components/ResetPassword";
 
 import {
   useFonts,
@@ -22,7 +23,7 @@ import {
 
 import TestPage from "./components/TestPage";
 
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
@@ -37,6 +38,7 @@ export default function App() {
         <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="Test Page" component={TestPage}/>
+        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false, gestureEnabled: true}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

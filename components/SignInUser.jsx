@@ -19,8 +19,10 @@ import { getFirebaseError } from "../extentions";
 import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from 'yup';
+import ResetPassword from "./ResetPassword";
 
-export default SignInUser = ({ navigation, route }) => {
+
+export default SignInUser = ({ navigation }) => {
   
   const [focusedInput, setFocusedInput] = useState(null);
   const [isSignInClicked, setIsSignInClicked] = useState(false);
@@ -58,7 +60,7 @@ export default SignInUser = ({ navigation, route }) => {
   })
 
 return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colours.bg }}>
+    <SafeAreaView style={styles.app}>
 		<KeyboardAwareScrollView> 
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View style={{ flex: 1 }}>
@@ -74,8 +76,7 @@ return (
                             password: ''
                           }}
                         onSubmit={async(values) => {
-                            console.log(values, "four");
-                            handleSignIn(values)
+                          handleSignIn(values)
                           }}
                         >
                           {({ handleSubmit, isValid, setFieldValue }) => (
@@ -109,6 +110,10 @@ return (
                           </>
                         )}
                       </Formik>
+                      <Text style={styles.link}
+                      onPress={() => navigation.navigate("ResetPassword")}>
+                        Forgot Password
+                      </Text>
                     </ScrollView>
                   </View>
               </View>
@@ -124,15 +129,28 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
+  scroll: {
+    padding: 30,
+    marginTop: 30,
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     display: 'flex',
-    padding: 50,
-    marginTop: 70,
+    paddingTop: 50,
+    paddingBottom: 80,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginTop: 80,
     width: "100%",
     backgroundColor: colours.bg,
     alignItems: "center",
     justifyContent: "center",
+    borderColor: colours.accent1,
+    borderWidth: 5
   },
   header: {
     fontSize: 35,
@@ -147,6 +165,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
     color: colours.accent1,
+    borderColor: colours.accent2,
+    borderWidth: 5
   },
   input_focused: {
     borderColor: colours.accent4,
@@ -177,5 +197,11 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 10,
   },
+  link: {
+    color: colours.accent2,
+    textDecorationLine: 'underline',
+    fontSize: 12,
+    
+  }
 });
 
