@@ -22,7 +22,7 @@ import {
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SingleLocation from "./components/SingleLocation";
+import SingleLocation from "./components/SingleLocation/SingleLocation";
 
 const Stack = createNativeStackNavigator();
 
@@ -76,7 +76,7 @@ function HomeScreen({navigation}) {
           >
             <Text>Sign Up</Text>
           </TouchableOpacity>
-          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650bfa752922d358b8c56566'})}}></Button>
+          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650bfa752922d358b8c5656a'})}}></Button>
       </View>
     </View>
     )

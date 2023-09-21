@@ -1,35 +1,54 @@
 import { StyleSheet } from "react-native"
+import { colours } from "./base"
 
 export const styles = StyleSheet.create({
     swimBot: {
         padding: '2%',
-        backgroundColor: 'white',
+        backgroundColor: colours.accent2,
         borderRadius: 20,
         borderStyle: 'solid',
         borderColor: 'white',
         borderWidth: 1,
-        elevation: 10
+        elevation: 10,
+        display: 'flex',
+        gap: 2,
     },
-    swimBotForecastDatesContainer: {
+    displayText: {
+        color: 'white'
+    },
+    forecastDatesContainer: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly',
+        color: 'white',
+        padding: '1%'
     },
-    swimBotForecastDates: {
-        backgroundColor: 'white',
-        paddingHorizontal: '5%'
+    forecastDates: {
+        backgroundColor: colours.accent4,
+        paddingHorizontal: '5%',
+        borderRadius: 10,
+        color: 'white',
+        opacity: 0.6
     },
-    AveUserData: {
-        backgroundColor: 'orange'
+    selectedForecastDate: {
+        backgroundColor: colours.accent4,
+        paddingHorizontal: '5%',
+        borderRadius: 10,
+        color: 'rgb(139, 83, 190)'
     },
-    summary: {
-        backgroundColor: 'pink'
+    expandedDataContainer: {
+        display: 'flex',
+        gap: 2,
+        padding: '2%',
+        opacity: 0.8,
+        borderRadius: 20,
+        elevation: 15,
+        backgroundColor: colours.accent2,
+        borderStyle: 'solid',
+        borderWidth: 0.5
     },
-    swimReviewGroup: {
-        backgroundColor: 'white'
-    },
-    swimReviewItem: {
-        height: 'auto'
+    expandedDataText: {
+        color: 'white'
     },
     showContent: {
         opacity:1
@@ -37,19 +56,5 @@ export const styles = StyleSheet.create({
     hideContent: {
         opacity: 0,
         height: 0
-    },
-    profileImage: {
-        objectFit: 'contain',
-        height: 75,
-        width: 75,
-        borderRadius: 75,
-        backgroundColor: 'black'
     }
 })
-
-export const props = {
-    KeyboardAvoidingView: {
-        behavior: Platform.OS === 'ios' ? 'padding' : 'height',
-        keyboardVerticalOffset: Platform.OS === 'ios' ? 0 : -300
-    }
-}

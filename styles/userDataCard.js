@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native"
+import { colours } from "./base"
 
 export const styles = StyleSheet.create({
     AveUserData: {
@@ -8,9 +9,20 @@ export const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderColor: 'white',
         borderWidth: 1,
-        elevation: 10
+        elevation: 10,
+        backgroundColor: colours.accent2,
+        display: 'flex',
+        gap: 2
+    },
+    displayText: {
+        color: 'white'
+    },
+    expandedData: {
+        display: 'flex',
+        gap: 2
     },
     showContent: {
+        color: 'rgb(139, 83, 190)',
         opacity:1
     },
     hideContent: {
