@@ -16,6 +16,9 @@ export const styles = StyleSheet.create({
     displayText: {
         color: 'white'
     },
+    highlightText: {
+        color: 'rgb(139, 83, 190)'
+    },
     forecastDatesContainer: {
         display: 'flex',
         flexDirection: 'row',
