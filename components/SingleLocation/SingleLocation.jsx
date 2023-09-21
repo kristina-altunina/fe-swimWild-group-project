@@ -17,21 +17,19 @@ const [locationData, setLocationData] = useState([])
 
 useEffect(() => {
     const {apiData, userData, swims, location} = test()
-    const requestedApiData = apiData;
     const requestedSwimsData = swims;
     setSwimsData(swimsData => requestedSwimsData)
-    setApiData(apiData => requestedApiData)
 
     getLocationByID(uid)
     .then(data => {
         const {apiData, userData, swims, location} = data
         const requestedUserData = userData;
-        // const requestedApiData = apiData;
+        const requestedApiData = apiData;
         // const requestedSwimsData = swims;
         const requestedLocation = location;
         setUserData(userData => requestedUserData);
         // setSwimsData(swimsData => requestedSwimsData)
-        // setApiData(apiData => requestedApiData)
+        setApiData(apiData => requestedApiData)
         setLocationData(locationData => requestedLocation)
     })
     .catch(err => {
@@ -72,10 +70,14 @@ useEffect(() => {
                                 )
                                 : locationData.type === 'sea'
                                     ? (
-                                        <ApiDataSeaCard apiData={apiData}/>
+                                        <ApiDataSeaCard
+                                        apiData={apiData}
+                                        uid={uid}/>
                                     )
                                     : (
-                                        <ApiDataOthersCard apiData={apiData}/>
+                                        <ApiDataOthersCard
+                                        apiData={apiData}
+                                        uid={uid}/>
                                     )
                             }
                             <UserDataCard userData={userData}/>

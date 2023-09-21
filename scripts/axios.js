@@ -11,11 +11,14 @@ export function getAllLocations() {
     })
 }
 
-export function getLocationByID(uid) {
-    return instance.get(`locations/${uid}`)
+export function getLocationByID(uid, day) {
+    return instance.get(`locations/${uid}?day=${day ? day : 0}`)
     .then(({data}) => {
         return data
     })
+	.catch(err => {
+		console.log(err)
+	})
 }
 
 

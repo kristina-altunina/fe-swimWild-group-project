@@ -1,32 +1,57 @@
 import { styles } from '../../../styles/apiDataCard'
-import { useState } from "react"
-import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator } from "react-native"
+import { useEffect, useState } from "react"
+import { TouchableWithoutFeedback, Text, View, LayoutAnimation } from "react-native"
+import { getLocationByID } from '../../../scripts/axios'
 
-export default function ApiDataSeaCard({apiData}) {
-    console.log('here')
+export default function ApiDataSeaCard({apiData, uid}) {
+    console.log(apiData.weather.values.wdir)
     const [showForecast, setShowForecast] = useState(false)
     const [selectedForecastDate, setSelectedForecastDate] = useState(0)
+    const [dataToDisplay, setDataToDisplay] = useState({})
+    const [isLoading, setIsLoading] = useState(false);
+    const day = [1,2,3,4,5,6,7];
+
+    useEffect(() => {
+        setIsLoading(isLoading => !isLoading)
+        !Object.keys(dataToDisplay).length
+        ? setDataToDisplay(dataToDisplay =>{
+            setIsLoading(isLoading => !isLoading)
+            return apiData
+        })
+        : getLocationByID(uid, day.indexOf(selectedForecastDate))
+        .then(({apiData}) => {
+            setIsLoading(isLoading => !isLoading)
+            setDataToDisplay(dataToDisplay => apiData)
+        })
+    }, [selectedForecastDate])
     
     function handleShowForecast() {
         setShowForecast(showForecast => !showForecast)
     }
 
-    function handleSelectedForecast(date) {
+    function handleSelectedForecast(i) {
         setSelectedForecastDate(selectedForecastDate => {
-            return apiData.waveData.weekForecast.dates.indexOf(date)
+            return i
         })
     }
 
     function handleForecastDateStyle(i) {
-        if(i === selectedForecastDate) {
+        if(i === day.indexOf(selectedForecastDate)) {
             return styles.selectedForecastDate
         } else {
             return styles.forecastDates
         }
     }
 
+    if(!Object.keys(dataToDisplay).length) {
+        return (
+            <>
+            <Text>test</Text>
+            </>
+        )
+    }
+
     return (
-        <>
         <TouchableWithoutFeedback onPress={() => {
             handleShowForecast()
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
@@ -41,69 +66,79 @@ export default function ApiDataSeaCard({apiData}) {
                         <>
                         <View style={styles.forecastDatesContainer}>
                         {
-                            apiData.waveData.weekForecast.dates.map((date, i) => {
+                            day.map((date, i) => {
                                 return (
                                     <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>{date}</Text>
                                 )
                             })
                         }
                         </View>
-                        <View style={styles.expandedDataContainer}>
-                            <Text style={styles.displayText}>
-                                Temperature: {apiData.tempCelsius}
-                            </Text>
-                            <Text style={styles.displayText}>
-                                Max Wave: {apiData.waveData.maxWave}
-                            </Text>
-                            <Text style={styles.displayText}>
-                                Max Wave Period: {apiData.waveData.maxWavePeriod}
+                        {
+                            isLoading
+                            ? (
+                                <>
+                                <Text>is Loading</Text>
+                                </>
+                            )
+                            : (
+                                <View style={styles.expandedDataContainer}>
+                            <Text style={styles.expandedDataText}>
+                                Temperature: {dataToDisplay.tempCelsius}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Wave Height Max: {apiData.waveData.weekForecast.wave_height_max[selectedForecastDate]}
+                                Max Wave: {dataToDisplay.waveData.maxWave}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Wave Direction Dominant: {apiData.waveData.weekForecast.wave_direction_dominant[selectedForecastDate]}
+                                Max Wave Period: {dataToDisplay.waveData.maxWavePeriod}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Wave Period Max: {apiData.waveData.weekForecast.wave_period_max[selectedForecastDate]}
+                                wdir: {dataToDisplay.weather.values.wdir}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Wind Wave Height Max: {apiData.waveData.weekForecast.wind_wave_height_max[selectedForecastDate]}
+                                uvindex: {dataToDisplay.weather.values.uvindex}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Wind Wave Direction Dominant: {apiData.waveData.weekForecast.wind_wave_direction_dominant[selectedForecastDate]}
+                                datetimeStr: {dataToDisplay.weather.values.datetimeStr}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Wind Wave Period Max: {apiData.waveData.weekForecast.wind_wave_period_max[selectedForecastDate]}
+                                preciptype: {dataToDisplay.weather.values.preciptype}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Wind Wave Peak Period Max: {apiData.waveData.weekForecast.wind_wave_peak_period_max[selectedForecastDate]}
+                                cloudcover: {dataToDisplay.weather.values.cloudcover}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Swell Wave Height Max: {apiData.waveData.weekForecast.swell_wave_height_max[selectedForecastDate]}
+                                humidity: {dataToDisplay.weather.values.humidity}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Swell Wave Direction Dominant: {apiData.waveData.weekForecast.swell_wave_direction_dominant[selectedForecastDate]}
+                                temp: {dataToDisplay.weather.values.temp}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Swell Wave Period Max: {apiData.waveData.weekForecast.swell_wave_period_max[selectedForecastDate]}
+                                visibility: {dataToDisplay.weather.valuesvisibility}
                             </Text>
                             <Text style={styles.expandedDataText}>
-                                Swell Wave Peak Period Max: {apiData.waveData.weekForecast.swell_wave_peak_period_max[selectedForecastDate]}
+                                snow: {dataToDisplay.weather.values.snow}
+                            </Text>
+                            <Text style={styles.expandedDataText}>
+                                snowdepth: {dataToDisplay.weather.values.snowdepth}
+                            </Text>
+                            <Text style={styles.expandedDataText}>
+                                conditions: {dataToDisplay.weather.values.conditions}
                             </Text>
                         </View>
+                            )
+                        }
                         </>
                     )
                     : (
                         <>
                         <Text style={styles.displayText}>
-                            Temperature: {apiData.tempCelsius}
+                            Temperature: {dataToDisplay.tempCelsius}
                         </Text>
                         <Text style={styles.displayText}>
-                            Max Wave: {apiData.waveData.maxWave}
+                            Max Wave: {dataToDisplay.waveData.maxWave}
                         </Text>
                         <Text style={styles.displayText}>
-                            Max Wave Period: {apiData.waveData.maxWavePeriod}
+                            Max Wave Period: {dataToDisplay.waveData.maxWavePeriod}
                         </Text>
                         <Text style={styles.highlightText}>
                             See Forecast...
@@ -114,7 +149,6 @@ export default function ApiDataSeaCard({apiData}) {
                 }
             </View>        
         </TouchableWithoutFeedback>
-        </>
     )
 }
 
