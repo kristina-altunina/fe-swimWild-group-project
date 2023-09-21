@@ -1,12 +1,11 @@
 import { styles } from '../../../styles/apiDataCard'
 import { useEffect, useState } from "react"
-import { TouchableWithoutFeedback, Text, View, LayoutAnimation } from "react-native"
+import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator } from "react-native"
 import { getLocationByID } from '../../../scripts/axios'
 
 export default function ApiDataSeaCard({apiData, uid}) {
-    console.log(apiData.weather.values.wdir)
     const [showForecast, setShowForecast] = useState(false)
-    const [selectedForecastDate, setSelectedForecastDate] = useState(0)
+    const [selectedForecastDate, setSelectedForecastDate] = useState(1)
     const [dataToDisplay, setDataToDisplay] = useState({})
     const [isLoading, setIsLoading] = useState(false);
     const day = [1,2,3,4,5,6,7];
@@ -57,7 +56,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
         }}>
             <View style={styles.swimBot}>
-                <Text style={styles.displayText}>
+                <Text style={styles.titleText}>
                             Location Details and Forecast
                 </Text>
                 {
@@ -68,7 +67,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
                         {
                             day.map((date, i) => {
                                 return (
-                                    <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>{date}</Text>
+                                    <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>Day {date}</Text>
                                 )
                             })
                         }
@@ -76,9 +75,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
                         {
                             isLoading
                             ? (
-                                <>
-                                <Text>is Loading</Text>
-                                </>
+                                <ActivityIndicator size='large'/>
                             )
                             : (
                                 <View style={styles.expandedDataContainer}>

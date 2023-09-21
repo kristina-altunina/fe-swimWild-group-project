@@ -14,6 +14,11 @@ export const styles = StyleSheet.create({
         display: 'flex',
         gap: 2
     },
+    titleText: {
+        fontSize: 25,
+        textAlign: "center",
+        color: 'white'
+    },
     displayText: {
         color: 'white'
     },

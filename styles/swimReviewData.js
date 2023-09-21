@@ -12,6 +12,13 @@ export const styles = StyleSheet.create({
         display: 'flex',
         gap: 10
     },
+    titleText: {
+        fontSize: 20,
+        color: '#84878d',
+        textShadowColor: '#b3b5b8',
+        textShadowOffset:{width: 10, height: 10},
+        textShadowRadius:20,
+    },
     swimReviewItem: {
         padding: '2%',
         backgroundColor: 'white',
@@ -33,11 +40,13 @@ export const styles = StyleSheet.create({
 
     },
     notes: {
+        padding: '3%'
     },
     stars: {
 
     },
     showContent: {
+        color: 'rgb(139, 83, 190)',
         opacity:1
     },
     hideContent: {

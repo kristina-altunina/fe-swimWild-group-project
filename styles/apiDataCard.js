@@ -13,6 +13,11 @@ export const styles = StyleSheet.create({
         display: 'flex',
         gap: 2,
     },
+    titleText: {
+        fontSize: 25,
+        textAlign: "center",
+        color: 'white'
+    },
     displayText: {
         color: 'white'
     },
@@ -24,11 +29,12 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         color: 'white',
-        padding: '1%'
+        padding: '1%',
+        gap: 15
     },
     forecastDates: {
         backgroundColor: colours.accent4,
-        paddingHorizontal: '5%',
+        paddingHorizontal: '2%',
         borderRadius: 10,
         color: 'white',
         opacity: 0.6

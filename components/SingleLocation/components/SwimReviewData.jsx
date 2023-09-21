@@ -4,6 +4,7 @@ import { styles } from "../../../styles/swimReviewData"
 
 export default function SwimReviewData({swimsData}) {
     const [expandReview, setExpandReview] = useState([])
+   
 
     function handleExpandSwimReview(i) {
         console.log(expandReview, 'look here')
@@ -21,10 +22,13 @@ export default function SwimReviewData({swimsData}) {
             return styles.showContent
         }
     }
-
+    
     return (
         <>
         <View style={styles.swimReviewGroup}>
+            <Text style={styles.titleText}>
+                Reviews
+            </Text>
         {
             !Object.keys(swimsData).length
             ? (<ActivityIndicator size='large'/>)
@@ -39,10 +43,10 @@ export default function SwimReviewData({swimsData}) {
                             <View style={styles.swimReviewItem}>
                             <Image style={styles.profileImage} source={{uri: swim.profileImg}}/>
                             <View style={styles.textContainer}>
-                                <Text>Nickname: {swim.nickname}</Text>
-                                <Text>Notes: {swim.notes}</Text>
+                                <Text>By {swim.nickname}</Text>
+                                <Text style={styles.notes}>{swim.notes}</Text>
                                 <Text>stars: {swim.stars}</Text>
-                                <Text>date: {swim.date}</Text>
+                                <Text>date: {new Date(swimsData[0]?.date)?.toDateString()}</Text>
                                 <Text style={handleExpandSwimReviewStyle(i)}>See Swimmer's Experience...</Text>
                                 {expandReview.includes(i) && (
                                     <>
