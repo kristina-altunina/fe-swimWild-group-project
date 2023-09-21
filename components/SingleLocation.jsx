@@ -68,16 +68,11 @@ useEffect(() => {
                                     {locationData.name}
                                 </Text>
                             </View>
-                        <ApiDataCard apiData={apiData}/>
-
-                        <UserDataCard userData={userData}/>
-
-
+                            <ApiDataCard apiData={apiData}/>
+                            <UserDataCard userData={userData}/>
                             <View style={styles.summary}>
                                 <Text>plan a new swim, summary pop up etc(no data)</Text>
                             </View>
-                            
-                            
                         <SwimReviewData swimsData={swimsData}/>
                         </View>
                     </View>

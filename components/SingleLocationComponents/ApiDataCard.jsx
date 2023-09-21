@@ -1,4 +1,4 @@
-import { styles } from '../../styles/singleLocation'
+import { styles } from '../../styles/apiDataCard'
 import { useState } from "react"
 import { TouchableWithoutFeedback, Text, View } from "react-native"
 
@@ -23,7 +23,7 @@ export default function ApiDataCard({apiData, }) {
             <Text>Temperature: {apiData.tempCelsius}</Text>
             <Text>Max Wave: {apiData.waveData.maxWave}</Text>
             <Text>Max Wave Period: {apiData.waveData.maxWavePeriod}</Text>
-            <Text>See Forecast...</Text>
+            <Text style={showForecast ? styles.hideContent: styles.showContent}>See Forecast...</Text>
             <View style={showForecast ? styles.showContent : styles.hideContent}>
                 <View style={styles.swimBotForecastDatesContainer}>
                 {

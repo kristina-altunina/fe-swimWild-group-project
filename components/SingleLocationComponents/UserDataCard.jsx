@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { styles } from "../../styles/singleLocation"
-import { View, TouchableWithoutFeedback, Text } from "react-native"
+import { styles } from "../../styles/userDataCard"
+import { View, TouchableWithoutFeedback, Text, Animated } from "react-native"
 
 export default function UserDataCard({userData}) {
     const [expandUserData, setExpandUserData] = useState(false)
@@ -18,13 +18,14 @@ export default function UserDataCard({userData}) {
                 <Text>avMins: {userData.avMins}</Text>
                 <Text>avKms: {userData.avKms}</Text>
                 <Text>mostRecentTemp: {userData.mostRecentTemp.temp} {userData.mostRecentTemp.date}</Text>
-                <View style={expandUserData ? styles.showContent : styles.hideContent}>
+                <Text style={expandUserData ? styles.hideContent : styles.showContent}>See More Details..</Text>
+                <Animated.View style={expandUserData ? styles.showContent : styles.hideContent}>
                     <Text>feelTemps: {`${userData.feelTemps}`}</Text>
                     <Text>sizes: {`${userData.sizes}`}</Text>
                     <Text>shores: {`${userData.shores}`}</Text>
                     <Text>bankAngles: {`${userData.bankAngles}`}</Text>
                     <Text>clarities: {`${userData.clarities}`}</Text>
-                </View>
+                </Animated.View>
             </View>
         </TouchableWithoutFeedback>
         </>

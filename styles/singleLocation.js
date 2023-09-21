@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native"
+import { colours } from "./base"
 
 export const styles = StyleSheet.create({
     KeyboardAvoidingView: {
@@ -10,45 +11,37 @@ export const styles = StyleSheet.create({
     },
     display: {
         flex: 1,
-        backgroundColor: 'black',
         display: 'flex',
-        backgroundColor: 'red', //delete after,
+        backgroundColor: colours.bg,
         padding: '1%',
-        paddingBottom: 0
+        paddingBottom: 0,
+        gap: 10
     },
     title: {
         width: '100%',
         height: 'fit-content',
-        backgroundColor: 'green',
-        padding: '1%'       
+        backgroundColor: colours.accent2,
+        padding: '2%',
+        borderRadius: 20,
+        borderStyle: 'solid',
+        borderColor: 'white',
+        borderWidth: 1,
+        elevation: 10
     },
     title_text: {
         fontSize: 35,
-        fontWeight: 'bold'
-    },
-    swimBot: {
-        backgroundColor: 'blue'
-    },
-    swimBotForecastDatesContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly'
-    },
-    swimBotForecastDates: {
-        backgroundColor: 'white',
-        paddingHorizontal: '5%'
-    },
-    AveUserData: {
-        backgroundColor: 'orange'
+        fontWeight: 'bold',
+        color: 'white',
+        textAlign: "center"
     },
     summary: {
-        backgroundColor: 'pink'
-    },
-    swimReviewGroup: {
-        backgroundColor: 'white'
-    },
-    swimReviewItem: {
-        height: 'auto'
+        padding: '2%',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        borderStyle: 'solid',
+        borderColor: 'white',
+        borderWidth: 1,
+        elevation: 10
     },
     showContent: {
         opacity:1
@@ -56,13 +49,6 @@ export const styles = StyleSheet.create({
     hideContent: {
         opacity: 0,
         height: 0
-    },
-    profileImage: {
-        objectFit: 'contain',
-        height: 75,
-        width: 75,
-        borderRadius: 75,
-        backgroundColor: 'black'
     }
 })
 

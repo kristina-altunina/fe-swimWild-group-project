@@ -1,41 +1,35 @@
 import { StyleSheet } from "react-native"
-import { colours } from "./base"
 
 export const styles = StyleSheet.create({
-    swimReviewGroup: {
-        padding: '2%',
-        // borderRadius: 20,
-        // borderStyle: 'solid',
-        // borderColor: 'white',
-        // borderWidth: 1,
-        // elevation: 10,
-        display: 'flex',
-        gap: 10
-    },
-    swimReviewItem: {
+    swimBot: {
         padding: '2%',
         backgroundColor: 'white',
-        height: 'auto',
         borderRadius: 20,
         borderStyle: 'solid',
         borderColor: 'white',
         borderWidth: 1,
-        elevation: 10,
+        elevation: 10
+    },
+    swimBotForecastDatesContainer: {
         display: 'flex',
         flexDirection: 'row',
-        gap: 10,
-        width: 'auto'
+        justifyContent: 'space-evenly'
     },
-    textContainer: {
-        flex: 1,
+    swimBotForecastDates: {
+        backgroundColor: 'white',
+        paddingHorizontal: '5%'
     },
-    nickname: {
-
+    AveUserData: {
+        backgroundColor: 'orange'
     },
-    notes: {
+    summary: {
+        backgroundColor: 'pink'
     },
-    stars: {
-
+    swimReviewGroup: {
+        backgroundColor: 'white'
+    },
+    swimReviewItem: {
+        height: 'auto'
     },
     showContent: {
         opacity:1
@@ -46,9 +40,9 @@ export const styles = StyleSheet.create({
     },
     profileImage: {
         objectFit: 'contain',
-        height: 60,
-        width: 60,
-        borderRadius: 30,
+        height: 75,
+        width: 75,
+        borderRadius: 75,
         backgroundColor: 'black'
     }
 })

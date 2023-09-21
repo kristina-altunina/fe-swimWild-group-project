@@ -76,7 +76,7 @@ function HomeScreen({navigation}) {
           >
             <Text>Sign Up</Text>
           </TouchableOpacity>
-          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650830dcc6e566c71d559fc3'})}}></Button>
+          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650bfa752922d358b8c56566'})}}></Button>
       </View>
     </View>
     )

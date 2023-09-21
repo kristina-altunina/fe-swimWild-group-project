@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { View, TouchableWithoutFeedback, Text, Image } from "react-native"
-import { styles } from "../../styles/singleLocation"
+import { styles } from "../../styles/swimReviewData"
 
 export default function SwimReviewData({swimsData}) {
     const [expandReview, setExpandReview] = useState([])
@@ -14,11 +14,13 @@ export default function SwimReviewData({swimsData}) {
         }
     }
 
-    function handleExpandSwimReviewStyle(i) {
+    function handleExpandSwimReviewStyle(i, ele) {
         if(expandReview.includes(i)) {
-            return styles.showContent
+            if(ele === 'view') return styles.showContent
+            if(ele === 'text') return styles.hideContent 
         } else {
-            return styles.hideContent
+            if(ele === 'view') return styles.hideContent
+            if(ele === 'text') return styles.showContent
         }
     }
 
@@ -30,14 +32,14 @@ export default function SwimReviewData({swimsData}) {
                 return (
                     <TouchableWithoutFeedback onPress={() => handleExpandSwimReview(i)} key={i}>
                         <View style={styles.swimReviewItem}>
-                        <Image style={styles.profileImage} source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Mad_scientist_transparent_background.svg/1200px-Mad_scientist_transparent_background.svg.png'}}/>
-                        <View>
+                        <Image style={styles.profileImage} source={{uri: swim.profileImg}}/>
+                        <View style={styles.textContainer}>
                             <Text>Nickname: {swim.nickname}</Text>
                             <Text>Notes: {swim.notes}</Text>
                             <Text>stars: {swim.stars}</Text>
                             <Text>date: {swim.date}</Text>
-                            
-                            <View style={handleExpandSwimReviewStyle(i)}>
+                            <Text style={handleExpandSwimReviewStyle(i, 'text')}>See Swimmer's Experience...</Text>
+                            <View style={handleExpandSwimReviewStyle(i, 'view')}>
                                 <Text>recordTemp: {swim.recordTemp}</Text>
                                 <Text>feelTemp: {swim.feelTemp}</Text>
                                 <Text>mins: {swim.mins}</Text>
