@@ -1,92 +1,121 @@
 import { useState } from "react";
-import { StatusBar } from "expo-status-bar";
 import NavBar from "./NavBar";
 import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
+    ScrollView,
+	StyleSheet,
+	Text,
+	View, SafeAreaView,
+	TextInput,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+	Keyboard
 } from "react-native";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { getFirebaseError } from "../extentions";
+import CustomInput from "./CustomInput";
+import { Formik, Field } from "formik";
+import * as yup from 'yup';
 
 export default SignInUser = ({ navigation, route }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [token, setToken] = useState("");
+  
   const [focusedInput, setFocusedInput] = useState(null);
+  const [isSignInClicked, setIsSignInClicked] = useState(false);
+  const [firebaseError, setFirebaseError] = useState('');
+  const [sending, setSending] = useState(false);
 
-  const connect = (token) => {
-    setToken(token);
-      fetch("https://spike-auth-server.onrender.com", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((json) => {
-            console.log(json);
-            navigation.navigate('Profile',
-             {data: json})
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-    };
-
-  function handleSignIn() {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        setEmail("");
-        setPassword("");
-        connect(user.stsTokenManager.accessToken);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  async function handleSignIn(values) {
+    setFirebaseError('')
+    setSending(true)
+    setIsSignInClicked(true)
+    try {
+        const response = await signInWithEmailAndPassword(auth, values.email, values.password)
+        const user = response.user;
+        console.log(user);
+        navigation.navigate('Profile',
+        {refresh_token: user.stsTokenManager.refreshToken})
+    }
+    catch(error) {
+        console.log(error, "three");
+        setSending(false)
+        setIsSignInClicked(false)
+        const firebaseError = getFirebaseError(error);
+        setFirebaseError(firebaseError)
+    }
   }
 
+  const signUpValidationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Please enter valid email")
+      .required('Email is required'),
+    password: yup
+      .string()
+      .required('Password is required'),
+  })
+
 return (
-  <View style={styles.app}>
-    <NavBar/>
-   <View style={styles["container"]}>
-    <Text style={styles["container__header"]}>Sign In</Text>
-    <TextInput
-      style={[styles["container__input"], focusedInput === "email" && {
-        borderColor: colours.accent4,
-        borderWidth: 2,
-      }]}
-      placeholder="Email"
-      value={email}
-      onChangeText={setEmail}
-      onFocus={() => setFocusedInput("email")}
-      onBlur={() => setFocusedInput(null)}
-    ></TextInput>
-    <TextInput
-      style={[styles["container__input"], focusedInput === "password" && {
-        borderColor: colours.accent4,
-        borderWidth: 2,
-      }]}
-      placeholder="Password"
-      value={password}
-      onChangeText={setPassword}
-      onFocus={() => setFocusedInput("password")}
-      onBlur={() => setFocusedInput(null)}
-      secureTextEntry
-    ></TextInput>
-    <StatusBar style="auto" />
-    <TouchableOpacity style={styles["button"]} 
-    onPress={handleSignIn}>
-      <Text style={styles["button__text"]}>Sign In</Text>
-    </TouchableOpacity>
-   </View>
-  </View>
-); 
+    <SafeAreaView style={{ flex: 1, backgroundColor: colours.bg }}>
+		<KeyboardAwareScrollView> 
+			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+				<View style={{ flex: 1 }}>
+				    <NavBar />
+                    <View style={styles.container}> 
+                    <ScrollView contentContainerStyle={styles.scroll}
+                        keyboardShouldPersistTaps="handled">
+                        <Text style={[styles.header, { zIndex: 0 }]}>Sign In</Text>
+                        <Formik
+                          validationSchema={signUpValidationSchema}
+                          initialValues={{
+                            email: '',
+                            password: ''
+                          }}
+                        onSubmit={async(values) => {
+                            console.log(values, "four");
+                            handleSignIn(values)
+                          }}
+                        >
+                          {({ handleSubmit, isValid, setFieldValue }) => (
+                            <>
+                             <View style={{ width: "100%" }}> 
+                                <TextInput style={[styles.input, focusedInput === "email" && styles.input_focused]}
+                                placeholder="Email"
+                                  onChangeText={(value) => {
+                                    setFirebaseError('')
+                                    setFieldValue("email", value)
+                                }}
+                                  onFocus={() => setFocusedInput("email")}
+                                  onBlur={() => setFocusedInput(null)}
+                                 
+                                ></TextInput>
+                                <Text style={firebaseError.length === 0 ? styles.textHide : styles.textShow}>{firebaseError}</Text>
+                                <Field
+                                component={CustomInput}
+                                name="password"
+                                placeholder="Password"
+                                secureTextEntry
+                                />
+                            <View style={styles.button__container}> 
+                                <TouchableOpacity disabled={!isValid || sending} style={[styles.button, 
+                                    isSignInClicked ? styles.button__accent : null]} 
+                                    onPress={handleSubmit}>
+                                    <Text style={styles.button__text}>{sending ? "Signing In..." : "Sign In"}</Text>
+                                </TouchableOpacity> 
+                              </View>
+                            </View>
+                          </>
+                        )}
+                      </Formik>
+                    </ScrollView>
+                  </View>
+              </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAwareScrollView>
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -95,37 +124,58 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
   },
-  "container": {
+  container: {
     flex: 1,
+    display: 'flex',
+    padding: 50,
+    marginTop: 70,
     width: "100%",
     backgroundColor: colours.bg,
     alignItems: "center",
     justifyContent: "center",
   },
-  "container__header": {
-    fontSize: 30,
+  header: {
+    fontSize: 35,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 25,
     color: colours.accent1,
   },
-  "container__input": {
-    width: "70%",
+  input: {
+    width: "100%",
     borderColor: colours.accent4,
     borderWidth: 1,
-    marginBottom: 15,
-    padding: 5,
+    marginBottom: 10,
+    padding: 10,
     color: colours.accent1,
   },
-  "button": {
-    width: "40%",
+  input_focused: {
+    borderColor: colours.accent4,
+    borderWidth: 2,
+  },
+  button: {
+    width: "60%",
     alignItems: "center",
     backgroundColor: colours.accent2,
     padding: 15,
     borderRadius: 5,
     marginBottom: 5,
   },
-  "button__text": {
+  button__text: {
+    alignItems: "center",
     color: "#fff",
     fontWeight: "bold",
-  }
+  },
+  textHide: {
+    width: 0,
+    height: 0,
+    overflow: "hidden",
+    opacity: 0
+  },
+  textShow: {
+    overflow: "hidden",
+    fontSize: 10,
+    color: 'red',
+    marginBottom: 10,
+  },
 });
+

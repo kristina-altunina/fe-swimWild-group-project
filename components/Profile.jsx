@@ -11,7 +11,6 @@ import { colours } from "../styles/base";
 import NavBar from "./NavBar";
 
 export default Profile = ({ navigation, route }) => {
- const data = route.params.data.name;
  const refreshToken = route.params.refresh_token;
  console.log(route.params, `ROUTE`)
 
@@ -29,7 +28,7 @@ return (
     <View style={styles.app}>
     <NavBar/>
         <View style={styles["container"]}>
-        <Text>Hi {data}</Text>
+        <Text>Hi </Text>
         <TouchableOpacity style={styles["button"]} onPress={handleSignOut}>
             <Text style={styles["button__text"]}>Sign Out</Text>
             </TouchableOpacity>

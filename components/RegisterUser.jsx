@@ -8,10 +8,8 @@ import {
 	View, SafeAreaView,
 	TextInput,
 	TouchableOpacity,
-	KeyboardAvoidingView,
 	TouchableWithoutFeedback,
-	Keyboard,
-	Platform
+	Keyboard
 } from "react-native";
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -25,7 +23,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { getFirebaseError, formatDate } from "../extentions";
 import CustomInput from "./CustomInput";
-import { Formik, useFormik, Field } from "formik";
+import { Formik, Field } from "formik";
 import * as yup from 'yup';
 
 export default RegisterUser = ({ navigation }) => {
@@ -34,7 +32,7 @@ export default RegisterUser = ({ navigation }) => {
 	const [dob, setDob] = useState(null);
 	const [requestedDate, setRequestedDate] = useState("");
 	const [focusedInput, setFocusedInput] = useState(null);
-	const [isSighUpClicked, setIsSignUpClicked] = useState(false);
+	const [isSignUpClicked, setIsSignUpClicked] = useState(false);
 	const [selectedDate, setSelectedDate] = useState(minimumDate);
 	const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [profileImgURL, setProfileImgURL] = useState('');
@@ -56,7 +54,6 @@ export default RegisterUser = ({ navigation }) => {
   };
 
 async function swimWildSignUp(token, refresh_token, uid, formData) {
-  console.log("inside swimWildSignUp, uid", uid);
     const data = {
       uid: uid,
       name: formData.fullName,
@@ -77,13 +74,14 @@ setGenericError('')
   })
 if (!response.ok) {
   setSending(false)
+  setIsSignUpClicked(false)
   if (response.status !== 400) {
   setGenericError('Something went wrong. Please try again later.')
   }
 } else {
-    const dataJSON = await response.json()
+    await response.json()
     navigation.navigate('Profile',
-    {data: dataJSON, refresh_token: refresh_token})
+    {refresh_token: refresh_token})
   }
 } 
 
@@ -167,6 +165,7 @@ return (
                         onSubmit={async(values) => {
                             setFirebaseError('')
                             setSending(true)
+                            setIsSignUpClicked(true)
                             try {
                                 const response = await createUserWithEmailAndPassword(auth, values.email, values.password)
                                 const user = response.user
@@ -174,6 +173,7 @@ return (
                             }
                             catch(error) {
                                 setSending(false)
+                                setIsSignUpClicked(false)
                                 const firebaseEmailError = getFirebaseError(error);
                                 setFirebaseError(firebaseEmailError)
                             }
@@ -181,7 +181,7 @@ return (
                         >
                           {({ handleSubmit, isValid, setFieldValue, errors }) => (
                             <>
-                             <View style={{ width: "120%" }}> 
+                             <View style={{ width: "100%" }}> 
                                 <Field
                                 component={CustomInput}
                                 name="fullName"
@@ -255,7 +255,7 @@ return (
                             </View>
                             <View style={styles.button__container}> 
                                 <TouchableOpacity disabled={!isValid || sending} style={[styles.button, 
-                                    isSighUpClicked ? styles.button__accent : null]} 
+                                    isSignUpClicked ? styles.button__accent : null]} 
                                     onPress={handleSubmit}>
                                     <Text style={styles.button__text}>{sending ? "Signing Up..." : "Sign Up"}</Text>
                                 </TouchableOpacity> 

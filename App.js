@@ -3,6 +3,7 @@ import RegisterUser from "./components/RegisterUser";
 import SignInUser from "./components/SignInUser";
 import Profile from "./components/Profile";
 import NavBar from "./components/NavBar";
+
 import {
   useFonts,
   Poppins_600SemiBold,
