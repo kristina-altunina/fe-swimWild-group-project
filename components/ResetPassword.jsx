@@ -19,7 +19,7 @@ import { getFirebaseError } from "../extentions";
 import { Formik, Field } from "formik";
 import * as yup from 'yup';
 
-export default ResetPassword = ({ navigation, route }) => {
+export default ResetPassword = ({ navigation }) => {
     const [firebaseError, setFirebaseError] = useState("");
     const [resetting, setResetting] = useState(false);
     const [isResettingClicked, setResettingClicked] = useState(false);

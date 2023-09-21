@@ -64,7 +64,7 @@ return (
 		<KeyboardAwareScrollView> 
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View style={{ flex: 1 }}>
-				    <NavBar />
+				    <NavBar navigation={navigation}/>
                     <View style={styles.container}> 
                     <ScrollView contentContainerStyle={styles.scroll}
                         keyboardShouldPersistTaps="handled">
@@ -149,8 +149,7 @@ const styles = StyleSheet.create({
     backgroundColor: colours.bg,
     alignItems: "center",
     justifyContent: "center",
-    borderColor: colours.accent1,
-    borderWidth: 5
+    
   },
   header: {
     fontSize: 35,
@@ -165,8 +164,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
     color: colours.accent1,
-    borderColor: colours.accent2,
-    borderWidth: 5
+    
   },
   input_focused: {
     borderColor: colours.accent4,

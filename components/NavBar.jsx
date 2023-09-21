@@ -7,17 +7,21 @@ import {
 
 import { colours } from "../styles/base";
 
-export default function NavBar() {
+export default NavBar = ({navigation}) => {
 return(
     <View style={styles.header}>
         <View style={styles.header__titleContainer}>
-          <Text style={styles.header__title}>
+          <Text style={styles.header__title} onPress={() => {
+            navigation.navigate('Home')
+          }}>
             Swim <Text style={styles.header__titleAccent}>Wild</Text>
           </Text>
         </View>
         <View style={styles.header__buttons}>
           <TouchableOpacity style={styles.header__button}>
-            <Text style={styles.header__buttonText}>Home</Text>
+            <Text style={styles.header__buttonText} onPress={() => {
+            navigation.navigate('Home')
+          }}>Home</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.header__button}
           onPress={() => {

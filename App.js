@@ -59,7 +59,7 @@ function HomeScreen({navigation}) {
 
   return (
     <View style={styles.app}>
-     <NavBar/>
+     <NavBar navigation={navigation}/>
       <View style={styles.container}>
           <TouchableOpacity
             style={styles.button}
