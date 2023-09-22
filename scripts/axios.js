@@ -11,8 +11,8 @@ export function getAllLocations() {
     })
 }
 
-export function getLocationByID(uid, day) {
-    return instance.get(`locations/${uid}?day=${day ? day : 0}`)
+export function getLocationByID(uid, day, station) {
+    return instance.get(`locations/${uid}?day=${day ? day : 0}&station=${station ? station : 0}`)
     .then(({data}) => {
         return data
     })

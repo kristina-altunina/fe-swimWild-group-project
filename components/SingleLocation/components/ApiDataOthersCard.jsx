@@ -2,14 +2,16 @@ import { styles } from '../../../styles/apiDataCard'
 import { useEffect, useState } from "react"
 import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator, TouchableOpacity } from "react-native"
 import { getLocationByID } from '../../../scripts/axios'
+import { Dropdown } from 'react-native-element-dropdown'
 
 export default function ApiDataSeaCard({apiData, uid}) {
-    
-    const [showForecast, setShowForecast] = useState(false)
-    const [selectedForecastDate, setSelectedForecastDate] = useState('Today')
-    const [dataToDisplay, setDataToDisplay] = useState({})
+    const [showForecast, setShowForecast] = useState(false);
+    const [selectedForecastDate, setSelectedForecastDate] = useState('Today');
+    const [dataToDisplay, setDataToDisplay] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [dayBar, setDayBar] = useState(['Today'])
+    const [dayBar, setDayBar] = useState(['Today']);
+    const [siteData, setSiteData] = useState([])
+    const [selectedSite, setSelectedSite] = useState(0);
     const daysRef = ['Mon',
                 'Tue',
                 'Wed',
@@ -26,13 +28,20 @@ export default function ApiDataSeaCard({apiData, uid}) {
             setIsLoading(isLoading => !isLoading)
             return apiData
         })
-        : getLocationByID(uid, dayBar.indexOf(selectedForecastDate))
+        : getLocationByID(uid, dayBar.indexOf(selectedForecastDate), selectedSite)
         .then(({apiData}) => {
             setIsLoading(isLoading => !isLoading)
             setDataToDisplay(dataToDisplay => apiData)
         })
+        .catch(err => {
+            console.log(err)
+        })
 
-    }, [selectedForecastDate])
+        setSiteData(siteData => apiData.hydrologyData.nearby.map((site, i) => {
+            return {value: i, label:site.name}
+        }))
+
+    }, [selectedForecastDate, setDataToDisplay, setSelectedSite])
 
     useEffect(() => {
         if(dayBar.length !== 7) {
@@ -55,7 +64,6 @@ export default function ApiDataSeaCard({apiData, uid}) {
         }
     },[])
     
-    console.log(dayBar, 'look here')
     function handleShowForecast() {
         setShowForecast(showForecast => !showForecast)
     }
@@ -148,12 +156,18 @@ export default function ApiDataSeaCard({apiData, uid}) {
                     )
                     : (
                         <>
-                        <Text style={styles.displayText}>
-                            Hydrology Test Site: {dataToDisplay.hydrologyData.name}
-                            <TouchableOpacity>
-                                <Text>See more sites..</Text>
-                            </TouchableOpacity>
-                        </Text>
+
+                            <Dropdown
+                            data={siteData}
+                            labelField='label'
+                            valueField='value'
+                            placeholderStyle={styles.displayText}
+                            selectedTextStyle={styles.displayText}
+                            placeholder={'Hydrology Site: ' + siteData[selectedSite].label}
+                            onChange={item => {
+                                // setSelectedSite(selectedSite => item.value)
+                            }}/>
+
                         <Text style={styles.displayText}>
                             Site Id: {dataToDisplay.hydrologyData.siteId}
                         </Text>

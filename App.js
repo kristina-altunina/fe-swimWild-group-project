@@ -76,15 +76,15 @@ function HomeScreen({navigation}) {
           >
             <Text>Sign Up</Text>
           </TouchableOpacity>
-          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650d6df281daa0c5838e1d75'})}}></Button>
+          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650dad012faf365cdf70435e'})}}></Button>
       </View>
     </View>
     )
     
   }
 }
-  //for lake: 650d6df281daa0c5838e1d75
-  //for sea: 650d6df281daa0c5838e1d7b
+  //for lake: 650dad012faf365cdf70435e
+  //for sea: 650dad012faf365cdf704361
 const styles = StyleSheet.create({
   app: {
     backgroundColor: colours.bg,
