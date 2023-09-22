@@ -41,7 +41,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
             return {value: i, label:site.name}
         }))
 
-    }, [selectedForecastDate, setDataToDisplay, setSelectedSite])
+    }, [selectedForecastDate, setDataToDisplay])
 
     useEffect(() => {
         if(dayBar.length !== 7) {
@@ -63,6 +63,19 @@ export default function ApiDataSeaCard({apiData, uid}) {
             })
         }
     },[])
+
+    useEffect(() => {
+        setIsLoading(isLoading => !isLoading)
+        getLocationByID(uid, dayBar.indexOf(selectedForecastDate), selectedSite)
+        .then(({apiData}) => {
+            console.log('here')
+            setIsLoading(isLoading => !isLoading)
+            setDataToDisplay(dataToDisplay => apiData)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    },[selectedSite])
     
     function handleShowForecast() {
         setShowForecast(showForecast => !showForecast)
@@ -89,6 +102,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
             </>
         )
     }
+    console.log(selectedSite, 'look here')
 
     // Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO. Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
 
@@ -165,14 +179,15 @@ export default function ApiDataSeaCard({apiData, uid}) {
                             selectedTextStyle={styles.displayText}
                             placeholder={'Hydrology Site: ' + siteData[selectedSite].label}
                             onChange={item => {
-                                // setSelectedSite(selectedSite => item.value)
+                                console.log(item.value)
+                                setSelectedSite(selectedSite => item.value)
                             }}/>
 
                         <Text style={styles.displayText}>
                             Site Id: {dataToDisplay.hydrologyData.siteId}
                         </Text>
                         <Text style={styles.displayText}>
-                            Temperature: {dataToDisplay.hydrologyData.data[0].maxSurfaceTemp} °C
+                            Temperature: {dataToDisplay?.hydrologyData.data[0].maxSurfaceTemp} °C
                         </Text>
                         <Text style={styles.displayText}>
                             Oxygen Saturation: {dataToDisplay.hydrologyData.data[1].mostRecentValue}%

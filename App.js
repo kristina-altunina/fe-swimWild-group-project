@@ -84,7 +84,7 @@ function HomeScreen({navigation}) {
           >
             <Text>Sign Up</Text>
           </TouchableOpacity>
-          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650db698826924b4539b0dc4'})}}></Button>
+          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650dd24c667ea748708385aa'})}}></Button>
         </ScrollView>          
       </View>
       </KeyboardAwareScrollView>
@@ -92,8 +92,8 @@ function HomeScreen({navigation}) {
     )
   }
 }
-  //for lake: 650db698826924b4539b0dc6
-  //for sea: 650db698826924b4539b0dc4
+  //for lake: 650dd24c667ea748708385aa
+  //for sea: 650dd24c667ea748708385ad
 const styles = StyleSheet.create({
   app: {
     backgroundColor: colours.bg,
