@@ -1,15 +1,15 @@
 import { styles } from '../../../styles/apiDataCard'
 import { useEffect, useState } from "react"
-import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator } from "react-native"
+import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator, TouchableOpacity } from "react-native"
 import { getLocationByID } from '../../../scripts/axios'
 
 export default function ApiDataSeaCard({apiData, uid}) {
     
     const [showForecast, setShowForecast] = useState(false)
-    const [selectedForecastDate, setSelectedForecastDate] = useState(1)
+    const [selectedForecastDate, setSelectedForecastDate] = useState('Today')
     const [dataToDisplay, setDataToDisplay] = useState({})
     const [isLoading, setIsLoading] = useState(false);
-    const day = [1,2,3,4,5,6,7];
+    const [dayBar, setDayBar] = useState(['Today'])
     const daysRef = ['Mon',
                 'Tue',
                 'Wed',
@@ -17,7 +17,6 @@ export default function ApiDataSeaCard({apiData, uid}) {
                 'Fri',
                 'Sat',
                 'Sun']
-    const [datesBar, setDatesBar] = useState(['Today'])
     
 
     useEffect(() => {
@@ -27,31 +26,36 @@ export default function ApiDataSeaCard({apiData, uid}) {
             setIsLoading(isLoading => !isLoading)
             return apiData
         })
-        : getLocationByID(uid, day.indexOf(selectedForecastDate))
+        : getLocationByID(uid, dayBar.indexOf(selectedForecastDate))
         .then(({apiData}) => {
             setIsLoading(isLoading => !isLoading)
             setDataToDisplay(dataToDisplay => apiData)
         })
 
-    }, [selectedForecastDate,setDataToDisplay])
+    }, [selectedForecastDate])
 
     useEffect(() => {
-        let currentDay = daysRef.indexOf(new Date(apiData.weather.values.datetimeStr).toDateString().split(' ')[0]);
-        const arr = ['Today']
-
-        while(arr.length !== 7) {
-            console.log(currentDay)
-            if(currentDay < 6) {
-                currentDay++
-                arr.push(daysRef[currentDay])
-            } else {
-                currentDay = 0
-                arr.push(daysRef[currentDay])
-            }
-            console.log(arr)
+        if(dayBar.length !== 7) {
+            setDayBar(dayBar => {
+                let currentDay = daysRef.indexOf(new Date(apiData.weather.values.datetimeStr).toDateString().split(' ')[0]);
+                const arr = [];
+    
+                while(arr.length !== 6) {
+                    if(currentDay < 6) {
+                        currentDay++
+                        arr.push(daysRef[currentDay])
+                    } else {
+                        currentDay = 0
+                        arr.push(daysRef[currentDay])
+                    }
+                }
+    
+                return [...dayBar, ...arr]
+            })
         }
     },[])
     
+    console.log(dayBar, 'look here')
     function handleShowForecast() {
         setShowForecast(showForecast => !showForecast)
     }
@@ -63,7 +67,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
     }
 
     function handleForecastDateStyle(i) {
-        if(i === day.indexOf(selectedForecastDate)) {
+        if(i === dayBar.indexOf(selectedForecastDate)) {
             return styles.selectedForecastDate
         } else {
             return styles.forecastDates
@@ -95,9 +99,9 @@ export default function ApiDataSeaCard({apiData, uid}) {
                         <>
                         <View style={styles.forecastDatesContainer}>
                         {
-                            day.map((date, i) => {
+                            dayBar.map((date, i) => {
                                 return (
-                                    <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>Day {date}</Text>
+                                    <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>{date}</Text>
                                 )
                             })
                         }
@@ -146,6 +150,9 @@ export default function ApiDataSeaCard({apiData, uid}) {
                         <>
                         <Text style={styles.displayText}>
                             Hydrology Test Site: {dataToDisplay.hydrologyData.name}
+                            <TouchableOpacity>
+                                <Text>See more sites..</Text>
+                            </TouchableOpacity>
                         </Text>
                         <Text style={styles.displayText}>
                             Site Id: {dataToDisplay.hydrologyData.siteId}
