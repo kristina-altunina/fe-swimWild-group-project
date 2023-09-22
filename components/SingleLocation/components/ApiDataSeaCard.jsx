@@ -97,7 +97,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                         Cloud Cover: {dataToDisplay.weather.values.cloudcover} %
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        visibility: {dataToDisplay.weather.valuesvisibility} mi
+                                        visibility: {dataToDisplay.weather.values.visibility} mi
                                     </Text>
                                     <Text style={styles.expandedDataText}>
                                         snowdepth: {dataToDisplay.weather.values.snowdepth} cm

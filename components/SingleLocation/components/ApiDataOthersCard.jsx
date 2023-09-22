@@ -10,6 +10,15 @@ export default function ApiDataSeaCard({apiData, uid}) {
     const [dataToDisplay, setDataToDisplay] = useState({})
     const [isLoading, setIsLoading] = useState(false);
     const day = [1,2,3,4,5,6,7];
+    const daysRef = ['Mon',
+                'Tue',
+                'Wed',
+                'Thurs',
+                'Fri',
+                'Sat',
+                'Sun']
+    const [datesBar, setDatesBar] = useState(['Today'])
+    
 
     useEffect(() => {
         setIsLoading(isLoading => !isLoading)
@@ -23,7 +32,25 @@ export default function ApiDataSeaCard({apiData, uid}) {
             setIsLoading(isLoading => !isLoading)
             setDataToDisplay(dataToDisplay => apiData)
         })
+
     }, [selectedForecastDate,setDataToDisplay])
+
+    useEffect(() => {
+        let currentDay = daysRef.indexOf(new Date(apiData.weather.values.datetimeStr).toDateString().split(' ')[0]);
+        const arr = ['Today']
+
+        while(arr.length !== 7) {
+            console.log(currentDay)
+            if(currentDay < 6) {
+                currentDay++
+                arr.push(daysRef[currentDay])
+            } else {
+                currentDay = 0
+                arr.push(daysRef[currentDay])
+            }
+            console.log(arr)
+        }
+    },[])
     
     function handleShowForecast() {
         setShowForecast(showForecast => !showForecast)
@@ -50,8 +77,6 @@ export default function ApiDataSeaCard({apiData, uid}) {
             </>
         )
     }
-
-    console.log(dataToDisplay.hydrologyData.data[1].mostRecentValue)
 
     // Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO. Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
 
@@ -99,9 +124,13 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                     <Text style={styles.expandedDataText}>
                                         Visibility: {dataToDisplay.weather.values.visibility} mi
                                     </Text>
-                                    <Text style={styles.expandedDataText}>
-                                        snowdepth: {dataToDisplay.weather.values.snowdepth} cm
-                                    </Text>
+                                    { !!dataToDisplay.weather.values.snowdepth && (
+                                        <>
+                                        <Text style={styles.expandedDataText}>
+                                            snowdepth: {dataToDisplay.weather.values.snowdepth} cm
+                                        </Text>
+                                        </>
+                                    )}
                                     <Text style={styles.expandedDataText}>
                                         Wind Speed: {dataToDisplay.weather.values.wspd} mph
                                     </Text>
