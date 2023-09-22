@@ -34,6 +34,13 @@ export const styles = StyleSheet.create({
         color: 'white',
         textAlign: "center"
     },
+    title_text_center: {
+        textAlign: 'center',
+        color: 'white'
+    },
+    displayText: {
+        color: 'white'
+    },
     summary: {
         padding: '2%',
         backgroundColor: 'white',

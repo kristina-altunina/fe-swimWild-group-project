@@ -37,14 +37,6 @@ useEffect(() => {
     })
 },[])
 
-    console.log('------------------------------------------------------------')
-    // if(!Object.keys(userData).length || !Object.keys(swimsData).length) {
-    //     return (
-    //         <View>
-    //             <Text>Loading...........</Text>
-    //         </View>
-    //     )
-    // }
 
     return (
 			<KeyboardAvoidingView
@@ -58,17 +50,33 @@ useEffect(() => {
 					<View style={styles.screen}>
 						<NavBar />
                         <View style={styles.display}>
-                            <View style={styles.title}>
-                                <Text style={styles.title_text}>
-                                    {locationData.name}
-                                </Text>
-                            </View>
                             {
-                                !Object.keys(apiData) && !Object.keys(locationData)
+                                !Object.keys(locationData).length
                                 ? (
+                                    <>
                                     <ActivityIndicator size='large'/>
+                                    </>
                                 )
-                                : locationData.type === 'sea'
+                                : (
+                                    <View style={styles.title}>
+                                        <Text style={styles.title_text}>
+                                            {locationData.name}
+                                        </Text>
+                                        <Text style={styles.title_text_center}>
+                                            Type: {locationData.type}
+                                        </Text>
+                                    </View>
+                                )
+                            }
+                            {
+                                !Object.keys(apiData).length && !Object.keys(locationData).length
+                                ? (
+                                    <>
+                                    <ActivityIndicator size='large'/>
+                                    </>
+                                )
+                                : (
+                                    locationData.type === 'sea'
                                     ? (
                                         <ApiDataSeaCard
                                         apiData={apiData}
@@ -79,6 +87,7 @@ useEffect(() => {
                                         apiData={apiData}
                                         uid={uid}/>
                                     )
+                                )
                             }
                             <UserDataCard userData={userData}/>
                             <View style={styles.summary}>

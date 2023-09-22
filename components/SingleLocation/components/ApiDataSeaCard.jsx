@@ -45,10 +45,12 @@ export default function ApiDataSeaCard({apiData, uid}) {
     if(!Object.keys(dataToDisplay).length) {
         return (
             <>
-            <Text>test</Text>
+            <ActivityIndicator size='large'/>
             </>
         )
     }
+
+    console.log(new Date(dataToDisplay.tides.highTides[0]).toTimeString().split(' ')[0])
 
     return (
         <TouchableWithoutFeedback onPress={() => {
@@ -57,7 +59,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
         }}>
             <View style={styles.swimBot}>
                 <Text style={styles.titleText}>
-                            Location Details and Forecast
+                            Forecast
                 </Text>
                 {
                     showForecast
@@ -79,49 +81,58 @@ export default function ApiDataSeaCard({apiData, uid}) {
                             )
                             : (
                                 <View style={styles.expandedDataContainer}>
-                            <Text style={styles.expandedDataText}>
-                                Temperature: {dataToDisplay.tempCelsius}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                Max Wave: {dataToDisplay.waveData.maxWave}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                Max Wave Period: {dataToDisplay.waveData.maxWavePeriod}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                wdir: {dataToDisplay.weather.values.wdir}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                uvindex: {dataToDisplay.weather.values.uvindex}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                datetimeStr: {dataToDisplay.weather.values.datetimeStr}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                preciptype: {dataToDisplay.weather.values.preciptype}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                cloudcover: {dataToDisplay.weather.values.cloudcover}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                humidity: {dataToDisplay.weather.values.humidity}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                temp: {dataToDisplay.weather.values.temp}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                visibility: {dataToDisplay.weather.valuesvisibility}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                snow: {dataToDisplay.weather.values.snow}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                snowdepth: {dataToDisplay.weather.values.snowdepth}
-                            </Text>
-                            <Text style={styles.expandedDataText}>
-                                conditions: {dataToDisplay.weather.values.conditions}
-                            </Text>
-                        </View>
+                                    <Text style={styles.expandedDataText}>
+                                        datetimeStr: {new Date(dataToDisplay.weather.values.datetimeStr).toDateString()}
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Temperature: {dataToDisplay.tempCelsius} °C
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Max Wave: {dataToDisplay.waveData.maxWave}
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Max Wave Period: {dataToDisplay.waveData.maxWavePeriod}
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Cloud Cover: {dataToDisplay.weather.values.cloudcover} %
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        visibility: {dataToDisplay.weather.valuesvisibility} mi
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        snowdepth: {dataToDisplay.weather.values.snowdepth} cm
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Wind Speed: {dataToDisplay.weather.values.wspd} mph
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        conditions: {dataToDisplay.weather.values.conditions}
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        High Tide:
+                                    </Text>
+                                    {
+                                        dataToDisplay.tides.highTides.map((time, i) => {
+                                            return (
+                                                <Text style={styles.expandedDataText} key={i}>
+                                                    {new Date(time).toTimeString().split(' ')[0]}
+                                                </Text>
+                                            )
+                                        })
+                                    }
+                                    <Text style={styles.expandedDataText}>
+                                        Low Tide:
+                                    </Text>
+                                    {
+                                        dataToDisplay.tides.lowTides.map((time, i) => {
+                                            return (
+                                                <Text style={styles.expandedDataText} key={i}>
+                                                    {new Date(time).toTimeString().split(' ')[0]}
+                                                </Text>
+                                            )
+                                        })
+                                    }
+                                </View>
                             )
                         }
                         </>
@@ -129,7 +140,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
                     : (
                         <>
                         <Text style={styles.displayText}>
-                            Temperature: {dataToDisplay.tempCelsius}
+                            Temperature: {dataToDisplay.tempCelsius} °C
                         </Text>
                         <Text style={styles.displayText}>
                             Max Wave: {dataToDisplay.waveData.maxWave}

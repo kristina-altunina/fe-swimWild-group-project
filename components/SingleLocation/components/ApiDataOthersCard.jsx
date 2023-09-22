@@ -1,116 +1,141 @@
 import { styles } from '../../../styles/apiDataCard'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator } from "react-native"
+import { getLocationByID } from '../../../scripts/axios'
 
-export default function ApiDataOthersCard({apiData}) {
+export default function ApiDataSeaCard({apiData, uid}) {
+    
     const [showForecast, setShowForecast] = useState(false)
-    const [selectedForecastDate, setSelectedForecastDate] = useState(0)
+    const [selectedForecastDate, setSelectedForecastDate] = useState(1)
+    const [dataToDisplay, setDataToDisplay] = useState({})
+    const [isLoading, setIsLoading] = useState(false);
+    const day = [1,2,3,4,5,6,7];
+
+    useEffect(() => {
+        setIsLoading(isLoading => !isLoading)
+        !Object.keys(dataToDisplay).length
+        ? setDataToDisplay(dataToDisplay =>{
+            setIsLoading(isLoading => !isLoading)
+            return apiData
+        })
+        : getLocationByID(uid, day.indexOf(selectedForecastDate))
+        .then(({apiData}) => {
+            setIsLoading(isLoading => !isLoading)
+            setDataToDisplay(dataToDisplay => apiData)
+        })
+    }, [selectedForecastDate,setDataToDisplay])
     
     function handleShowForecast() {
         setShowForecast(showForecast => !showForecast)
     }
 
-    function handleSelectedForecast(date) {
+    function handleSelectedForecast(i) {
         setSelectedForecastDate(selectedForecastDate => {
-            return apiData.waveData.weekForecast.dates.indexOf(date)
+            return i
         })
     }
 
     function handleForecastDateStyle(i) {
-        if(i === selectedForecastDate) {
+        if(i === day.indexOf(selectedForecastDate)) {
             return styles.selectedForecastDate
         } else {
             return styles.forecastDates
         }
     }
 
+    if(!Object.keys(dataToDisplay).length) {
+        return (
+            <>
+            <Text>test others card</Text>
+            </>
+        )
+    }
+
+    console.log(dataToDisplay.hydrologyData.data[1].mostRecentValue)
+
+    // Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO. Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
+
     return (
-        <>
         <TouchableWithoutFeedback onPress={() => {
             handleShowForecast()
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.linear)
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
         }}>
-        {
-            !Object.keys(apiData).length
-            ? (
-                <ActivityIndicator size='large'/>
-            )
-            : (
-                <View style={styles.swimBot}>
-                    {
-                        !showForecast && (
-                            <>
-                            <Text style={styles.displayText}>
-                                Location Details and Forecast
-                            </Text>
-                            <Text style={styles.displayText}>
-                                Temperature: {apiData.tempCelsius}
-                            </Text>
-                            <Text style={styles.displayText}>
-                                Max Wave: {apiData.waveData.maxWave}
-                            </Text>
-                            <Text style={styles.displayText}>
-                                Max Wave Period: {apiData.waveData.maxWavePeriod}
-                            </Text>
-                            <Text style={showForecast ? styles.hideContent: styles.showContent}>
-                                See Forecast...
-                            </Text>
-                            </>
-                        )
-                    }
-                    {showForecast && (
-                    <>
-                    <View style={styles.forecastDatesContainer}>
-                    {
-                        apiData.waveData.weekForecast.dates.map((date, i) => {
-                            return (
-                                <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>{date}</Text>
+            <View style={styles.swimBot}>
+                <Text style={styles.titleText}>
+                            Forecast
+                </Text>
+                {
+                    showForecast
+                    ? (
+                        <>
+                        <View style={styles.forecastDatesContainer}>
+                        {
+                            day.map((date, i) => {
+                                return (
+                                    <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>Day {date}</Text>
+                                )
+                            })
+                        }
+                        </View>
+                        {
+                            isLoading
+                            ? (
+                                <ActivityIndicator size='large'/>
                             )
-                        })
-                    }
-                    </View>
-                    <View style={styles.expandedDataContainer}>
-                        <Text style={styles.expandedDataText}>
-                            Wave Height Max: {apiData.waveData.weekForecast.wave_height_max[selectedForecastDate]}
+                            : (
+                                <View style={styles.expandedDataContainer}>
+                                    <Text style={styles.expandedDataText}>
+                                        Date: {new Date(dataToDisplay.weather.values.datetimeStr).toDateString()}
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Temperature: {dataToDisplay.hydrologyData.data[0].maxSurfaceTemp} °C
+                                    </Text>
+                                    <Text style={styles.displayText}>
+                                        Oxygen Saturation: {dataToDisplay.hydrologyData.data[1].mostRecentValue}%
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Cloud Cover: {dataToDisplay.weather.values.cloudcover} %
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Visibility: {dataToDisplay.weather.values.visibility} mi
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        snowdepth: {dataToDisplay.weather.values.snowdepth} cm
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Wind Speed: {dataToDisplay.weather.values.wspd} mph
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        conditions: {dataToDisplay.weather.values.conditions}
+                                    </Text>
+                                </View>
+                            )
+                        }
+                        </>
+                    )
+                    : (
+                        <>
+                        <Text style={styles.displayText}>
+                            Hydrology Test Site: {dataToDisplay.hydrologyData.name}
                         </Text>
-                        <Text style={styles.expandedDataText}>
-                            Wave Direction Dominant: {apiData.waveData.weekForecast.wave_direction_dominant[selectedForecastDate]}
+                        <Text style={styles.displayText}>
+                            Site Id: {dataToDisplay.hydrologyData.siteId}
                         </Text>
-                        <Text style={styles.expandedDataText}>
-                            Wave Period Max: {apiData.waveData.weekForecast.wave_period_max[selectedForecastDate]}
+                        <Text style={styles.displayText}>
+                            Temperature: {dataToDisplay.hydrologyData.data[0].maxSurfaceTemp} °C
                         </Text>
-                        <Text style={styles.expandedDataText}>
-                            Wind Wave Height Max: {apiData.waveData.weekForecast.wind_wave_height_max[selectedForecastDate]}
+                        <Text style={styles.displayText}>
+                            Oxygen Saturation: {dataToDisplay.hydrologyData.data[1].mostRecentValue}%
                         </Text>
-                        <Text style={styles.expandedDataText}>
-                            Wind Wave Direction Dominant: {apiData.waveData.weekForecast.wind_wave_direction_dominant[selectedForecastDate]}
+                        <Text style={styles.highlightText}>
+                            See Forecast...
                         </Text>
-                        <Text style={styles.expandedDataText}>
-                            Wind Wave Period Max: {apiData.waveData.weekForecast.wind_wave_period_max[selectedForecastDate]}
-                        </Text>
-                        <Text style={styles.expandedDataText}>
-                            Wind Wave Peak Period Max: {apiData.waveData.weekForecast.wind_wave_peak_period_max[selectedForecastDate]}
-                        </Text>
-                        <Text style={styles.expandedDataText}>
-                            Swell Wave Height Max: {apiData.waveData.weekForecast.swell_wave_height_max[selectedForecastDate]}
-                        </Text>
-                        <Text style={styles.expandedDataText}>
-                            Swell Wave Direction Dominant: {apiData.waveData.weekForecast.swell_wave_direction_dominant[selectedForecastDate]}
-                        </Text>
-                        <Text style={styles.expandedDataText}>
-                            Swell Wave Period Max: {apiData.waveData.weekForecast.swell_wave_period_max[selectedForecastDate]}
-                        </Text>
-                        <Text style={styles.expandedDataText}>
-                            Swell Wave Peak Period Max: {apiData.waveData.weekForecast.swell_wave_peak_period_max[selectedForecastDate]}
-                        </Text>
-                    </View>
-                    </>
-                    )}
-                </View>
-            )
-        }
+                        </>
+                    )
+                    
+                }
+            </View>        
         </TouchableWithoutFeedback>
-        </>
     )
 }
 
