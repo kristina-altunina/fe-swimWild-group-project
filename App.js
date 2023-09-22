@@ -20,13 +20,14 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Button
 } from "react-native";
 
-import TestPage from "./components/TestPage";
 
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SingleLocation from "./components/SingleLocation/SingleLocation";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +40,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="Test Page" component={TestPage}/>
+        <Stack.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false, gestureEnabled: true}}/>
       </Stack.Navigator>
     </NavigationContainer>
@@ -62,7 +63,7 @@ function HomeScreen({navigation}) {
   return (
     <SafeAreaView style={styles.app}>
       <KeyboardAwareScrollView> 
-     <NavBar navigation={navigation}/>
+      <NavBar navigation={navigation}/>
       <View>
         <ScrollView contentContainerStyle={styles.container}
             keyboardShouldPersistTaps="handled">
@@ -83,14 +84,16 @@ function HomeScreen({navigation}) {
           >
             <Text>Sign Up</Text>
           </TouchableOpacity>
-          </ScrollView>          
+          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650db698826924b4539b0dc4'})}}></Button>
+        </ScrollView>          
       </View>
       </KeyboardAwareScrollView>
-      </SafeAreaView>
+    </SafeAreaView>
     )
   }
 }
-  
+  //for lake: 650db698826924b4539b0dc6
+  //for sea: 650db698826924b4539b0dc4
 const styles = StyleSheet.create({
   app: {
     backgroundColor: colours.bg,
