@@ -10,7 +10,7 @@ import {
 import { colours } from "../styles/base";
 import NavBar from "./NavBar";
 import { tokenRefresh } from "../firebaseConfig";
-import { BACKEND_API_URL } from "@env"
+import { BACKEND_API_URL, DEFAULT_IMAGE_URL } from "@env"
 import { useState, useEffect } from "react";
 import {formatDate} from '../extentions'
 import BuddiesDisplay from "./Buddies/BuddiesDisplay";
@@ -21,9 +21,9 @@ export default Profile = ({ navigation, route }) => {
  const refreshToken = route.params.refresh_token;
  
 async function getProfile(){
-//refresh the token
-  const tokenObj = await tokenRefresh(refreshToken)
 
+  const tokenObj = await tokenRefresh(refreshToken)
+ 
   const url = BACKEND_API_URL + "/users/profile"
   fetch(url, {
     method: "GET",
@@ -62,7 +62,7 @@ return (
               }}
             />: <Image
             style={styles.tinyLogo}
-            source={require('../no-image-icon-15.png')}
+            source={{uri: DEFAULT_IMAGE_URL}}
           />}
           <TouchableOpacity style={canEditImage ? styles.textHide : styles.textShow} onPress={()=>{setCanEditImage(true)}}>
              <Text>Edit</Text>
@@ -155,8 +155,8 @@ const styles = StyleSheet.create({
         paddingTop: 50,
       },
       tinyLogo: {
-        width: 90,
-        height: 90,
+        width: 140,
+        height: 140,
       },
       logo: {
         width: 66,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { DEFAULT_IMAGE_URL} from  "@env"
 import {
     StyleSheet,
     View,
@@ -29,7 +29,9 @@ export default BuddyIcon = props => {
             <TouchableOpacity>
             <Image
             style={styles.tinyLogo}
-            source={require('.../no-image-icon-15.png')}
+            source={{
+              uri: DEFAULT_IMAGE_URL
+            }}
           />
           </TouchableOpacity>
           }
@@ -39,8 +41,8 @@ export default BuddyIcon = props => {
 
 const styles = StyleSheet.create({
       tinyLogo: {
-        width: 70,
-        height:70,
+        width: 100,
+        height:100,
       },
       logo: {
         width: 66,
