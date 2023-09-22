@@ -16,6 +16,7 @@ import {
 } from "@expo-google-fonts/poppins";
 import {
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -62,7 +63,9 @@ function HomeScreen({navigation}) {
     <SafeAreaView style={styles.app}>
       <KeyboardAwareScrollView> 
      <NavBar navigation={navigation}/>
-      <View style={styles.container}>
+      <View>
+        <ScrollView contentContainerStyle={styles.container}
+            keyboardShouldPersistTaps="handled">
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
@@ -79,7 +82,8 @@ function HomeScreen({navigation}) {
             }}
           >
             <Text>Sign Up</Text>
-          </TouchableOpacity>          
+          </TouchableOpacity>
+          </ScrollView>          
       </View>
       </KeyboardAwareScrollView>
       </SafeAreaView>
@@ -130,6 +134,7 @@ const styles = StyleSheet.create({
     color: colours.bg,
   },
   container: {
+    paddingTop: 200,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
