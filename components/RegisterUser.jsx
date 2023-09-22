@@ -75,6 +75,7 @@ setGenericError('')
 if (!response.ok) {
   setSending(false)
   setIsSignUpClicked(false)
+  console.log(response, "User----");
   if (response.status !== 400) {
   setGenericError('Something went wrong. Please try again later.')
   }

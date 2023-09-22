@@ -36,12 +36,10 @@ export default SignInUser = ({ navigation }) => {
     try {
         const response = await signInWithEmailAndPassword(auth, values.email, values.password)
         const user = response.user;
-        console.log(user);
         navigation.navigate('Profile',
         {refresh_token: user.stsTokenManager.refreshToken})
     }
     catch(error) {
-        console.log(error, "three");
         setSending(false)
         setIsSignInClicked(false)
         const firebaseError = getFirebaseError(error);

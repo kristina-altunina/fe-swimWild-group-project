@@ -13,6 +13,7 @@ import { tokenRefresh } from "../firebaseConfig";
 import { BACKEND_API_URL } from "@env"
 import { useState, useEffect } from "react";
 import {formatDate} from '../extentions'
+import BuddiesDisplay from "./Buddies/BuddiesDisplay";
 export default Profile = ({ navigation, route }) => {
  const [profileData, setProfileData] = useState({})
  const [canEditAboutMe, setCanEditAboutMe] = useState(false)
@@ -105,6 +106,7 @@ return (
                 </TouchableOpacity>
               </View>
           </View>
+          <BuddiesDisplay refreshToken={refreshToken}/>
         </View>
     </View>
   );
