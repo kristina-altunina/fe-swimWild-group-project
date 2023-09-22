@@ -4,6 +4,7 @@ import SignInUser from "./components/SignInUser";
 import Profile from "./components/Profile";
 import NavBar from "./components/NavBar";
 import ResetPassword from "./components/ResetPassword";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import {
   useFonts,
@@ -14,11 +15,11 @@ import {
   Poppins_200ExtraLight,
 } from "@expo-google-fonts/poppins";
 import {
+  SafeAreaView,
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  Button
+  TouchableOpacity
 } from "react-native";
 
 import TestPage from "./components/TestPage";
@@ -58,7 +59,8 @@ function HomeScreen({navigation}) {
   }
 
   return (
-    <View style={styles.app}>
+    <SafeAreaView style={styles.app}>
+      <KeyboardAwareScrollView> 
      <NavBar navigation={navigation}/>
       <View style={styles.container}>
           <TouchableOpacity
@@ -79,7 +81,8 @@ function HomeScreen({navigation}) {
             <Text>Sign Up</Text>
           </TouchableOpacity>          
       </View>
-      </View>
+      </KeyboardAwareScrollView>
+      </SafeAreaView>
     )
   }
 }

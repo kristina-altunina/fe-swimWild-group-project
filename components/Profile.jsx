@@ -45,10 +45,19 @@ useEffect(() => {
    getProfile()
   }, [])  
 
-useEffect(()=>{
+  useEffect(() => {
+    const { routes } = navigation.getState();
 
-},[canEditImage])
-  const pic = 'https://reactnative.dev/img/tiny_logo.png'
+    const filteredRoutes = routes.filter(
+      route => route.name !== 'Register' && route.name !== 'SignIn',
+    );
+
+    navigation.reset({
+      index: filteredRoutes.length - 1,
+      routes: filteredRoutes,
+    });
+  }, [])
+
 return (
     <View style={styles.app}>
     <NavBar navigation={navigation}/>

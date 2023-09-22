@@ -13,6 +13,7 @@ import NavBar from "./NavBar";
 import { auth } from "../firebaseConfig";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { colours } from "../styles/base";
+import { styles } from '../styles/layout';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import CustomInput from "./CustomInput";
 import { getFirebaseError } from "../extentions";
@@ -51,13 +52,13 @@ export default ResetPassword = ({ navigation }) => {
       })
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: colours.bg }}>
+        <SafeAreaView style={styles.app}>
 		<KeyboardAwareScrollView> 
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View style={{ flex: 1 }}>
-				    <NavBar />
+				    <NavBar navigation={navigation}/>
                     <View style={styles.container}> 
-                    <ScrollView contentContainerStyle={styles.scroll}
+                    <ScrollView contentContainerStyle={customStyles.scroll}
                         keyboardShouldPersistTaps="handled">
                         <Text style={[styles.header, { zIndex: 0 }]}>Reset Password</Text>
                         <Formik
@@ -100,89 +101,14 @@ export default ResetPassword = ({ navigation }) => {
     </SafeAreaView>
 )};
 
-
-const styles = StyleSheet.create({
-    app: {
-      backgroundColor: colours.bg,
-      height: "100%",
-      width: "100%",
-    },
-    scroll: {
-      padding: 30,
-      marginTop: 30,
-      flex: 1,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    container: {
-      flex: 1,
-      display: 'flex',
-      paddingTop: 50,
-      paddingBottom: 80,
-      paddingLeft: 20,
-      paddingRight: 20,
-      marginTop: 80,
-      width: "100%",
-      backgroundColor: colours.bg,
-      alignItems: "center",
-      justifyContent: "center",
-      borderColor: colours.accent1,
-      borderWidth: 5
-    },
-    header: {
-      fontSize: 35,
-      fontWeight: "bold",
-      marginBottom: 25,
-      color: colours.accent1,
-    },
-    input: {
-      width: "100%",
-      borderColor: colours.accent4,
-      borderWidth: 1,
-      marginBottom: 10,
-      padding: 10,
-      color: colours.accent1,
-      borderColor: colours.accent2,
-      borderWidth: 5
-    },
-    input_focused: {
-      borderColor: colours.accent4,
-      borderWidth: 2,
-    },
-    button: {
-      width: "60%",
-      alignItems: "center",
-      backgroundColor: colours.accent2,
-      padding: 15,
-      borderRadius: 5,
-      marginBottom: 5,
-      
-    },
-    button__text: {
-      alignItems: "center",
-      color: "#fff",
-      fontWeight: "bold",
-    },
-    textHide: {
-      width: 0,
-      height: 0,
-      overflow: "hidden",
-      opacity: 0
-    },
-    textShow: {
-      overflow: "hidden",
-      fontSize: 10,
-      color: 'red',
-      marginBottom: 10,
-    },
-    firebase__error: {
-        overflow: "hidden",
-        fontSize: 10,
-        color: 'red',
-        marginTop: -7,
-        alignItems: "center"
-      },
-  });
-  
-  
+const customStyles = StyleSheet.create({
+  scroll: {
+    padding: 50,
+    paddingTop: 150,
+    paddingBottom: 120,
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+});

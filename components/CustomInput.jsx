@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Text, TextInput, View, StyleSheet } from 'react-native'
-import { colours } from '../styles/base'
-const CustomInput = (props) => {
+import { Text, TextInput, View } from 'react-native'
+import { styles } from '../styles/layout'
+
+export default CustomInput = (props) => {
   const {
     field: { name, onBlur, onChange, value },
     form: { errors, touched, setFieldTouched },
@@ -35,28 +36,3 @@ const CustomInput = (props) => {
     </>
   )
 }
-
-const styles = StyleSheet.create({
-  textInput: {
-    width: "100%",
-    borderColor: colours.accent4,
-    borderWidth: 1,
-    marginBottom: 10,
-    padding: 10,
-    color: colours.accent1,
-  },
-  input_focused: {
-    borderColor: colours.accent4,
-    borderWidth: 2,
-  },
-  errorText: {
-    fontSize: 10,
-    color: 'red',
-    marginBottom: 10,
-  },
-  errorInput: {
-    borderColor: 'red',
-  }
-})
-
-export default CustomInput

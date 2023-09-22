@@ -1,7 +1,7 @@
 import { useState } from "react";
 import NavBar from "./NavBar";
 import {
-    ScrollView,
+  ScrollView,
 	StyleSheet,
 	Text,
 	View, SafeAreaView,
@@ -13,14 +13,12 @@ import {
 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { colours } from "../styles/base";
+import { styles } from '../styles/layout';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { getFirebaseError } from "../extentions";
 import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from 'yup';
-import ResetPassword from "./ResetPassword";
-
 
 export default SignInUser = ({ navigation }) => {
   
@@ -63,8 +61,8 @@ return (
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 				<View style={{ flex: 1 }}>
 				    <NavBar navigation={navigation}/>
-                    <View style={styles.container}> 
-                    <ScrollView contentContainerStyle={styles.scroll}
+                <View> 
+                    <ScrollView contentContainerStyle={customStyles.scroll}
                         keyboardShouldPersistTaps="handled">
                         <Text style={[styles.header, { zIndex: 0 }]}>Sign In</Text>
                         <Formik
@@ -81,7 +79,7 @@ return (
                             <>
                              <View style={{ width: "100%" }}> 
                                 <TextInput style={[styles.input, focusedInput === "email" && styles.input_focused]}
-                                placeholder="Email"
+                                  placeholder="Email"
                                   onChangeText={(value) => {
                                     setFirebaseError('')
                                     setFieldValue("email", value)
@@ -121,83 +119,15 @@ return (
   );
 };
 
-const styles = StyleSheet.create({
-  app: {
-    backgroundColor: colours.bg,
-    height: "100%",
-    width: "100%",
-  },
+const customStyles = StyleSheet.create({
   scroll: {
-    padding: 30,
-    marginTop: 30,
+    padding: 50,
+    paddingTop: 120,
+    paddingBottom: 120,
     flex: 1,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-    display: 'flex',
-    paddingTop: 50,
-    paddingBottom: 80,
-    paddingLeft: 20,
-    paddingRight: 20,
-    marginTop: 80,
-    width: "100%",
-    backgroundColor: colours.bg,
-    alignItems: "center",
-    justifyContent: "center",
-    
-  },
-  header: {
-    fontSize: 35,
-    fontWeight: "bold",
-    marginBottom: 25,
-    color: colours.accent1,
-  },
-  input: {
-    width: "100%",
-    borderColor: colours.accent4,
-    borderWidth: 1,
-    marginBottom: 10,
-    padding: 10,
-    color: colours.accent1,
-    
-  },
-  input_focused: {
-    borderColor: colours.accent4,
-    borderWidth: 2,
-  },
-  button: {
-    width: "60%",
-    alignItems: "center",
-    backgroundColor: colours.accent2,
-    padding: 15,
-    borderRadius: 5,
-    marginBottom: 5,
-  },
-  button__text: {
-    alignItems: "center",
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  textHide: {
-    width: 0,
-    height: 0,
-    overflow: "hidden",
-    opacity: 0
-  },
-  textShow: {
-    overflow: "hidden",
-    fontSize: 10,
-    color: 'red',
-    marginBottom: 10,
-  },
-  link: {
-    color: colours.accent2,
-    textDecorationLine: 'underline',
-    fontSize: 12,
-    
+    alignItems: 'center'
   }
 });
 

@@ -1,20 +1,20 @@
+'use strict';
 import { colours } from "../styles/base";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+    app: {
+        backgroundColor: colours.bg,
+        height: "100%",
+        width: "100%",
+      },
     scroll: {
-      padding: 30,
-      marginTop: 30,
-      flex: 1,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    container: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-    },
+        padding: 50,
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
     header: {
       fontSize: 35,
       fontWeight: "bold",
@@ -130,7 +130,19 @@ export const styles = StyleSheet.create({
       },
       errorInput: {
         borderColor: 'red',
-      }
+      },
+      link: {
+        color: colours.accent2,
+        textDecorationLine: 'underline',
+        fontSize: 12,
+      },
+      firebase__error: {
+        overflow: "hidden",
+        fontSize: 10,
+        color: 'red',
+        marginTop: -7,
+        alignItems: "center"
+    },
   });
 
   
