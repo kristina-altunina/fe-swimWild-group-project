@@ -102,7 +102,6 @@ export default function ApiDataSeaCard({apiData, uid}) {
             </>
         )
     }
-    console.log(selectedSite, 'look here')
 
     // Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO. Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
 
@@ -136,32 +135,32 @@ export default function ApiDataSeaCard({apiData, uid}) {
                             : (
                                 <View style={styles.expandedDataContainer}>
                                     <Text style={styles.expandedDataText}>
-                                        Date: {new Date(dataToDisplay.weather.values.datetimeStr).toDateString()}
+                                        Date: {new Date(dataToDisplay?.weather.values.datetimeStr).toDateString()}
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        Temperature: {dataToDisplay.hydrologyData.data[0].maxSurfaceTemp} °C
+                                        Temperature: {dataToDisplay?.hydrologyData.data[0].maxSurfaceTemp} °C
                                     </Text>
                                     <Text style={styles.displayText}>
-                                        Oxygen Saturation: {dataToDisplay.hydrologyData.data[1].mostRecentValue}%
+                                        Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1].mostRecentValue}%
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        Cloud Cover: {dataToDisplay.weather.values.cloudcover} %
+                                        Cloud Cover: {dataToDisplay?.weather.values.cloudcover} %
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        Visibility: {dataToDisplay.weather.values.visibility} mi
+                                        Visibility: {dataToDisplay?.weather.values.visibility} mi
                                     </Text>
-                                    { !!dataToDisplay.weather.values.snowdepth && (
+                                    { !!dataToDisplay?.weather.values.snowdepth && (
                                         <>
                                         <Text style={styles.expandedDataText}>
-                                            snowdepth: {dataToDisplay.weather.values.snowdepth} cm
+                                            snowdepth: {dataToDisplay?.weather.values.snowdepth} cm
                                         </Text>
                                         </>
                                     )}
                                     <Text style={styles.expandedDataText}>
-                                        Wind Speed: {dataToDisplay.weather.values.wspd} mph
+                                        Wind Speed: {dataToDisplay?.weather.values.wspd} mph
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        conditions: {dataToDisplay.weather.values.conditions}
+                                        conditions: {dataToDisplay?.weather.values.conditions}
                                     </Text>
                                 </View>
                             )
@@ -170,34 +169,42 @@ export default function ApiDataSeaCard({apiData, uid}) {
                     )
                     : (
                         <>
+                        {
+                            isLoading
+                            ? (
+                                <ActivityIndicator size='large'/>
+                            )
+                            : (
+                                <>
+                                <Dropdown
+                                data={siteData}
+                                labelField='label'
+                                valueField='value'
+                                placeholderStyle={styles.displayText}
+                                selectedTextStyle={styles.displayText}
+                                placeholder={'Hydrology Site: ' + siteData[selectedSite].label}
+                                onChange={item => {
+                                    console.log(item.value)
+                                    setSelectedSite(selectedSite => item.value)
+                                }}/>
 
-                            <Dropdown
-                            data={siteData}
-                            labelField='label'
-                            valueField='value'
-                            placeholderStyle={styles.displayText}
-                            selectedTextStyle={styles.displayText}
-                            placeholder={'Hydrology Site: ' + siteData[selectedSite].label}
-                            onChange={item => {
-                                console.log(item.value)
-                                setSelectedSite(selectedSite => item.value)
-                            }}/>
-
-                        <Text style={styles.displayText}>
-                            Site Id: {dataToDisplay.hydrologyData.siteId}
-                        </Text>
-                        <Text style={styles.displayText}>
-                            Temperature: {dataToDisplay?.hydrologyData.data[0].maxSurfaceTemp} °C
-                        </Text>
-                        <Text style={styles.displayText}>
-                            Oxygen Saturation: {dataToDisplay.hydrologyData.data[1].mostRecentValue}%
-                        </Text>
-                        <Text style={styles.highlightText}>
-                            See Forecast...
-                        </Text>
+                                <Text style={styles.displayText}>
+                                    Site Id: {dataToDisplay?.hydrologyData.siteId}
+                                </Text>
+                                <Text style={styles.displayText}>
+                                    Temperature: {dataToDisplay?.hydrologyData.data[0].maxSurfaceTemp} °C
+                                </Text>
+                                <Text style={styles.displayText}>
+                                    Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1].mostRecentValue}%
+                                </Text>
+                                <Text style={styles.highlightText}>
+                                    See Forecast...
+                                </Text>
+                                </>
+                            )
+                        }
                         </>
                     )
-                    
                 }
             </View>        
         </TouchableWithoutFeedback>
