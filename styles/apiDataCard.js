@@ -23,6 +23,10 @@ export const styles = StyleSheet.create({
     expandedDataText: {
         color: 'white'
     },
+    expandedDataTidesText: {
+        color: 'white',
+        marginLeft: '15%'
+    },
     forecastDates: {
         backgroundColor: colours.accent4,
         paddingHorizontal: '2%',

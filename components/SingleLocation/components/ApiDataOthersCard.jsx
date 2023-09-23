@@ -104,12 +104,10 @@ export default function ApiDataSeaCard({apiData, uid}) {
             </>
         )
     }
-    // Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO. Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
 
     return (
         <TouchableWithoutFeedback onPress={() => {
             handleShowForecast()
-            // setTest(test => !test)
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
         }}>
             <View style={styles.swimBot}>
@@ -119,27 +117,29 @@ export default function ApiDataSeaCard({apiData, uid}) {
                     </Text>
                     <TouchableOpacity
                     onPress={() => setPopupArr(popupArr => [...popupArr, 'forecast'])}>
-                        <Ionicons name="md-information-circle-outline" size={24} color="white" />
+                        <Ionicons name="md-information-circle-outline"
+                        size={24} color="white" />
                     </TouchableOpacity>
                 </View>
-                    <Modal
-                    visible={popupArr.includes('forecast')}
-                    transparent={true}
-                    >
-                        <TouchableOpacity
-                        onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'forecast'))}
-                        style={styles.popupContainerSetup}>
-                            <View style={styles.popupContainer}>
-                                <Text style={styles.popupTitle}>
-                                    Forecast
-                                </Text>
-                                <Text style={styles.popupDetails}>
-                                    These forecasted data are gathered from the displayed Hydrology site. If you wish to change the Hydrology Site, you can press on the site and choose from which site you want to get the data from.{'\n'}{'\n'}
-                                    You may also view the forcasted data within the week. Press on the Forecast data display and select from which day you wish to see.
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </Modal>
+                <Modal
+                visible={popupArr.includes('forecast')}
+                transparent={true}
+                animationType='slide'
+                >
+                    <TouchableOpacity
+                    onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'forecast'))}
+                    style={styles.popupContainerSetup}>
+                        <View style={styles.popupContainer}>
+                            <Text style={styles.popupTitle}>
+                                Forecast
+                            </Text>
+                            <Text style={styles.popupDetails}>
+                                These forecasted data are gathered from the displayed Hydrology site. If you wish to change the Hydrology Site, you can press on the site and choose from which site you want to get the data from.{'\n'}{'\n'}
+                                You may also view the forcasted data within the week. Press on the Forecast data display and select from which day you wish to see.
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
                 {
                     showForecast
                     ? (
@@ -148,7 +148,9 @@ export default function ApiDataSeaCard({apiData, uid}) {
                         {
                             dayBar.map((date, i) => {
                                 return (
-                                    <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>{date}</Text>
+                                    <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>
+                                        {date}
+                                    </Text>
                                 )
                             })
                         }
@@ -176,6 +178,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                         <Modal
                                         visible={popupArr.includes('oxygenSaturation')}
                                         transparent={true}
+                                        animationType='slide'
                                         >
                                             <TouchableOpacity
                                             onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'oxygenSaturation'))}
@@ -251,24 +254,25 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                         <Ionicons name="md-information-circle-outline" size={18} color="white" />
                                     </TouchableOpacity>
                                 </View>
-                                    <Modal
-                                    visible={popupArr.includes('oxygenSaturation')}
-                                    transparent={true}
-                                    >
-                                        <TouchableOpacity
-                                        onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'oxygenSaturation'))}
-                                        style={styles.popupContainerSetup}>
-                                            <View style={styles.popupContainer}>
-                                                <Text style={styles.popupTitle}>
-                                                    Oxygen Saturation
-                                                </Text>
-                                                <Text style={styles.popupDetails}>
-                                                Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO.{'\n'}{'\n'}
-                                                Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>    
-                                    </Modal>
+                                <Modal
+                                visible={popupArr.includes('oxygenSaturation')}
+                                transparent={true}
+                                animationType='slide'
+                                >
+                                    <TouchableOpacity
+                                    onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'oxygenSaturation'))}
+                                    style={styles.popupContainerSetup}>
+                                        <View style={styles.popupContainer}>
+                                            <Text style={styles.popupTitle}>
+                                                Oxygen Saturation
+                                            </Text>
+                                            <Text style={styles.popupDetails}>
+                                            Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO.{'\n'}{'\n'}
+                                            Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>    
+                                </Modal>
                                 <Text style={styles.highlightText}>
                                     See Forecast...
                                 </Text>

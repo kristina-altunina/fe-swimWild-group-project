@@ -1,14 +1,23 @@
 import { styles } from '../../../styles/apiDataCard'
 import { useEffect, useState } from "react"
-import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator } from "react-native"
+import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator, Modal, TouchableOpacity } from "react-native"
 import { getLocationByID } from '../../../scripts/axios'
+import Ionicons from '@expo/vector-icons/Ionicons'
 
 export default function ApiDataSeaCard({apiData, uid}) {
     const [showForecast, setShowForecast] = useState(false)
-    const [selectedForecastDate, setSelectedForecastDate] = useState(1)
+    const [selectedForecastDate, setSelectedForecastDate] = useState('Today')
     const [dataToDisplay, setDataToDisplay] = useState({})
     const [isLoading, setIsLoading] = useState(false);
-    const day = [1,2,3,4,5,6,7];
+    const [dayBar, setDayBar] = useState(['Today']);
+    const [popupArr, setPopupArr] = useState([]);
+    const daysRef = ['Mon',
+                'Tue',
+                'Wed',
+                'Thurs',
+                'Fri',
+                'Sat',
+                'Sun']
 
     useEffect(() => {
         setIsLoading(isLoading => !isLoading)
@@ -17,12 +26,36 @@ export default function ApiDataSeaCard({apiData, uid}) {
             setIsLoading(isLoading => !isLoading)
             return apiData
         })
-        : getLocationByID(uid, day.indexOf(selectedForecastDate))
+        : getLocationByID(uid, dayBar.indexOf(selectedForecastDate))
         .then(({apiData}) => {
             setIsLoading(isLoading => !isLoading)
             setDataToDisplay(dataToDisplay => apiData)
         })
-    }, [selectedForecastDate])
+        .catch(err => {
+            console.log(err)
+        })
+    }, [selectedForecastDate, setDataToDisplay])
+
+    useEffect(() => {
+        if(dayBar.length !== 7) {
+            setDayBar(dayBar => {
+                let currentDay = daysRef.indexOf(new Date(apiData.weather.values.datetimeStr).toDateString().split(' ')[0]);
+                const arr = [];
+    
+                while(arr.length !== 6) {
+                    if(currentDay < 6) {
+                        currentDay++
+                        arr.push(daysRef[currentDay])
+                    } else {
+                        currentDay = 0
+                        arr.push(daysRef[currentDay])
+                    }
+                }
+    
+                return [...dayBar, ...arr]
+            })
+        }
+    },[])
     
     function handleShowForecast() {
         setShowForecast(showForecast => !showForecast)
@@ -35,7 +68,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
     }
 
     function handleForecastDateStyle(i) {
-        if(i === day.indexOf(selectedForecastDate)) {
+        if(i === dayBar.indexOf(selectedForecastDate)) {
             return styles.selectedForecastDate
         } else {
             return styles.forecastDates
@@ -49,13 +82,22 @@ export default function ApiDataSeaCard({apiData, uid}) {
             </>
         )
     }
-
-    console.log(new Date(dataToDisplay.tides.highTides[0]).toTimeString().split(' ')[0])
-
+    
     return (
         <TouchableWithoutFeedback onPress={() => {
             handleShowForecast()
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+            LayoutAnimation.configureNext({
+                duration: 300,
+                create: 
+                {
+                   type: LayoutAnimation.Types.easeInEaseOut,
+                   property: LayoutAnimation.Properties.opacity,
+                },
+                update: 
+                {
+                   type: LayoutAnimation.Types.easeInEaseOut,
+                }
+               })
         }}>
             <View style={styles.swimBot}>
                 <Text style={styles.titleText}>
@@ -67,9 +109,11 @@ export default function ApiDataSeaCard({apiData, uid}) {
                         <>
                         <View style={styles.forecastDatesContainer}>
                         {
-                            day.map((date, i) => {
+                            dayBar.map((date, i) => {
                                 return (
-                                    <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>Day {date}</Text>
+                                    <Text style={handleForecastDateStyle(i)} key={i} onPress={() => handleSelectedForecast(date)}>
+                                        {date}
+                                    </Text>
                                 )
                             })
                         }
@@ -82,51 +126,63 @@ export default function ApiDataSeaCard({apiData, uid}) {
                             : (
                                 <View style={styles.expandedDataContainer}>
                                     <Text style={styles.expandedDataText}>
-                                        datetimeStr: {new Date(dataToDisplay.weather.values.datetimeStr).toDateString()}
+                                        Date: {new Date(dataToDisplay?.weather.values.datetimeStr).toDateString()}
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        Temperature: {dataToDisplay.tempCelsius} °C
+                                        Temperature: {dataToDisplay?.tempCelsius} °C
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        Max Wave: {dataToDisplay.waveData.maxWave}
+                                        Max Wave: {dataToDisplay?.waveData.maxWave}
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        Max Wave Period: {dataToDisplay.waveData.maxWavePeriod}
+                                        Max Wave Period: {dataToDisplay?.waveData.maxWavePeriod}
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        Cloud Cover: {dataToDisplay.weather.values.cloudcover} %
+                                        Cloud Cover: {dataToDisplay?.weather.values.cloudcover} %
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        visibility: {dataToDisplay.weather.values.visibility} mi
-                                    </Text>
-                                    <Text style={styles.expandedDataText}>
-                                        snowdepth: {dataToDisplay.weather.values.snowdepth} cm
-                                    </Text>
-                                    <Text style={styles.expandedDataText}>
-                                        Wind Speed: {dataToDisplay.weather.values.wspd} mph
-                                    </Text>
-                                    <Text style={styles.expandedDataText}>
-                                        conditions: {dataToDisplay.weather.values.conditions}
-                                    </Text>
-                                    <Text style={styles.expandedDataText}>
-                                        High Tide:
+                                        Visibility: {dataToDisplay?.weather.values.visibility} mi
                                     </Text>
                                     {
-                                        dataToDisplay.tides.highTides.map((time, i) => {
-                                            return (
-                                                <Text style={styles.expandedDataText} key={i}>
-                                                    {new Date(time).toTimeString().split(' ')[0]}
-                                                </Text>
-                                            )
-                                        })
+                                        !!dataToDisplay?.weather.values.snowdepth && (
+                                            <>
+                                            <Text style={styles.expandedDataText}>
+                                                Snow depth: {dataToDisplay?.weather.values.snowdepth} cm
+                                            </Text>
+                                            </>
+                                        )
+                                    }
+                                    <Text style={styles.expandedDataText}>
+                                        Wind Speed: {dataToDisplay?.weather.values.wspd} mph
+                                    </Text>
+                                    <Text style={styles.expandedDataText}>
+                                        Conditions: {dataToDisplay?.weather.values.conditions}
+                                    </Text>
+                                    {
+                                        dataToDisplay?.tides.highTides.length && (
+                                            <>
+                                            <Text style={styles.expandedDataText}>
+                                                High Tide:
+                                            </Text>
+                                            {
+                                                dataToDisplay?.tides.highTides.map((time, i) => {
+                                                return (
+                                                    <Text style={styles.expandedDataTidesText} key={i}>
+                                                        {new Date(time).toTimeString().split(' ')[0]}
+                                                    </Text>
+                                                    )
+                                                })
+                                            }
+                                            </>
+                                        )
                                     }
                                     <Text style={styles.expandedDataText}>
                                         Low Tide:
                                     </Text>
                                     {
-                                        dataToDisplay.tides.lowTides.map((time, i) => {
+                                        dataToDisplay?.tides.lowTides.map((time, i) => {
                                             return (
-                                                <Text style={styles.expandedDataText} key={i}>
+                                                <Text style={styles.expandedDataTidesText} key={i}>
                                                     {new Date(time).toTimeString().split(' ')[0]}
                                                 </Text>
                                             )
@@ -139,21 +195,80 @@ export default function ApiDataSeaCard({apiData, uid}) {
                     )
                     : (
                         <>
-                        <Text style={styles.displayText}>
-                            Temperature: {dataToDisplay.tempCelsius} °C
-                        </Text>
-                        <Text style={styles.displayText}>
-                            Max Wave: {dataToDisplay.waveData.maxWave}
-                        </Text>
-                        <Text style={styles.displayText}>
-                            Max Wave Period: {dataToDisplay.waveData.maxWavePeriod}
-                        </Text>
-                        <Text style={styles.highlightText}>
-                            See Forecast...
-                        </Text>
+                        {
+                            isLoading
+                            ? (
+                                <ActivityIndicator size='large'/>
+                            )
+                            : (
+                                <>
+                                <Text style={styles.displayText}>
+                                    Temperature: {dataToDisplay?.tempCelsius} °C
+                                </Text>
+                                <View style={styles.textWithInfoContainer}>
+                                    <Text style={styles.displayText}>
+                                        Max Wave: {dataToDisplay?.waveData.maxWave}
+                                    </Text>
+                                    <TouchableOpacity
+                                    onPress={() => setPopupArr(popupArr => [...popupArr, 'maxWave'])} >
+                                        <Ionicons
+                                        name="md-information-circle-outline"
+                                        size={24} color="white" />
+                                    </TouchableOpacity>
+                                </View>
+                                <Modal
+                                visible={popupArr.includes('maxWave')}
+                                transparent={true}
+                                animationType='slide'>
+                                    <TouchableOpacity
+                                    onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'maxWave'))}
+                                    style={styles.popupContainerSetup}>
+                                        <View style={styles.popupContainer}>
+                                            <Text style={styles.popupTitle}>
+                                                Max Wave
+                                            </Text>
+                                            <Text style={styles.popupDetails}>
+                                            Wave height is affected by wind speed, wind duration (or how long the wind blows), and fetch, which is the distance over water that the wind blows in a single direction. If wind speed is slow, only small waves result, regardless of wind duration or fetch.
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </Modal>
+                                <View style={styles.textWithInfoContainer}>
+                                    <Text style={styles.displayText}>
+                                        Max Wave Period: {dataToDisplay?.waveData.maxWavePeriod}
+                                    </Text>
+                                    <TouchableOpacity
+                                    onPress={() => setPopupArr(popupArr => [...popupArr, 'maxWavePeriod'])}>
+                                        <Ionicons
+                                        name="md-information-circle-outline"
+                                        size={24} color="white" />
+                                    </TouchableOpacity>
+                                </View>
+                                <Modal
+                                visible={popupArr.includes('maxWavePeriod')}
+                                transparent={true}
+                                animationType='slide'>
+                                    <TouchableOpacity
+                                    onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'maxWavePeriod'))}
+                                    style={styles.popupContainerSetup}>
+                                        <View style={styles.popupContainer}>
+                                            <Text style={styles.popupTitle}>
+                                                Max Wave Period
+                                            </Text>
+                                            <Text style={styles.popupDetails}>
+                                                Wave period is measured in seconds and is the gap between one wave and the next. Simply said the wave period is the amount in seconds that pass between each wave. The higher the wave period, the more energy in the swell and so the larger the wave and more often than not this results in better quality waves for surfing.
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </Modal>
+                                <Text style={styles.highlightText}>
+                                    See Forecast...
+                                </Text>
+                                </>
+                            )
+                        }
                         </>
                     )
-                    
                 }
             </View>        
         </TouchableWithoutFeedback>

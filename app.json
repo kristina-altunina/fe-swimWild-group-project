@@ -18,13 +18,18 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets."
-      }
+      },
+      "bundleIdentifier": "com.anonymous.AwesomeProject"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.anonymous.AwesomeProject"
     },
     "web": {
       "favicon": "./assets/favicon.png"
