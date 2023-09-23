@@ -14,7 +14,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
     const [dayBar, setDayBar] = useState(['Today']);
     const [siteData, setSiteData] = useState([])
     const [selectedSite, setSelectedSite] = useState(0);
-    const [test, setTest] = useState(false)
+    const [popupArr, setPopupArr] = useState([])
     const daysRef = ['Mon',
                 'Tue',
                 'Wed',
@@ -105,7 +105,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
         )
     }
     // Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO. Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
-
+    
     return (
         <TouchableWithoutFeedback onPress={() => {
             handleShowForecast()
@@ -113,23 +113,31 @@ export default function ApiDataSeaCard({apiData, uid}) {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
         }}>
             <View style={styles.swimBot}>
-                <View style={styles.textWithInfo}>
+                <View style={styles.textWithInfoContainer}>
                     <Text style={styles.titleText}>
                         Forecast
                     </Text>
-                    <TouchableOpacity onPress={() => setTest(test => !test)}>
+                    <TouchableOpacity onPress={() => setPopupArr(popupArr => [...popupArr, 'forecast'])}>
                         <Ionicons name="md-information-circle-outline" size={24} color="white" />
                     </TouchableOpacity>
                     
                 </View>
                     <Modal
-                    visible={test}
+                    visible={popupArr.includes('forecast')}
+                    transparent={true}
                     >
-                        <TouchableOpacity onPress={() => setTest(test => !test)}
-                        style={{width: '100%',
-                        height: '100%',
-                        backgroundColor: 'red'}}>
-                        <Text>test</Text>
+                        <TouchableOpacity onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'forecast'))}
+                        style={styles.popupContainerSetup}>
+                            <View style={styles.popupContainer}>
+                                <Text style={styles.popupTitle}>
+                                    Forecast
+                                </Text>
+                                <Text style={styles.popupDetails}>
+                                    These forecasted data are gathered from the displayed Hydrology site. If you wish to change the Hydrology Site, you can press on the site and choose from which site you want to get the data from.{'\n'}{'\n'}
+                                    You may also view the forcasted data within the week. Press on the Forecast data display and select from which day you wish to see.
+                                </Text>
+                            </View>
+                        
                         </TouchableOpacity>
                         
                     </Modal>
@@ -158,10 +166,10 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                         Date: {new Date(dataToDisplay?.weather.values.datetimeStr).toDateString()}
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        Temperature: {dataToDisplay?.hydrologyData.data[0].maxSurfaceTemp} °C
+                                        Temperature: {dataToDisplay?.hydrologyData.data[0]?.maxSurfaceTemp} °C
                                     </Text>
                                     <Text style={styles.displayText}>
-                                        Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1].mostRecentValue}%
+                                        Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1]?.mostRecentValue}%
                                     </Text>
                                     <Text style={styles.expandedDataText}>
                                         Cloud Cover: {dataToDisplay?.weather.values.cloudcover} %
@@ -212,10 +220,10 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                     Site Id: {dataToDisplay?.hydrologyData.siteId}
                                 </Text>
                                 <Text style={styles.displayText}>
-                                    Temperature: {dataToDisplay?.hydrologyData.data[0].maxSurfaceTemp} °C
+                                    Temperature: {dataToDisplay?.hydrologyData.data[0]?.maxSurfaceTemp} °C
                                 </Text>
                                 <Text style={styles.displayText}>
-                                    Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1].mostRecentValue}%
+                                    Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1]?.mostRecentValue}%
                                 </Text>
                                 <Text style={styles.highlightText}>
                                     See Forecast...
