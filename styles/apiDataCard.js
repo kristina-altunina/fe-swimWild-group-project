@@ -56,8 +56,18 @@ export const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderWidth: 0.5
     },
+    exclamationMarkIcon: {
+        height: 100,
+        width: 100
+    },
     expandedDataText: {
         color: 'white'
+    },
+    textWithInfo: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 5,
+        justifyContent: 'center'
     },
     showContent: {
         opacity:1

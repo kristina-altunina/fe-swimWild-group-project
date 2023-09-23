@@ -1,8 +1,10 @@
 import { styles } from '../../../styles/apiDataCard'
 import { useEffect, useState } from "react"
-import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator, TouchableOpacity } from "react-native"
+import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator, Modal, Image,TouchableOpacity } from "react-native"
 import { getLocationByID } from '../../../scripts/axios'
 import { Dropdown } from 'react-native-element-dropdown'
+import Ionicons from '@expo/vector-icons/Ionicons'
+
 
 export default function ApiDataSeaCard({apiData, uid}) {
     const [showForecast, setShowForecast] = useState(false);
@@ -12,6 +14,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
     const [dayBar, setDayBar] = useState(['Today']);
     const [siteData, setSiteData] = useState([])
     const [selectedSite, setSelectedSite] = useState(0);
+    const [test, setTest] = useState(false)
     const daysRef = ['Mon',
                 'Tue',
                 'Wed',
@@ -68,7 +71,6 @@ export default function ApiDataSeaCard({apiData, uid}) {
         setIsLoading(isLoading => !isLoading)
         getLocationByID(uid, dayBar.indexOf(selectedForecastDate), selectedSite)
         .then(({apiData}) => {
-            console.log('here')
             setIsLoading(isLoading => !isLoading)
             setDataToDisplay(dataToDisplay => apiData)
         })
@@ -102,18 +104,36 @@ export default function ApiDataSeaCard({apiData, uid}) {
             </>
         )
     }
-
     // Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO. Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
 
     return (
         <TouchableWithoutFeedback onPress={() => {
             handleShowForecast()
+            // setTest(test => !test)
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
         }}>
             <View style={styles.swimBot}>
-                <Text style={styles.titleText}>
-                            Forecast
-                </Text>
+                <View style={styles.textWithInfo}>
+                    <Text style={styles.titleText}>
+                        Forecast
+                    </Text>
+                    <TouchableOpacity onPress={() => setTest(test => !test)}>
+                        <Ionicons name="md-information-circle-outline" size={24} color="white" />
+                    </TouchableOpacity>
+                    
+                </View>
+                    <Modal
+                    visible={test}
+                    >
+                        <TouchableOpacity onPress={() => setTest(test => !test)}
+                        style={{width: '100%',
+                        height: '100%',
+                        backgroundColor: 'red'}}>
+                        <Text>test</Text>
+                        </TouchableOpacity>
+                        
+                    </Modal>
+                
                 {
                     showForecast
                     ? (
