@@ -1,6 +1,6 @@
 import { styles } from '../../../styles/apiDataCard'
 import { useEffect, useState } from "react"
-import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator, Modal, Image,TouchableOpacity } from "react-native"
+import { TouchableWithoutFeedback, Text, View, LayoutAnimation, ActivityIndicator, Modal,TouchableOpacity } from "react-native"
 import { getLocationByID } from '../../../scripts/axios'
 import { Dropdown } from 'react-native-element-dropdown'
 import Ionicons from '@expo/vector-icons/Ionicons'
@@ -105,7 +105,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
         )
     }
     // Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO. Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
-    
+
     return (
         <TouchableWithoutFeedback onPress={() => {
             handleShowForecast()
@@ -113,20 +113,21 @@ export default function ApiDataSeaCard({apiData, uid}) {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
         }}>
             <View style={styles.swimBot}>
-                <View style={styles.textWithInfoContainer}>
+                <View style={styles.textWithInfoContainerCentered}>
                     <Text style={styles.titleText}>
                         Forecast
                     </Text>
-                    <TouchableOpacity onPress={() => setPopupArr(popupArr => [...popupArr, 'forecast'])}>
+                    <TouchableOpacity
+                    onPress={() => setPopupArr(popupArr => [...popupArr, 'forecast'])}>
                         <Ionicons name="md-information-circle-outline" size={24} color="white" />
                     </TouchableOpacity>
-                    
                 </View>
                     <Modal
                     visible={popupArr.includes('forecast')}
                     transparent={true}
                     >
-                        <TouchableOpacity onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'forecast'))}
+                        <TouchableOpacity
+                        onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'forecast'))}
                         style={styles.popupContainerSetup}>
                             <View style={styles.popupContainer}>
                                 <Text style={styles.popupTitle}>
@@ -137,11 +138,8 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                     You may also view the forcasted data within the week. Press on the Forecast data display and select from which day you wish to see.
                                 </Text>
                             </View>
-                        
                         </TouchableOpacity>
-                        
                     </Modal>
-                
                 {
                     showForecast
                     ? (
@@ -168,11 +166,34 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                     <Text style={styles.expandedDataText}>
                                         Temperature: {dataToDisplay?.hydrologyData.data[0]?.maxSurfaceTemp} °C
                                     </Text>
-                                    <Text style={styles.displayText}>
-                                        Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1]?.mostRecentValue}%
-                                    </Text>
+                                    <View style={styles.textWithInfoContainer}>
+                                        <Text style={styles.displayText}>
+                                            Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1]?.mostRecentValue}%
+                                        </Text>
+                                        <TouchableOpacity onPress={() => setPopupArr(popupArr => [...popupArr, 'oxygenSaturation'])}>
+                                            <Ionicons name="md-information-circle-outline" size={18} color="white" />
+                                        </TouchableOpacity>
+                                        <Modal
+                                        visible={popupArr.includes('oxygenSaturation')}
+                                        transparent={true}
+                                        >
+                                            <TouchableOpacity
+                                            onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'oxygenSaturation'))}
+                                            style={styles.popupContainerSetup}>
+                                                <View style={styles.popupContainer}>
+                                                    <Text style={styles.popupTitle}>
+                                                        Oxygen Saturation
+                                                    </Text>
+                                                    <Text style={styles.popupDetails}>
+                                                    Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO.{'\n'}{'\n'}
+                                                    Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>    
+                                        </Modal>
+                                    </View>
                                     <Text style={styles.expandedDataText}>
-                                        Cloud Cover: {dataToDisplay?.weather.values.cloudcover} %
+                                        Cloud Cover: {dataToDisplay?.weather.values.cloudcover}%
                                     </Text>
                                     <Text style={styles.expandedDataText}>
                                         Visibility: {dataToDisplay?.weather.values.visibility} mi
@@ -188,7 +209,7 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                         Wind Speed: {dataToDisplay?.weather.values.wspd} mph
                                     </Text>
                                     <Text style={styles.expandedDataText}>
-                                        conditions: {dataToDisplay?.weather.values.conditions}
+                                        Conditions: {dataToDisplay?.weather.values.conditions}
                                     </Text>
                                 </View>
                             )
@@ -210,21 +231,44 @@ export default function ApiDataSeaCard({apiData, uid}) {
                                 valueField='value'
                                 placeholderStyle={styles.displayText}
                                 selectedTextStyle={styles.displayText}
+                                iconColor='white'
                                 placeholder={'Hydrology Site: ' + siteData[selectedSite].label}
                                 onChange={item => {
                                     console.log(item.value)
                                     setSelectedSite(selectedSite => item.value)
-                                }}/>
-
+                                }}/>                                
                                 <Text style={styles.displayText}>
                                     Site Id: {dataToDisplay?.hydrologyData.siteId}
                                 </Text>
                                 <Text style={styles.displayText}>
                                     Temperature: {dataToDisplay?.hydrologyData.data[0]?.maxSurfaceTemp} °C
                                 </Text>
-                                <Text style={styles.displayText}>
-                                    Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1]?.mostRecentValue}%
-                                </Text>
+                                <View style={styles.textWithInfoContainer}>
+                                    <Text style={styles.displayText}>
+                                        Oxygen Saturation: {dataToDisplay?.hydrologyData.data[1]?.mostRecentValue}%
+                                    </Text>
+                                    <TouchableOpacity onPress={() => setPopupArr(popupArr => [...popupArr, 'oxygenSaturation'])}>
+                                        <Ionicons name="md-information-circle-outline" size={18} color="white" />
+                                    </TouchableOpacity>
+                                </View>
+                                    <Modal
+                                    visible={popupArr.includes('oxygenSaturation')}
+                                    transparent={true}
+                                    >
+                                        <TouchableOpacity
+                                        onPress={() => setPopupArr(popupArr => popupArr.filter(item => item !== 'oxygenSaturation'))}
+                                        style={styles.popupContainerSetup}>
+                                            <View style={styles.popupContainer}>
+                                                <Text style={styles.popupTitle}>
+                                                    Oxygen Saturation
+                                                </Text>
+                                                <Text style={styles.popupDetails}>
+                                                Water at lower temperatures should have higher mg/L of dissolved oxygen and higher %DO while warmer, polluted waters will have lower mg/L and %DO.{'\n'}{'\n'}
+                                                Healthy water should generally have dissolved oxygen concentrations above 6.5-8 mg/L and between about 80-120 %.
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>    
+                                    </Modal>
                                 <Text style={styles.highlightText}>
                                     See Forecast...
                                 </Text>

@@ -89,11 +89,18 @@ export const styles = StyleSheet.create({
     showContent: {
         opacity:1
     },
+    textWithInfoContainerCentered: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 5,
+        justifyContent: 'center',
+        alignItems:'center'
+    },
     textWithInfoContainer: {
         display: 'flex',
         flexDirection: 'row',
         gap: 5,
-        justifyContent: 'center'
+        alignItems:'center'
     },
     titleText: {
         fontSize: 25,
