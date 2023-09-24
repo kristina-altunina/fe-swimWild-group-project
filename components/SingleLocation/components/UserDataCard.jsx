@@ -35,11 +35,11 @@ export default function UserDataCard({userData}) {
                 Object.entries(data).map((pair, i) => {
                     const dataName = pair[0][0].toUpperCase() + pair[0].split('').slice(1).join('')
                     return (
-                        <>
-                        <Text key={i} style={styles.marginLeft}>
+                        <View key={i}>
+                        <Text style={styles.marginLeft}>
                             {dataName} : {pair[1]}
                         </Text>
-                        </>
+                        </View>
                     )
                 })
             }
@@ -51,7 +51,7 @@ export default function UserDataCard({userData}) {
         <>
         <TouchableWithoutFeedback onPress={() => {
             handleExpandUserData()
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.linear)
         }}>
             {
                 !Object.keys(userData).length
@@ -63,25 +63,43 @@ export default function UserDataCard({userData}) {
                         <Text style={styles.titleText}>
                             Swimmers Average Reviews
                         </Text>
-                        <StarRatingDisplay
-                            num={userData.avStars}/>
-                        <Text style={styles.displayText}>
-                            Out of Depth: {`${userData.outOfDepth}` || 'No Swimmer Review yet'}
-                        </Text>
-                        <Text style={styles.displayText}>
-                            Average Minutes: {`${userData.avMins} mins` || 'No Swimmer Review yet'}
-                        </Text>
-                        <Text style={styles.displayText}>
-                            Most recent temp from swimmer: {`${userData.mostRecentTemp.temp}°C last` || 'No Swimmer Review yet'} {userData.mostRecentTemp.temp
-                            ? new Date(userData.mostRecentTemp.date).toDateString()
-                            : ''}
-                        </Text>
-                        <Text style={expandUserData ? styles.hideContent : styles.showContent}>
-                            See More Details..
-                        </Text>
-                        {expandUserData && (
-                            <View style={styles.expandedData}>
-                                
+                        {
+                            !expandUserData
+                            ? (
+                                <>
+                                <StarRatingDisplay
+                                    num={userData.avStars}/>
+                                <Text style={styles.displayText}>
+                                    Out of Depth: {`${userData.outOfDepth}` || 'No Swimmer Review yet'}
+                                </Text>
+                                <Text style={styles.displayText}>
+                                    Average Minutes: {`${userData.avMins} mins` || 'No Swimmer Review yet'}
+                                </Text>
+                                <Text style={styles.displayText}>
+                                    Most recent temp from swimmer: {`${userData.mostRecentTemp.temp}°C last` || 'No Swimmer Review yet'} {userData.mostRecentTemp.temp
+                                    ? new Date(userData.mostRecentTemp.date).toDateString()
+                                    : ''}
+                                </Text>
+                                <Text style={expandUserData ? styles.hideContent : styles.showContent}>
+                                    See More Details..
+                                </Text>
+                                </>
+                            )
+                            : (
+                                <View style={styles.expandedData}>
+                                    <StarRatingDisplay
+                                    num={userData.avStars}/>
+                                <Text style={styles.displayText}>
+                                    Out of Depth: {`${userData.outOfDepth}` || 'No Swimmer Review yet'}
+                                </Text>
+                                <Text style={styles.displayText}>
+                                    Average Minutes: {`${userData.avMins} mins` || 'No Swimmer Review yet'}
+                                </Text>
+                                <Text style={styles.displayText}>
+                                    Most recent temp from swimmer: {`${userData.mostRecentTemp.temp}°C last` || 'No Swimmer Review yet'} {userData.mostRecentTemp.temp
+                                    ? new Date(userData.mostRecentTemp.date).toDateString()
+                                    : ''}
+                                </Text>
                                 {
                                     Object.keys(userData.feelTemps).length && (
                                         <>
@@ -142,9 +160,11 @@ export default function UserDataCard({userData}) {
                                         </>
                                     )
                                 }
-                            </View>
-                )}
-            </View>
+                                </View>
+                            )
+                        }
+
+                    </View>
                 )
             }
         </TouchableWithoutFeedback>
