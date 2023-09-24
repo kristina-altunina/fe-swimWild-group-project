@@ -19,9 +19,6 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 3
     },
-    starRatingStyle: {
-
-    },
     swimReviewItem: {
         padding: '2%',
         backgroundColor: 'white',

@@ -84,7 +84,7 @@ function HomeScreen({navigation}) {
           >
             <Text>Sign Up</Text>
           </TouchableOpacity>
-          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650dd24c667ea748708385ad'})}}></Button>
+          <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650dd24c667ea748708385aa'})}}></Button>
         </ScrollView>          
       </View>
       </KeyboardAwareScrollView>

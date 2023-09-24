@@ -33,6 +33,18 @@ export const styles = StyleSheet.create({
     hideContent: {
         opacity: 0,
         height: 0
+    },flexRow: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    starRatingDisplay: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 3
+    }, marginLeft: {
+        color: 'white',
+        marginLeft: '5%'
     }
 })
 
