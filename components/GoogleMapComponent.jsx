@@ -2,10 +2,10 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 
-export default function GoogleMapComponent({ onRegionChange, region, locations }) {
+export default function GoogleMapComponent({ onRegionChange, region, children }) {
 	return (
 		<MapView
-			style={{ flex: 3 }}
+			style={{ flex: 1 }}
 			onRegionChangeComplete={onRegionChange}
 			region={region}
 			initialRegion={{
@@ -15,22 +15,7 @@ export default function GoogleMapComponent({ onRegionChange, region, locations }
 				longitudeDelta: 10,
 			}}
 		>
-			{
-				(locations || []).map((location) => {
-					console.log('Location: ', location);
-					return (
-						<Marker
-							key={location._id}
-							coordinate={{
-								latitude: location.coords[0],
-								longitude: location.coords[1],
-							}}
-							title={location.name}
-							description={location.type}
-						/>
-					)
-				})
-			}
+			{children}
 		</MapView>
 	)
 }

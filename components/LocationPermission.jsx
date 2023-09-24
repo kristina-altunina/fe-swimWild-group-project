@@ -13,13 +13,12 @@ export default function LocationPermission({ onPermissionChange }) {
 					onPermissionChange(status === 'granted')
 				})
 				.catch((error) => {
-					console.log('here');
 					console.error('Error in requesting permission: ', error);
 					onPermissionChange(false);
 				});
 		};
 		requestPermission();
-	}, [onPermissionChange]);
+	}, []);
 
 	if (permission === 'granted') return <Text>Permission Granted</Text>;
 	if (permission === 'denied') return <Text>Permission Denied</Text>;

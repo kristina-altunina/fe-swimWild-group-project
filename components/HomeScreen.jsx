@@ -3,12 +3,14 @@ import { View, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import { getDistance } from 'geolib';
+import { Marker } from 'react-native-maps';
 import LocationSearch from './LocationSearch';
 import GoogleMapComponent from './GoogleMapComponent';
 import LocationPermission from './LocationPermission';
 
-
 export default function HomeScreen() {
+	const [noLocationsFound, setNoLocationsFound] = useState(false);
+	const [userLocation, setUserLocation] = useState(null);
 	const [locations, setLocations] = useState([]);
 	const instance = axios.create({
 		baseURL: 'https://spike-auth-server.onrender.com/',
@@ -21,11 +23,14 @@ export default function HomeScreen() {
 		longitudeDelta: 10,
 	});
 
-	const handleLocationSelect = (location) => {
+	const handleRegionSelect = (selectedRegion) => {
+		// Convert the selected location from the search into a region format and set it
+		console.log('SELECTED_REGION: ', selectedRegion);
 		setRegion({
-			...region,
-			latitude: location.latitude,
-			longitude: location.longitude,
+			latitude: selectedRegion.latitude,
+			longitude: selectedRegion.longitude,
+			latitudeDelta: 0.0922,
+			longitudeDelta: 0.0421,
 		});
 	};
 
@@ -33,9 +38,11 @@ export default function HomeScreen() {
 		if (isGranted) {
 			Location.getCurrentPositionAsync({})
 				.then(({ coords }) => {
-					setRegion({
-						latitude: coords.latitude,
-						longitude: coords.longitude,
+					const { latitude, longitude } = coords; //<--
+					console.log('CURRENT_LOCATION: ', { coords });
+					setUserLocation({
+						latitude, //<--
+						longitude,//<--
 						latitudeDelta: 0.0922,
 						longitudeDelta: 0.0421,
 					});
@@ -44,12 +51,19 @@ export default function HomeScreen() {
 				.then(({ data }) => {
 					const filteredLocations = data.filter(location => {
 						const distance = getDistance(
-							{ latitude: region.latitude, longitude: region.longitude },
+							{ latitude, longitude },
+							// { latitude: userLocation.latitude, longitude: userLocation.longitude },
 							{ latitude: location.coords[0], longitude: location.coords[1] }
-						);
-						return distance <= 10000; // 10 km
+						) / 1000;
+						return distance <= 1000; //  km
 					});
-					setLocations(filteredLocations);
+					if (filteredLocations.length === 0) {
+						setNoLocationsFound(true)
+					} else {
+						setLocations(filteredLocations);
+						setNoLocationsFound(false)
+						console.log('FILTERED_LOCATIONS: ', filteredLocations[0].name);
+					}
 				})
 				.catch((error) => {
 					console.error('Error in fetching location or locations: ', error);
@@ -61,9 +75,10 @@ export default function HomeScreen() {
 				latitudeDelta: 10,
 				longitudeDelta: 10,
 			});
-			instance.get(`locations?lat=${region.latitude}&lon=${region.longitude}&limit=5`)
+			instance.get(`locations?lat=${region.latitude}&lon=${region.longitude}&limit=6`)
 				.then(({ data }) => {
 					setLocations(data);
+					console.log('TOP_LOCATIONS: ', data[0].name);
 				})
 				.catch((error) => {
 					console.error('Error fetching popular locations: ', error);
@@ -71,15 +86,43 @@ export default function HomeScreen() {
 		}
 	};
 
+	const handleRegionChange = (newRegion) => {
+		console.log('CHANGE_REGION: ', newRegion);
+		setRegion(newRegion);
+	}
+
 	return (
 		<View style={styles.container}>
 			<LocationPermission onPermissionChange={handlePermissionChange} />
-			<LocationSearch onSelect={handleLocationSelect} />
+			<LocationSearch onSelect={handleRegionSelect} />
 			<GoogleMapComponent
 				region={region}
-				onRegionChange={(newRegion) => setRegion(newRegion)}
-				locations={locations}
-			/>
+				onRegionChange={handleRegionChange}
+			>
+				{userLocation && (
+					<Marker
+						coordinate={{
+							latitude: userLocation.latitude,
+							longitude: userLocation.longitude,
+						}}
+						title="You are here!"
+					/>
+				)}
+				{
+					(locations || []).map((location) => (
+						<Marker
+							key={location._id}
+							coordinate={{
+								latitude: location.coords[0],
+								longitude: location.coords[1],
+							}}
+							title={location.name}
+							description={location.type}
+						/>
+					))
+				}
+			</GoogleMapComponent>
+			{noLocationsFound && <Text style={styles.noLocationsText}>No locations found nearby!</Text>}
 		</View>
 	);
 }
@@ -89,5 +132,12 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		backgroundColor: 'fff'
+	},
+	noLocationsText: {
+		color: 'red',
+		fontSize: 16,
+		textAlign: 'center',
+		margin: 10,
 	},
 });

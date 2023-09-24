@@ -17,6 +17,7 @@ export default function LocationSearch({ onSelect }) {
 			.then((data) => {
 				if (data.results && data.results.length > 0) {
 					const location = data.results[0].geometry.location;
+					console.log('SEARCH_NEW_REGION: ', location);
 					onSelect({
 						latitude: location.lat,
 						longitude: location.lng
