@@ -4,11 +4,6 @@ import { colours } from "./base"
 export const styles = StyleSheet.create({
     swimReviewGroup: {
         padding: '2%',
-        // borderRadius: 20,
-        // borderStyle: 'solid',
-        // borderColor: 'white',
-        // borderWidth: 1,
-        // elevation: 10,
         display: 'flex',
         gap: 10
     },
@@ -18,6 +13,14 @@ export const styles = StyleSheet.create({
         textShadowColor: '#b3b5b8',
         textShadowOffset:{width: 10, height: 10},
         textShadowRadius:20,
+    },
+    starRatingDisplay: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 3
+    },
+    starRatingStyle: {
+
     },
     swimReviewItem: {
         padding: '2%',
@@ -59,6 +62,11 @@ export const styles = StyleSheet.create({
         width: 60,
         borderRadius: 30,
         backgroundColor: 'black'
+    },
+    flexRow: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 })
 
