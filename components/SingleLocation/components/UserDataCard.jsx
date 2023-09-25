@@ -47,11 +47,13 @@ export default function UserDataCard({userData}) {
         )
     }
 
+    console.log(userData)
+
     return (
         <>
         <TouchableWithoutFeedback onPress={() => {
             handleExpandUserData()
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.linear)
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
         }}>
             {
                 !Object.keys(userData).length
@@ -86,22 +88,24 @@ export default function UserDataCard({userData}) {
                                 </>
                             )
                             : (
+                                <>
                                 <View style={styles.expandedData}>
                                     <StarRatingDisplay
                                     num={userData.avStars}/>
-                                <Text style={styles.displayText}>
-                                    Out of Depth: {`${userData.outOfDepth}` || 'No Swimmer Review yet'}
-                                </Text>
-                                <Text style={styles.displayText}>
-                                    Average Minutes: {`${userData.avMins} mins` || 'No Swimmer Review yet'}
-                                </Text>
-                                <Text style={styles.displayText}>
+                                    <Text style={styles.displayText}>
+                                        Out of Depth: {`${userData.outOfDepth}` || 'No Swimmer Review yet'}
+                                    </Text>
+                                    <Text style={styles.displayText}>
+                                        Average Minutes: {`${userData.avMins} mins` || 'No Swimmer Review yet'}
+                                    </Text>
+                                    <Text style={styles.displayText}>
                                     Most recent temp from swimmer: {`${userData.mostRecentTemp.temp}°C last` || 'No Swimmer Review yet'} {userData.mostRecentTemp.temp
                                     ? new Date(userData.mostRecentTemp.date).toDateString()
                                     : ''}
                                 </Text>
                                 {
-                                    Object.keys(userData.feelTemps).length && (
+                                    Object.keys(userData.feelTemps).length
+                                    ? (
                                         <>
                                         <Text style={styles.displayText}>
                                             Feels like Temperature:
@@ -110,6 +114,9 @@ export default function UserDataCard({userData}) {
                                             handleObjectData(userData.feelTemps)
                                         }
                                         </>
+                                    )
+                                    : (
+                                        <></>
                                     )
                                 }
                                 {
@@ -161,6 +168,7 @@ export default function UserDataCard({userData}) {
                                     )
                                 }
                                 </View>
+                                </>
                             )
                         }
 
