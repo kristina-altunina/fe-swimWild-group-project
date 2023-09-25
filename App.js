@@ -5,6 +5,7 @@ import Profile from "./components/Profile";
 import NavBar from "./components/NavBar";
 import ResetPassword from "./components/ResetPassword";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import HomeScreen from "./components/HomeScreen";
 
 import {
   useFonts,
@@ -36,7 +37,8 @@ export default function App() {
   return (
 <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="HomePage" component={HomeScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="Home" component={LogIn} options={{headerShown: false}}/>
         <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
@@ -46,7 +48,7 @@ export default function App() {
     </NavigationContainer>
   );
 
-function HomeScreen({navigation}) {
+function LogIn({navigation}) {
 
   let [fontsLoaded] = useFonts({
     Poppins_600SemiBold,

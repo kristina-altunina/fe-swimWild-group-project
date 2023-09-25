@@ -34,7 +34,7 @@ return(
     <View style={styles.header}>
         <View style={styles.header__titleContainer}>
           <Text style={styles.header__title} onPress={() => {
-            navigation.navigate('Home')
+            navigation.navigate('HomePage')
           }}>
             Swim <Text style={styles.header__titleAccent}>Wild</Text>
           </Text>
@@ -42,7 +42,7 @@ return(
         <View style={styles.header__buttons}>
           <TouchableOpacity style={styles.header__button}>
             <Text style={styles.header__buttonText} onPress={() => {
-            navigation.navigate('Home')
+            navigation.navigate('HomePage')
           }}>Home</Text>
           </TouchableOpacity>
           { isAuthenticated ? <TouchableOpacity style={styles.header__button}
