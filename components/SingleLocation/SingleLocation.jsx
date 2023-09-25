@@ -9,7 +9,7 @@ import UserDataCard from "./components/UserDataCard"
 import SwimReviewData from "./components/SwimReviewData"
 import ApiDataSeaCard from "./components/ApiDataSeaCard"
 
-export default function SingleLocation({route:{params:{uid}}}) {
+export default function SingleLocation({route:{params:{uid}}, navigation}) {
 const [userData, setUserData] = useState({})
 const [apiData, setApiData] = useState({})
 const [swimsData, setSwimsData] = useState([])
@@ -48,7 +48,7 @@ useEffect(() => {
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 
 					<View style={styles.screen}>
-						<NavBar />
+						<NavBar navigation={navigation}/>
                         <View style={styles.display}>
                             {
                                 !Object.keys(locationData).length
