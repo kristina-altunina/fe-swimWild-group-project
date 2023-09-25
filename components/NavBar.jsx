@@ -10,12 +10,34 @@ import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
 
 import { isCurrentUserAuthenticated } from "../firebaseConfig";
+import {
+  useFonts,
+  Poppins_600SemiBold,
+  Poppins_900Black,
+  Poppins_500Medium,
+  Poppins_300Light_Italic,
+  Poppins_200ExtraLight,
+} from "@expo-google-fonts/poppins";
+
 import { useState } from "react";
 
 export default NavBar = ({navigation}) => {
 
  const [isAuthenticated, setIsAuthenticated] = useState(false)
  
+ const [fontsLoaded] = useFonts({
+  Poppins_600SemiBold,
+  Poppins_900Black,
+  Poppins_500Medium,
+  Poppins_300Light_Italic,
+  Poppins_200ExtraLight,
+});
+
+if (!fontsLoaded) {
+  // Return a loading indicator or placeholder
+  return <Text>Loading fonts...</Text>;
+}
+
  isCurrentUserAuthenticated((isAuth)=>{
    setIsAuthenticated(isAuth)
  });
