@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { styles } from "../../styles/swimReviewData";
 import { colours } from "../../styles/base";
 import { useFonts } from "expo-font";
+import { Stat } from "../reuse/Stat";
 
 export function SwimRecord({ swim }) {
   const [fontsLoaded] = useFonts({
@@ -18,15 +19,23 @@ export function SwimRecord({ swim }) {
           {new Date(swim.date).toDateString()}
         </Text>
       </View>
-      <View style={styles.starRatingDisplay}>
-        <StarRating
-          disabled={true}
-          maxStars={5}
-          starSize={18}
-          rating={swim.stars}
-          fullStarColor="#FFC033"
-          emptyStarColor="#DBDBDB"
-        />
+      <View style={changeMe.swimRecord__stats}>
+        <View style={styles.starRatingDisplay}>
+          <StarRating
+            disabled={true}
+            maxStars={5}
+            starSize={18}
+            rating={swim.stars}
+            fullStarColor="#FFC033"
+            emptyStarColor="#DBDBDB"
+          />
+          <Stat val={swim.feelTemp} icon={"feelTemp"} />
+          <Stat val={swim.bankAngle} icon={"bankAngle"} />
+          <Stat val={swim.clarity} icon={"clarity"} />
+          <Stat val={swim.recordTemp} icon={"recordTemp"} />
+          <Stat val={swim.shore} icon={"shore"} />
+          <Stat val={swim.sizeKey} icon={"sizeKey"} />
+        </View>
       </View>
     </View>
   );
