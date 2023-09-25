@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, NavigationContainer } from 'react-native';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import { getDistance } from 'geolib';
@@ -8,6 +8,9 @@ import LocationSearch from './LocationSearch';
 import GoogleMapComponent from './GoogleMapComponent';
 import LocationPermission from './LocationPermission';
 import NavBar from './NavBar';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+const Stack = createNativeStackNavigator();
 
 export default function HomeScreen() {
 	const [noLocationsFound, setNoLocationsFound] = useState(false);
@@ -94,7 +97,7 @@ export default function HomeScreen() {
 
 	return (
 		<View style={styles.container}>
-			<NavBar navigation={navigation}/>
+			<NavBar/>
 			<LocationPermission onPermissionChange={handlePermissionChange} />
 			<LocationSearch onSelect={handleRegionSelect} />
 			<GoogleMapComponent
