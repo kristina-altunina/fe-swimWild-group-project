@@ -10,8 +10,6 @@ import NavBar from './NavBar';
 import { getAllLocations } from '../scripts/axios';
 import SingleLocation from './SingleLocation/SingleLocation';
 
-const Stack = createNativeStackNavigator();
-
 export default function HomeScreen({navigation}) {
 	const [noLocationsFound, setNoLocationsFound] = useState(false);
 	const [userLocation, setUserLocation] = useState(null);
