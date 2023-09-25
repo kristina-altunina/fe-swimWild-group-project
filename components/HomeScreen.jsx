@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, Text, NavigationContainer, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, NavigationContainer, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import { Marker } from 'react-native-maps';
@@ -9,18 +9,19 @@ import LocationPermission from './LocationPermission';
 import NavBar from './NavBar';
 import { getAllLocations } from '../scripts/axios';
 import SingleLocation from './SingleLocation/SingleLocation';
+import LocationPreview from './LocationPreview';
 
-export default function HomeScreen({navigation}) {
+export default function HomeScreen({ navigation }) {
 	const [noLocationsFound, setNoLocationsFound] = useState(false);
 	const [userLocation, setUserLocation] = useState(null);
 	const [locations, setLocations] = useState([]);
-	
+
 	useEffect(() => {
 		getAllLocations()
-		.then(data => {
-			setLocations(locations => [...data])
-		})
-		
+			.then(data => {
+				setLocations(locations => [...data])
+			})
+
 	}, [])
 	const [region, setRegion] = useState({
 		latitude: 54.6360,
@@ -30,7 +31,6 @@ export default function HomeScreen({navigation}) {
 	});
 
 	const handleRegionSelect = (selectedRegion) => {
-		// Convert the selected location from the search into a region format and set it
 		console.log('SELECTED_REGION: ', selectedRegion);
 		setRegion({
 			latitude: selectedRegion.latitude,
@@ -44,11 +44,11 @@ export default function HomeScreen({navigation}) {
 		if (isGranted) {
 			Location.getCurrentPositionAsync({})
 				.then(({ coords }) => {
-					const { latitude, longitude } = coords; //<--
+					const { latitude, longitude } = coords;
 					console.log('CURRENT_LOCATION: ', { coords });
 					setUserLocation({
-						latitude, //<--
-						longitude,//<--
+						latitude,
+						longitude,
 						latitudeDelta: 0.0922,
 						longitudeDelta: 0.0421,
 					});
@@ -98,65 +98,61 @@ export default function HomeScreen({navigation}) {
 	}
 
 	function handleClick(uid) {
-		return navigation.navigate('SingleLocation', {uid})
+		return navigation.navigate('SingleLocation', { uid })
 	}
 
 	return (
 		<View style={styles.container}>
-			<NavBar navigation={navigation}/>
+			<NavBar navigation={navigation} />
 			<LocationPermission onPermissionChange={handlePermissionChange} />
-			<LocationSearch onSelect={handleRegionSelect} />
-			<GoogleMapComponent
-				region={region}
-				onRegionChange={handleRegionChange}
-			>
-				{userLocation && (
-					<Marker
-						coordinate={{
-							latitude: userLocation.latitude,
-							longitude: userLocation.longitude,
-						}}
-						title="You are here!"
-					/>
-				)}
-				{
-					(locations || []).map((location) => (
-						<Marker
-							key={location._id}
-							coordinate={{
-								latitude: location.coords[0],
-								longitude: location.coords[1],
-							}}
-							title={location.name}
-							description={location.type}
-						/>
-					))
-				}
-				
-			</GoogleMapComponent>
-			{
-					!locations.length
+			<View style={styles.mapContainer}>
+				<GoogleMapComponent
+					region={region}
+					onRegionChange={handleRegionChange}
+					locations={locations}
+					userLocation={userLocation}
+				/>
+				<LocationSearch style={styles.locationSearch} onSelect={handleRegionSelect} />
+			</View>
+			{/* {
+				!locations.length
 					? (
-						<ActivityIndicator size='large'/>
+						<ActivityIndicator size='large' />
 					)
 					: (
 						<>
-						{
-							locations.map(location => {
-								return (
-									<TouchableOpacity
-									onPress={() => handleClick(location._id)}>
-									<Text style={{fontSize: 20}}>
-										{location.name}
-									</Text>
-									</TouchableOpacity>
-								)
-							})
-						}
+							{
+								locations.map(location => {
+									return (
+										<TouchableOpacity
+											onPress={() => handleClick(location._id)}>
+											<Text style={{ fontSize: 20 }}>
+												{location.name}
+												{location.type}
+												{location.distanceKm}
+											</Text>
+										</TouchableOpacity>
+									)
+								})
+							}
 						</>
 					)
-			}
-				
+			} */}
+
+			<View style={styles.locationList}>
+				<ScrollView>
+					{locations.map(location => (
+						<LocationPreview
+							key={location._id}
+							name={location.name}
+							type={location.type}
+							distance={location.distanceKm.toFixed(2)}
+							avStars={location.avStars}
+						/>
+					))}
+				</ScrollView>
+			</View>
+
 			{/* {noLocationsFound && <Text style={styles.noLocationsText}>No locations found nearby!</Text>} */}
 		</View>
 	);
@@ -175,4 +171,16 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		margin: 10,
 	},
+	mapContainer: {
+		flex: 3
+	},
+	locationSearch: {
+		position: 'absolute',
+		top: 10,
+		left: 10,
+		zIndex: 2,
+	},
+	locationList: {
+		flex: 2
+	}
 });
