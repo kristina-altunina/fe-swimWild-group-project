@@ -1,195 +1,271 @@
 import {
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
-    TouchableOpacity,
-    Image
-  } from "react-native";
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+} from "react-native";
+
+import {
+  useFonts,
+  Poppins_700Bold,
+  Poppins_600SemiBold,
+  Poppins_900Black,
+  Poppins_500Medium,
+  Poppins_400Regular_Italic,
+  Poppins_400Regular,
+  Poppins_300Light,
+  Poppins_300Light_Italic,
+  Poppins_200ExtraLight,
+} from "@expo-google-fonts/poppins";
 
 import { colours } from "../styles/base";
 import NavBar from "./NavBar";
 import { tokenRefresh } from "../firebaseConfig";
-import { BACKEND_API_URL, DEFAULT_IMAGE_URL } from "@env"
+import { BACKEND_API_URL, DEFAULT_IMAGE_URL } from "@env";
 import { useState, useEffect } from "react";
-import {formatDate} from '../extentions'
-import BuddiesDisplay from "./Buddies/BuddiesDisplay";
-export default Profile = ({ navigation, route }) => {
- const [profileData, setProfileData] = useState({})
- const [canEditAboutMe, setCanEditAboutMe] = useState(false)
- const [canEditImage, setCanEditImage] = useState(false)
- const refreshToken = route.params.refresh_token;
- 
-async function getProfile(){
+import { formatDate } from "../extentions";
+import SwimFilter from "./Profile/SwimFilter";
+import {
+  addMonthToSwims,
+  coldest,
+  favouriteSwim,
+  hottest,
+  swimTheLakeDistrict,
+  swimsThisMonth,
+} from "../scripts/swims";
+import StarRating from "react-native-star-rating";
+import SwimGrid from "./Profile/SwimGrid";
 
-  const tokenObj = await tokenRefresh(refreshToken)
- 
-  const url = BACKEND_API_URL + "/users/profile"
-  fetch(url, {
-    method: "GET",
-    headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${tokenObj.access_token}`,
-    }
-  })
-  .then(response => response.json())
-  .then((json)=> {
-    json.dob = formatDate(json.dob.split('T')[0],'-')
-    setProfileData(json)
-    console.log(json, "PROFILE")
-  }).catch((error)=>{
-    console.log(error)
-  })
-}
-useEffect(() => {
-   getProfile()
-  }, [])  
+export default Profile = ({ navigation, route }) => {
+  const [profileData, setProfileData] = useState({ swims: [] });
+  const [swims, setSwims] = useState([]);
+  const [filtSwims, setFiltSwims] = useState([]);
+  const refreshToken = route.params.refresh_token;
+
+  async function getProfile() {
+    const tokenObj = await tokenRefresh(refreshToken);
+    const url = BACKEND_API_URL + "/users/profile";
+
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenObj.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        json.dob = formatDate(json.dob.split("T")[0], "-");
+        setProfileData(() => json);
+        setSwims(() => addMonthToSwims(json.swims));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  useEffect(() => {
+    getProfile();
+  }, []);
 
   useEffect(() => {
     const { routes } = navigation.getState();
-
     const filteredRoutes = routes.filter(
-      route => route.name !== 'Register' && route.name !== 'SignIn',
+      (route) => route.name !== "Register" && route.name !== "SignIn"
     );
-
     navigation.reset({
       index: filteredRoutes.length - 1,
       routes: filteredRoutes,
     });
-  }, [])
+  }, []);
 
-return (
+  const [fontsLoaded] = useFonts({
+    Poppins_700Bold,
+    Poppins_600SemiBold,
+    Poppins_900Black,
+    Poppins_500Medium,
+    Poppins_400Regular_Italic,
+    Poppins_400Regular,
+    Poppins_300Light,
+    Poppins_300Light_Italic,
+    Poppins_200ExtraLight,
+  });
+
+  if (!fontsLoaded) {
+    // Return a loading indicator or placeholder
+    return <Text>Loading fonts...</Text>;
+  }
+
+  if (!swims.length) {
+    return <ActivityIndicator size="large" />;
+  }
+
+  return (
     <View style={styles.app}>
-    <NavBar navigation={navigation}/>
-        <View>
-          <Text>Hi {profileData.name}</Text>
-          <View>
-            {profileData.profileImg ?  <Image
-              style={styles.tinyLogo}
-              source={{
-                uri: profileData.profileImg,
-              }}
-            />: <Image
-            style={styles.tinyLogo}
-            source={{uri: DEFAULT_IMAGE_URL}}
-          />}
-          <TouchableOpacity style={canEditImage ? styles.textHide : styles.textShow} onPress={()=>{setCanEditImage(true)}}>
-             <Text>Edit</Text>
-          </TouchableOpacity>
-          </View>
-          <View> 
-              <TouchableOpacity style={canEditImage ? styles.textShow: styles.textHide}>
-                <Text>Select Photo</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={canEditImage ? styles.textShow: styles.textHide}>
-                <Text>Take a Photo</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={canEditImage ? styles.textShow: styles.textHide}>
-                <Text onPress={()=> setCanEditImage(false)}>Cancel</Text>
-              </TouchableOpacity>
-           </View>
-            <View>
-              <Text>{profileData.name}</Text>
-              <Text>{profileData.nickname}</Text>
-              <Text>{profileData.dob}</Text>
-            </View>
-            <View style={styles.textAreaContainer} >
-              <TextInput
-                style={styles.textArea}
-                underlineColorAndroid="transparent"
-                placeholder="Type something"
-                placeholderTextColor="grey"
-                numberOfLines={5}
-                multiline={true}
-                editable={canEditAboutMe}
-              />
-              <View>
-                <TouchableOpacity style={canEditAboutMe ? styles.textHide : styles.textShow} onPress={()=>{setCanEditAboutMe(true)}}>
-                  <Text>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={canEditAboutMe ? styles.textShow : styles.textHide} onPress={()=>{setCanEditAboutMe(false)}}>
-                  <Text>Save</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={canEditAboutMe ? styles.textShow : styles.textHide} onPress={()=>{setCanEditAboutMe(false)}}>
-                  <Text>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-          </View>
-          <BuddiesDisplay refreshToken={refreshToken}/>
+      <NavBar navigation={navigation} />
+      <View style={styles.profile}>
+        <View style={styles.profile__text}>
+          <Text style={styles.profile__name}>{profileData.name}</Text>
+          <Text style={styles.profile__nickname}>{profileData.nickname}</Text>
+          <Text style={styles.profile__home}>{profileData.home || ""}</Text>
+          <Text style={styles.profile__bio}>{profileData.bio || ""}</Text>
         </View>
+        {profileData.profileImg ? (
+          <Image
+            style={styles.profile__img}
+            resizeMode={"cover"}
+            source={{
+              uri: profileData.profileImg,
+            }}
+          />
+        ) : (
+          <Image
+            style={styles.profileImg}
+            source={{ uri: DEFAULT_IMAGE_URL }}
+          />
+        )}
+      </View>
+      <View style={styles.stats}>
+        <View style={styles.stats__left}>
+          <Text style={styles.stats__label}>
+            <Text style={styles.stats__stat}>{swims.length}</Text> swims total
+          </Text>
+          <Text style={styles.stats__label}>
+            <Text style={styles.stats__stat}>{swimsThisMonth(swims)}</Text>{" "}
+            swims this month
+          </Text>
+          <Text style={styles.stats__label}>
+            Last swam on{" "}
+            <Text style={styles.stats__stat}>
+              {new Date(swims[0].date)
+                .toDateString()
+                .split(" ")
+                .slice(1, 3)
+                .join(" ")}
+            </Text>
+          </Text>
+        </View>
+        <View style={styles.stats__right}>
+          <Text style={styles.stats__label}>
+            Loves <Text style={styles.stats__stat}>{favouriteSwim(swims)}</Text>
+          </Text>
+          <Text style={styles.stats__label}>
+            Swim the Lake District:{" "}
+            <Text style={styles.stats__stat}>{swimTheLakeDistrict(swims)}</Text>
+          </Text>
+        </View>
+        <View style={styles.stats__bottom}>
+          {coldest(swims) && (
+            <Text style={styles.stats__label}>
+              Coldest: <Text style={styles.stats__stat}>{coldest(swims)}</Text>,
+            </Text>
+          )}
+          {hottest(swims) && (
+            <Text>
+              Warmest: <Text style={styles.stats__stat}>{hottest(swims)}</Text>
+            </Text>
+          )}
+        </View>
+      </View>
+      <SwimFilter
+        allSwims={swims}
+        filtSwims={filtSwims}
+        setFiltSwims={setFiltSwims}
+      />
+      <SwimGrid />
+      <View>
+        {filtSwims.map((swim) => {
+          return (
+            <View>
+              <Text>{swim.location.name}</Text>
+              <Text>{new Date(swim.date).toDateString()}</Text>
+              <StarRating
+                disabled={true}
+                maxStars={5}
+                starSize={18}
+                rating={swim.stars}
+                fullStarColor="yellow"
+                emptyStarColor="white"
+              />
+            </View>
+          );
+        })}
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-    app: {
-        backgroundColor: colours.bg,
-        height: "100%",
-        width: "100%",
-      },
-    "container": {
-      flex: 1,
-      width: "100%",
-      backgroundColor: colours.bg,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    "container__header": {
-      fontSize: 30,
-      fontWeight: "bold",
-      marginBottom: 20,
-      color: colours.accent1,
-    },
-    "container__input": {
-      width: "70%",
-      borderColor: colours.accent4,
-      borderWidth: 1,
-      marginBottom: 15,
-      padding: 5,
-      color: colours.accent1,
-    },
-    "button": {
-        width: "40%",
-        alignItems: "center",
-        backgroundColor: colours.accent2,
-        padding: 15,
-        borderRadius: 5,
-        marginBottom: 5,
-      },
-      "button__text": {
-        color: "#fff",
-        fontWeight: "bold",
-      },
-      image__container: {
-        paddingTop: 50,
-      },
-      tinyLogo: {
-        width: 140,
-        height: 140,
-      },
-      logo: {
-        width: 66,
-        height: 58,
-      },
-      textAreaContainer: {
-        borderColor: colours.accent1,
-        borderWidth: 1,
-        padding: 1
-      },
-      textArea: {
-        height: 150,
-        justifyContent: "flex-start",
-        textAlignVertical: 'top'
-      },
-      textHide: {
-        width: 0,
-        height: 0,
-        overflow: "hidden",
-        opacity: 0
-    },
-    textShow: {
-        overflow: "hidden",
-        fontSize: 10,
-        marginBottom: 10,
-    },
-  });
+  app: {
+    backgroundColor: colours.bg,
+    height: "100%",
+    width: "100%",
+  },
+  profile: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    padding: 12,
+  },
+  profile__text: {
+    minWidth: 0,
+    width: "60%",
+    margin: 2,
+    padding: 0,
+  },
+  profile__name: {
+    fontSize: 22,
+    fontFamily: "Poppins_700Bold",
+    color: colours.text,
+    height: 28,
+  },
+  profile__nickname: {
+    fontSize: 16,
+    fontFamily: "Poppins_400Regular",
+    color: colours.lightText,
+  },
+  profile__home: {
+    fontSize: 12,
+    fontFamily: "Poppins_300Light",
+    color: colours.lightText,
+  },
+  profile__bio: {
+    fontSize: 16,
+    marginTop: 8,
+    fontFamily: "Poppins_400Regular_Italic",
+  },
+  profile__img: {
+    minWidth: 0,
+    width: "38%",
+    height: "auto",
+    overflow: "hidden",
+    borderRadius: 12,
+  },
+  stats: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    backgroundColor: colours.accent3Weak,
+    padding: 12,
+    rowGap: 12,
+  },
+  stats__left: {
+    width: "48%",
+    minWidth: 0,
+  },
+  stats__right: {
+    width: "48%",
+    minWidth: 0,
+    textAlign: "right",
+  },
+  stats__label: {
+    fontFamily: "Poppins_300Light",
+  },
+  stats__stat: {
+    fontFamily: "Poppins_700Bold",
+  },
+});

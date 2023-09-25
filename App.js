@@ -23,80 +23,107 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Button
+  Button,
 } from "react-native";
 
-
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SingleLocation from "./components/SingleLocation/SingleLocation";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-
   return (
-<NavigationContainer>
+    <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="HomePage" component={HomeScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="LogIn" component={LogIn} options={{headerShown: false}}/>
-        <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false, gestureEnabled: true}}/>
+        <Stack.Screen
+          name="HomePage"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="LogIn"
+          component={LogIn}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterUser}
+          options={{ headerShown: false, gestureEnabled: true }}
+        />
+        <Stack.Screen
+          name="SignIn"
+          component={SignInUser}
+          options={{ headerShown: false, gestureEnabled: true }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{ headerShown: false, gestureEnabled: true }}
+        />
+        <Stack.Screen
+          name="SingleLocation"
+          component={SingleLocation}
+          options={{ headerShown: false, gestureEnabled: true }}
+        />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPassword}
+          options={{ headerShown: false, gestureEnabled: true }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 
-function LogIn({navigation}) {
+  function LogIn({ navigation }) {
+    let [fontsLoaded] = useFonts({
+      Poppins_600SemiBold,
+      Poppins_900Black,
+      Poppins_500Medium,
+      Poppins_300Light_Italic,
+      Poppins_200ExtraLight,
+    });
 
-  let [fontsLoaded] = useFonts({
-    Poppins_600SemiBold,
-    Poppins_900Black,
-    Poppins_500Medium,
-    Poppins_300Light_Italic,
-    Poppins_200ExtraLight,
-  });
+    if (!fontsLoaded) {
+      return null;
+    }
 
-  if (!fontsLoaded) {
-    return null;
-  }
+    return (
+      <SafeAreaView style={styles.app}>
+        <KeyboardAwareScrollView>
+          <NavBar navigation={navigation} />
+          <View>
+            <ScrollView
+              contentContainerStyle={styles.container}
+              keyboardShouldPersistTaps="handled"
+            >
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  navigation.navigate("SignIn");
+                }}
+              >
+                <Text>Sign In</Text>
+              </TouchableOpacity>
 
-  return (
-    <SafeAreaView style={styles.app}>
-      <KeyboardAwareScrollView> 
-      <NavBar navigation={navigation}/>
-      <View>
-        <ScrollView contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps="handled">
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              navigation.navigate('SignIn')
-            }}
-          >
-            <Text>Sign In</Text>
-          </TouchableOpacity>
-        
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              navigation.navigate('Register')
-            }}
-          >
-            <Text>Sign Up</Text>
-          </TouchableOpacity>
-          {/* <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650dd24c667ea748708385aa'})}}></Button> */}
-        </ScrollView>          
-      </View>
-      </KeyboardAwareScrollView>
-    </SafeAreaView>
-    )
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  navigation.navigate("Register");
+                }}
+              >
+                <Text>Sign Up</Text>
+              </TouchableOpacity>
+              {/* <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650dd24c667ea748708385aa'})}}></Button> */}
+            </ScrollView>
+          </View>
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
+    );
   }
 }
-  //for lake: 650dd24c667ea748708385aa
-  //for sea: 650dd24c667ea748708385ad
+//for lake: 650dd24c667ea748708385aa
+//for sea: 650dd24c667ea748708385ad
 const styles = StyleSheet.create({
   app: {
     backgroundColor: colours.bg,
