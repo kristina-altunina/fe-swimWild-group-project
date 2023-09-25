@@ -38,7 +38,7 @@ export default function App() {
 <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="HomePage" component={HomeScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="Home" component={LogIn} options={{headerShown: false}}/>
+        <Stack.Screen name="LogIn" component={LogIn} options={{headerShown: false}}/>
         <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>

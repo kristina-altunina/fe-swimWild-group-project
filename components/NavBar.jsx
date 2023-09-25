@@ -36,14 +36,16 @@ return(
           <Text style={styles.header__title} onPress={() => {
             navigation.navigate('HomePage')
           }}>
-            Swim <Text style={styles.header__titleAccent}>Wild</Text>
+            Swim <Text style={styles.header__titleAccent} onPress={() => {
+            navigation.navigate('HomePage')
+          }}>Wild</Text>
           </Text>
         </View>
         <View style={styles.header__buttons}>
           <TouchableOpacity style={styles.header__button}>
             <Text style={styles.header__buttonText} onPress={() => {
-            navigation.navigate('HomePage')
-          }}>Home</Text>
+            navigation.navigate('Register')
+          }}>Sign Up</Text>
           </TouchableOpacity>
           { isAuthenticated ? <TouchableOpacity style={styles.header__button}
           onPress={() => {

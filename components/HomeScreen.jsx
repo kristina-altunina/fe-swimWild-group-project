@@ -12,7 +12,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
 	const [noLocationsFound, setNoLocationsFound] = useState(false);
 	const [userLocation, setUserLocation] = useState(null);
 	const [locations, setLocations] = useState([]);
@@ -97,7 +97,7 @@ export default function HomeScreen() {
 
 	return (
 		<View style={styles.container}>
-			<NavBar/>
+			<NavBar navigation={navigation}/>
 			<LocationPermission onPermissionChange={handlePermissionChange} />
 			<LocationSearch onSelect={handleRegionSelect} />
 			<GoogleMapComponent
