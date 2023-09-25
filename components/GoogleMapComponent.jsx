@@ -5,7 +5,7 @@ import MapView, { Marker } from 'react-native-maps'
 export default function GoogleMapComponent({ onRegionChange, region, children }) {
 	return (
 		<MapView
-			style={{ flex: 1 }}
+			style={{width: '100%', height: '50%', padding: 100}}
 			onRegionChangeComplete={onRegionChange}
 			region={region}
 			initialRegion={{
