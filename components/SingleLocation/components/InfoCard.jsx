@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { View, TouchableWithoutFeedback, Text, LayoutAnimation, ActivityIndicator } from "react-native"
 import { styles } from "../../../styles/infoCard"
+import Ionicons from '@expo/vector-icons/Ionicons'
 
 export default function InfoCard({info}) {
-    console.log(info, 'here')
     const [expandData, setExpandData] = useState(false)
 
     function handleWarnings(data) {
@@ -13,7 +13,7 @@ export default function InfoCard({info}) {
                 data.map((item, i) => {
                     return (
                         <>
-                        <Text>
+                        <Text style={styles.displayText}>
                             {item}
                         </Text>
                         </>
@@ -44,12 +44,23 @@ export default function InfoCard({info}) {
                             !expandData
                             ? (
                                 <>
-                                <Text>
+                                <Text style={styles.displayText}>
                                     {info.msg}
                                 </Text>
-                                <Text>
-                                    Disclaimer: {info.disclaimer}
+                                <Text style={styles.displayText}>
+                                    Disclaimer:{`\n`}{info.disclaimer}
                                 </Text>
+                                {
+                                    info.warnings.length && (
+                                        <View style={styles.textWithInfoContainer}>
+                                            <Text style={styles.displayText}>
+                                                Warnings 
+                                            </Text>
+                                            <Ionicons name="alert-circle-outline"
+                                            size={24} color="red" />
+                                        </View>
+                                    )
+                                }
                                 </>
                             )
                             : (

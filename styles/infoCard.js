@@ -2,6 +2,12 @@ import { StyleSheet } from "react-native"
 import { colours } from "./base"
 
 export const styles = StyleSheet.create({
+    textWithInfoContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 5,
+        alignItems:'center'
+    },
     infoData: {
         padding: '2%',
         backgroundColor: 'white',
@@ -12,7 +18,7 @@ export const styles = StyleSheet.create({
         elevation: 10,
         backgroundColor: colours.accent2,
         display: 'flex',
-        gap: 2
+        gap: 10
     },
     titleText: {
         fontSize: 25,
@@ -21,29 +27,5 @@ export const styles = StyleSheet.create({
     },
     displayText: {
         color: 'white'
-    },
-    expandedData: {
-        display: 'flex',
-        gap: 2
-    },
-    showContent: {
-        color: 'rgb(139, 83, 190)',
-        opacity:1
-    },
-    hideContent: {
-        opacity: 0,
-        height: 0
-    },flexRow: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    starRatingDisplay: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 3
-    }, marginLeft: {
-        color: 'white',
-        marginLeft: '5%'
     }
 })
