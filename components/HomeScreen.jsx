@@ -98,17 +98,9 @@ export default function HomeScreen({navigation}) {
 	}
 
 	function handleClick(uid) {
-		console.log(uid)
-		// return (
-		// 	<SingleLocation uid={uid} />
-		// 	{
-				
-		// 	}
-		// )
 		return navigation.navigate('SingleLocation', {uid})
 	}
 
-	console.log(locations)
 	return (
 		<View style={styles.container}>
 			<NavBar navigation={navigation}/>

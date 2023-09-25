@@ -47,8 +47,6 @@ export default function UserDataCard({userData}) {
         )
     }
 
-    console.log(userData)
-
     return (
         <>
         <TouchableWithoutFeedback onPress={() => {
