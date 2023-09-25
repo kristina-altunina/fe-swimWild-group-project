@@ -1,40 +1,33 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  NavigationContainer,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
-import * as Location from "expo-location";
-import { getDistance } from "geolib";
-import { Marker } from "react-native-maps";
-import LocationSearch from "./LocationSearch";
-import GoogleMapComponent from "./GoogleMapComponent";
-import LocationPermission from "./LocationPermission";
-import NavBar from "./NavBar";
-import { getAllLocations } from "../scripts/axios";
-import SingleLocation from "./SingleLocation/SingleLocation";
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, Text, NavigationContainer, ActivityIndicator, TouchableOpacity } from 'react-native';
+import * as Location from 'expo-location';
+import { getDistance } from 'geolib';
+import { Marker } from 'react-native-maps';
+import LocationSearch from './LocationSearch';
+import GoogleMapComponent from './GoogleMapComponent';
+import LocationPermission from './LocationPermission';
+import NavBar from './NavBar';
+import { getAllLocations } from '../scripts/axios';
+import SingleLocation from './SingleLocation/SingleLocation';
 
-// const Stack = createNativeStackNavigator();
-
-export default function HomeScreen({ navigation }) {
-  const [noLocationsFound, setNoLocationsFound] = useState(false);
-  const [userLocation, setUserLocation] = useState(null);
-  const [locations, setLocations] = useState([]);
-
-  useEffect(() => {
-    getAllLocations().then((data) => {
-      setLocations((locations) => [...data]);
-    });
-  }, []);
-  const [region, setRegion] = useState({
-    latitude: 54.636,
-    longitude: -3.3631,
-    latitudeDelta: 10,
-    longitudeDelta: 10,
-  });
+export default function HomeScreen({navigation}) {
+	const [noLocationsFound, setNoLocationsFound] = useState(false);
+	const [userLocation, setUserLocation] = useState(null);
+	const [locations, setLocations] = useState([]);
+	
+	useEffect(() => {
+		getAllLocations()
+		.then(data => {
+			setLocations(locations => [...data])
+		})
+		
+	}, [])
+	const [region, setRegion] = useState({
+		latitude: 54.6360,
+		longitude: -3.3631,
+		latitudeDelta: 10,
+		longitudeDelta: 10,
+	});
 
 	const handleRegionSelect = (selectedRegion) => {
 		// Convert the selected location from the search into a region format and set it
@@ -104,16 +97,16 @@ export default function HomeScreen({ navigation }) {
 		setRegion(newRegion);
 	}
 
-  function handleClick(uid) {
-    console.log(uid);
-    // return (
-    // 	<SingleLocation uid={uid} />
-    // 	{
-
-    // 	}
-    // )
-    return navigation.navigate("SingleLocation", { uid });
-  }
+	function handleClick(uid) {
+		console.log(uid)
+		// return (
+		// 	<SingleLocation uid={uid} />
+		// 	{
+				
+		// 	}
+		// )
+		return navigation.navigate('SingleLocation', {uid})
+	}
 
 	console.log(locations)
 	return (
@@ -157,38 +150,37 @@ export default function HomeScreen({ navigation }) {
 					: (
 						<>
 						{
-							locations.map((location, i) => {
+							locations.map(location => {
 								return (
-									<>
-									<View
-										key={i}
-										>
-											<TouchableOpacity onPress={() => handleClick(location._id)}>
-											<Text style={{fontSize: 20}}>
-												{location.name}
-											</Text>
-											</TouchableOpacity>
-										</View>
-									</>
+									<TouchableOpacity
+									onPress={() => handleClick(location._id)}>
+									<Text style={{fontSize: 20}}>
+										{location.name}
+									</Text>
+									</TouchableOpacity>
 								)
 							})
 						}
 						</>
 					)
 			}
+				
+			{/* {noLocationsFound && <Text style={styles.noLocationsText}>No locations found nearby!</Text>} */}
 		</View>
 	);
 }
 
+
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "fff",
-  },
-  noLocationsText: {
-    color: "red",
-    fontSize: 16,
-    textAlign: "center",
-    margin: 10,
-  },
+	container: {
+		flex: 1,
+		backgroundColor: 'fff'
+	},
+	noLocationsText: {
+		color: 'red',
+		fontSize: 16,
+		textAlign: 'center',
+		margin: 10,
+	},
 });
