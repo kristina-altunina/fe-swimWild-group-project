@@ -3,24 +3,21 @@ import { View, TouchableWithoutFeedback, Text, Image, LayoutAnimation, ActivityI
 import { styles } from "../../../styles/swimReviewData"
 import StarRating from 'react-native-star-rating'
 
-export default function SwimReviewData({swimsData}) {
-    const [expandReview, setExpandReview] = useState([])
+export default function SwimReviewData({swimsData, navigation}) {
+    // const [expandReview, setExpandReview] = useState([])
 
-    function handleExpandSwimReview(i) {
-        if(!expandReview.includes(i)) {
-            setExpandReview(expandReview => [...expandReview, i])
-        } else {
-            setExpandReview(expandReview => [...expandReview.filter(item => item !== i)])
-        }
+    function handleExpandSwimReview(swim) {
+        return navigation.navigate('SwimSpot', {swim})
     }
 
-    function handleExpandSwimReviewStyle(i) {
-        if(expandReview.includes(i)) {
-            return styles.hideContent 
-        } else {
-            return styles.showContent
-        }
-    }
+    // function handleExpandSwimReviewStyle(i) {
+        
+    //     if(expandReview.includes(i)) {
+    //         return styles.hideContent 
+    //     } else {
+    //         return styles.showContent
+    //     }
+    // }
 
     function StarRatingDisplay({num}) {
         return (
@@ -52,7 +49,7 @@ export default function SwimReviewData({swimsData}) {
                 swimsData.map((swim, i) => {
                     return (
                         <TouchableWithoutFeedback onPress={() => {
-                            handleExpandSwimReview(i)
+                            handleExpandSwimReview(swim)
                             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
                         }}
                         key={i}>
@@ -72,8 +69,10 @@ export default function SwimReviewData({swimsData}) {
                                         {new Date(swimsData[0]?.date)?.toDateString()}
                                     </Text>
                                 </View>
-                                <Text style={handleExpandSwimReviewStyle(i)}>See Swimmer's Experience...</Text>
-                                {expandReview.includes(i) && (
+                                <Text style={styles.showContent}>
+                                    See Swimmer's Experience...
+                                </Text>
+                                {/* {expandReview.includes(i) && (
                                     <>
                                     <Text>
                                         Recorded Temp: {swim.recordTemp}
@@ -97,7 +96,7 @@ export default function SwimReviewData({swimsData}) {
                                         Clarity: {swim.clarity}
                                     </Text>
                                     </>
-                                )}
+                                )} */}
                             </View>
                         </View>
                     </TouchableWithoutFeedback>

@@ -91,7 +91,8 @@ useEffect(() => {
                             }
                             <UserDataCard userData={userData}/>
                             <InfoCard info={infoData}/>
-                            <SwimReviewData swimsData={swimsData}/>
+                            <SwimReviewData swimsData={swimsData}
+                            navigation={navigation}/>
                         </View>
                     </View>
                 </TouchableWithoutFeedback>

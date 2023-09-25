@@ -30,6 +30,7 @@ import {
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SingleLocation from "./components/SingleLocation/SingleLocation";
+import SwimSpot from "./components/SwimSpot";
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +46,7 @@ export default function App() {
         <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false, gestureEnabled: true}}/>
         <Stack.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false, gestureEnabled: true}}/>
+        <Stack.Screen name="SwimSpot" component={SwimSpot} options={{headerShown: false, gestureEnabled: true}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
