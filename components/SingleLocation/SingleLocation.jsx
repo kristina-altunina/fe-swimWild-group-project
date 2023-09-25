@@ -16,19 +16,19 @@ const [swimsData, setSwimsData] = useState([])
 const [locationData, setLocationData] = useState([])
 
 useEffect(() => {
-    const {apiData, userData, swims, location} = test()
-    const requestedSwimsData = swims;
-    setSwimsData(swimsData => requestedSwimsData)
+    // const {apiData, userData, swims, location} = test()
+    // const requestedSwimsData = swims;
+    // setSwimsData(swimsData => requestedSwimsData)
 
     getLocationByID(uid)
     .then(data => {
         const {apiData, userData, swims, location} = data
         const requestedUserData = userData;
         const requestedApiData = apiData;
-        // const requestedSwimsData = swims;
+        const requestedSwimsData = swims;
         const requestedLocation = location;
         setUserData(userData => requestedUserData);
-        // setSwimsData(swimsData => requestedSwimsData)
+        setSwimsData(swimsData => requestedSwimsData)
         setApiData(apiData => requestedApiData)
         setLocationData(locationData => requestedLocation)
     })
