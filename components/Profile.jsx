@@ -8,19 +8,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import {
-  useFonts,
-  Poppins_700Bold,
-  Poppins_600SemiBold,
-  Poppins_900Black,
-  Poppins_500Medium,
-  Poppins_400Regular_Italic,
-  Poppins_400Regular,
-  Poppins_300Light,
-  Poppins_300Light_Italic,
-  Poppins_200ExtraLight,
-} from "@expo-google-fonts/poppins";
-
 import { colours } from "../styles/base";
 import NavBar from "./NavBar";
 import { tokenRefresh } from "../firebaseConfig";
@@ -38,12 +25,22 @@ import {
 } from "../scripts/swims";
 import StarRating from "react-native-star-rating";
 import SwimGrid from "./Profile/SwimGrid";
+import { SwimRecord } from "./Profile/SwimRecord";
+import { useFonts } from "expo-font";
 
 export default Profile = ({ navigation, route }) => {
   const [profileData, setProfileData] = useState({ swims: [] });
   const [swims, setSwims] = useState([]);
   const [filtSwims, setFiltSwims] = useState([]);
   const refreshToken = route.params.refresh_token;
+  const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
+    "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-Regular_Italic": require("../assets/fonts/Poppins-Italic.ttf"),
+    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
+  });
 
   async function getProfile() {
     const tokenObj = await tokenRefresh(refreshToken);
@@ -81,23 +78,6 @@ export default Profile = ({ navigation, route }) => {
       routes: filteredRoutes,
     });
   }, []);
-
-  const [fontsLoaded] = useFonts({
-    Poppins_700Bold,
-    Poppins_600SemiBold,
-    Poppins_900Black,
-    Poppins_500Medium,
-    Poppins_400Regular_Italic,
-    Poppins_400Regular,
-    Poppins_300Light,
-    Poppins_300Light_Italic,
-    Poppins_200ExtraLight,
-  });
-
-  if (!fontsLoaded) {
-    // Return a loading indicator or placeholder
-    return <Text>Loading fonts...</Text>;
-  }
 
   if (!swims.length) {
     return <ActivityIndicator size="large" />;
@@ -178,20 +158,7 @@ export default Profile = ({ navigation, route }) => {
       <SwimGrid />
       <View>
         {filtSwims.map((swim) => {
-          return (
-            <View>
-              <Text>{swim.location.name}</Text>
-              <Text>{new Date(swim.date).toDateString()}</Text>
-              <StarRating
-                disabled={true}
-                maxStars={5}
-                starSize={18}
-                rating={swim.stars}
-                fullStarColor="yellow"
-                emptyStarColor="white"
-              />
-            </View>
-          );
+          return <SwimRecord swim={swim} key={swim._id} />;
         })}
       </View>
     </View>
@@ -218,24 +185,24 @@ const styles = StyleSheet.create({
   },
   profile__name: {
     fontSize: 22,
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Poppins-Bold",
     color: colours.text,
     height: 28,
   },
   profile__nickname: {
     fontSize: 16,
-    fontFamily: "Poppins_400Regular",
+    fontFamily: "Poppins-Regular",
     color: colours.lightText,
   },
   profile__home: {
     fontSize: 12,
-    fontFamily: "Poppins_300Light",
+    fontFamily: "Poppins-Light",
     color: colours.lightText,
   },
   profile__bio: {
     fontSize: 16,
     marginTop: 8,
-    fontFamily: "Poppins_400Regular_Italic",
+    fontFamily: "Poppins-Regular_Italic",
   },
   profile__img: {
     minWidth: 0,
@@ -263,9 +230,9 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   stats__label: {
-    fontFamily: "Poppins_300Light",
+    fontFamily: "Poppins-Light",
   },
   stats__stat: {
-    fontFamily: "Poppins_700Bold",
+    fontFamily: "Poppins-Bold",
   },
 });

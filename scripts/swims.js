@@ -32,6 +32,16 @@ export function swimsThisMonth(swims) {
   }).length;
 }
 
+export function listLocations(swims) {
+  const locations = [];
+  for (const swim of swims) {
+    if (!locations.includes(swim.location.name)) {
+      locations.push(swim.location.name);
+    }
+  }
+  return locations;
+}
+
 export function favouriteSwim(swims) {
   let maxStars = 0;
   let favouriteSwims = [];
