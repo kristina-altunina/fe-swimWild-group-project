@@ -1,14 +1,14 @@
-import React, { useState } from 'react'
-import { View, StyleSheet, Text, NavigationContainer } from 'react-native';
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, Text, NavigationContainer, ActivityIndicator, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
-import axios from 'axios';
 import { getDistance } from 'geolib';
 import { Marker } from 'react-native-maps';
 import LocationSearch from './LocationSearch';
 import GoogleMapComponent from './GoogleMapComponent';
 import LocationPermission from './LocationPermission';
 import NavBar from './NavBar';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { getAllLocations } from '../scripts/axios';
+import SingleLocation from './SingleLocation/SingleLocation';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,10 +16,14 @@ export default function HomeScreen({navigation}) {
 	const [noLocationsFound, setNoLocationsFound] = useState(false);
 	const [userLocation, setUserLocation] = useState(null);
 	const [locations, setLocations] = useState([]);
-	const instance = axios.create({
-		baseURL: 'https://spike-auth-server.onrender.com/',
-	});
-
+	
+	useEffect(() => {
+		getAllLocations()
+		.then(data => {
+			setLocations(locations => [...data])
+		})
+		
+	}, [])
 	const [region, setRegion] = useState({
 		latitude: 54.6360,
 		longitude: -3.3631,
@@ -95,6 +99,18 @@ export default function HomeScreen({navigation}) {
 		setRegion(newRegion);
 	}
 
+	function handleClick(uid) {
+		console.log(uid)
+		// return (
+		// 	<SingleLocation uid={uid} />
+		// 	{
+				
+		// 	}
+		// )
+		return navigation.navigate('SingleLocation', {uid})
+	}
+
+	console.log(locations)
 	return (
 		<View style={styles.container}>
 			<NavBar navigation={navigation}/>
@@ -126,8 +142,32 @@ export default function HomeScreen({navigation}) {
 						/>
 					))
 				}
+				
 			</GoogleMapComponent>
-			{noLocationsFound && <Text style={styles.noLocationsText}>No locations found nearby!</Text>}
+			{
+					!locations.length
+					? (
+						<ActivityIndicator size='large'/>
+					)
+					: (
+						<>
+						{
+							locations.map(location => {
+								return (
+									<TouchableOpacity
+									onPress={() => handleClick(location._id)}>
+									<Text style={{fontSize: 20}}>
+										{location.name}
+									</Text>
+									</TouchableOpacity>
+								)
+							})
+						}
+						</>
+					)
+			}
+				
+			{/* {noLocationsFound && <Text style={styles.noLocationsText}>No locations found nearby!</Text>} */}
 		</View>
 	);
 }
