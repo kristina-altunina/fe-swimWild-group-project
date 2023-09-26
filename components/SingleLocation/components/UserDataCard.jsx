@@ -20,7 +20,7 @@ export default function UserDataCard({ userData }) {
 					disabled={true}
 					maxStars={5}
 					starSize={18}
-					rating={4}
+					rating={userData.avStars}
 					fullStarColor="yellow"
 					emptyStarColor="white"
 				/>
