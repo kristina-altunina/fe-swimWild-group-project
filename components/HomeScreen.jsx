@@ -56,13 +56,6 @@ export default function HomeScreen({ navigation }) {
   };
 
   function handleClick(uid) {
-    console.log(uid);
-    // return (
-    // 	<SingleLocation uid={uid} />
-    // 	{
-
-    // 	}
-    // )
     return navigation.navigate("SingleLocation", { uid });
   }
 
@@ -70,36 +63,38 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <NavBar navigation={navigation} />
       <LocationPermission onPermissionChange={handlePermissionChange} />
-      <LocationSearch setUserLocation={setUserLocation} />
-      <GoogleMapComponent
-        region={userLocation}
-        onRegionChange={handleRegionChange}
-      >
-        {(locations || []).map((location) => (
-          <Marker
-            key={location._id}
-            coordinate={{
-              latitude: location.coords[0],
-              longitude: location.coords[1],
-            }}
-            title={location.name}
-            description={location.type}
+      <View style={styles.mapContainer}>
+        <GoogleMapComponent
+          region={region}
+          onRegionChange={handleRegionChange}
+          locations={locations}
+          userLocation={userLocation}
+          navigation={navigation}
+        />
+        <View style={styles.locationSearch}>
+          <LocationSearch
+            style={styles.locationSearch}
+            onSelect={handleRegionSelect}
           />
-        ))}
-      </GoogleMapComponent>
-      {loadingLocations ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <>
-          {locations.map((location) => {
-            return (
+        </View>
+      </View>
+
+      <View style={styles.locationList}>
+        <ScrollView>
+          {locations &&
+            locations.map((location) => (
               <TouchableOpacity onPress={() => handleClick(location._id)}>
-                <Text style={{ fontSize: 20 }}>{location.name}</Text>
+                <LocationPreview
+                  key={location._id}
+                  name={location.name}
+                  type={location.type}
+                  distance={location.distanceKm.toFixed(2)}
+                  avStars={location.avStars}
+                />
               </TouchableOpacity>
-            );
-          })}
-        </>
-      )}
+            ))}
+        </ScrollView>
+      </View>
 
       {/* {noLocationsFound && <Text style={styles.noLocationsText}>No locations found nearby!</Text>} */}
     </View>
@@ -108,26 +103,26 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 3,
+    flex: 1,
     backgroundColor: "fff",
-  },
-  listItem: {
-    backgroundColor: "#f9f9f9",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  listItemText: {
-    fontSize: 18,
-  },
-  listItemDescription: {
-    fontSize: 14,
-    color: "gray",
   },
   noLocationsText: {
     color: "red",
     fontSize: 16,
     textAlign: "center",
     margin: 10,
+  },
+  mapContainer: {
+    flex: 3,
+  },
+  locationSearch: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    zIndex: 2,
+    width: "100%",
+  },
+  locationList: {
+    flex: 2,
   },
 });

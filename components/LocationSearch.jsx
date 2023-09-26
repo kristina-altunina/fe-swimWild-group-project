@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { TextInput, StyleSheet } from "react-native";
+import { TextInput, StyleSheet, View } from "react-native";
 import { debounce } from "lodash";
 
 export default function LocationSearch({ setUserLocation }) {
@@ -40,22 +40,25 @@ export default function LocationSearch({ setUserLocation }) {
   const debouncedFetchGeocode = useCallback(debounce(fetchGeocode, 1000), []);
 
   return (
-    <TextInput
-      style={styles.input}
-      placeholder="Search for a location..."
-      value={inputValue}
-      onChangeText={(text) => {
-        setInputValue(text);
-        if (text.trim()) {
-          debouncedFetchGeocode(text);
-        }
-      }}
-    />
+    <View>
+      <TextInput
+        style={styles.input}
+        placeholder="Search for a location..."
+        value={inputValue}
+        onChangeText={(text) => {
+          setInputValue(text);
+          if (text.trim()) {
+            debouncedFetchGeocode(text);
+          }
+        }}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   input: {
+    width: "100%",
     height: 40,
     borderColor: "gray",
     borderWidth: 1,

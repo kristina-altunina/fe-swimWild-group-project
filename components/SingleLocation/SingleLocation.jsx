@@ -15,6 +15,7 @@ import ApiDataOthersCard from "./components/ApiDataOthersCard";
 import UserDataCard from "./components/UserDataCard";
 import SwimReviewData from "./components/SwimReviewData";
 import ApiDataSeaCard from "./components/ApiDataSeaCard";
+import InfoCard from "./components/InfoCard";
 
 export default function SingleLocation({
   route: {
@@ -26,23 +27,22 @@ export default function SingleLocation({
   const [apiData, setApiData] = useState({});
   const [swimsData, setSwimsData] = useState([]);
   const [locationData, setLocationData] = useState([]);
+  const [infoData, setInfoData] = useState({});
 
   useEffect(() => {
-    // const {apiData, userData, swims, location} = test()
-    // const requestedSwimsData = swims;
-    // setSwimsData(swimsData => requestedSwimsData)
-
     getLocationByID(uid)
       .then((data) => {
-        const { apiData, userData, swims, location } = data;
+        const { apiData, userData, swims, location, info } = data;
         const requestedUserData = userData;
         const requestedApiData = apiData;
         const requestedSwimsData = swims;
-        const requestedLocation = location;
+        const requestedLocationData = location;
+        const requestInfoData = info;
         setUserData((userData) => requestedUserData);
         setSwimsData((swimsData) => requestedSwimsData);
         setApiData((apiData) => requestedApiData);
-        setLocationData((locationData) => requestedLocation);
+        setLocationData((locationData) => requestedLocationData);
+        setInfoData((infoData) => requestInfoData);
       })
       .catch((err) => {
         console.log(err);
@@ -83,9 +83,7 @@ export default function SingleLocation({
                 <ApiDataOthersCard apiData={apiData} uid={uid} />
               )}
               <UserDataCard userData={userData} />
-              <View style={styles.summary}>
-                <Text>plan a new swim, summary pop up etc(no data)</Text>
-              </View>
+              <InfoCard info={infoData} />
               <SwimReviewData swimsData={swimsData} />
             </View>
           </View>
