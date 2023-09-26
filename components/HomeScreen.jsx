@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text, NavigationContainer, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
-import { Marker } from 'react-native-maps';
 import LocationSearch from './LocationSearch';
 import GoogleMapComponent from './GoogleMapComponent';
 import LocationPermission from './LocationPermission';
 import NavBar from './NavBar';
 import { getAllLocations } from '../scripts/axios';
-import SingleLocation from './SingleLocation/SingleLocation';
 import LocationPreview from './LocationPreview';
 
 export default function HomeScreen({ navigation }) {
@@ -52,7 +50,7 @@ export default function HomeScreen({ navigation }) {
 						latitudeDelta: 0.0922,
 						longitudeDelta: 0.0421,
 					});
-					return instance.get(`locations?lat=${coords.latitude}&lon=${coords.longitude}`);
+					return instance.get(`locations?lat=${coords.latitude}&lon=${coords.longitude}&limit=5`);
 				})
 				.then(({ data }) => {
 					const filteredLocations = data.filter(location => {
@@ -111,44 +109,25 @@ export default function HomeScreen({ navigation }) {
 					onRegionChange={handleRegionChange}
 					locations={locations}
 					userLocation={userLocation}
+					navigation={navigation}
 				/>
-				<LocationSearch style={styles.locationSearch} onSelect={handleRegionSelect} />
+				<View style={styles.locationSearch}>
+					<LocationSearch style={styles.locationSearch} onSelect={handleRegionSelect} />
+				</View>
 			</View>
-			{/* {
-				!locations.length
-					? (
-						<ActivityIndicator size='large' />
-					)
-					: (
-						<>
-							{
-								locations.map(location => {
-									return (
-										<TouchableOpacity
-											onPress={() => handleClick(location._id)}>
-											<Text style={{ fontSize: 20 }}>
-												{location.name}
-												{location.type}
-												{location.distanceKm}
-											</Text>
-										</TouchableOpacity>
-									)
-								})
-							}
-						</>
-					)
-			} */}
 
 			<View style={styles.locationList}>
 				<ScrollView>
 					{locations.map(location => (
-						<LocationPreview
-							key={location._id}
-							name={location.name}
-							type={location.type}
-							distance={location.distanceKm.toFixed(2)}
-							avStars={location.avStars}
-						/>
+						<TouchableOpacity onPress={() => handleClick(location._id)}>
+							<LocationPreview
+								key={location._id}
+								name={location.name}
+								type={location.type}
+								distance={location.distanceKm.toFixed(2)}
+								avStars={location.avStars}
+							/>
+						</TouchableOpacity>
 					))}
 				</ScrollView>
 			</View>
@@ -157,7 +136,6 @@ export default function HomeScreen({ navigation }) {
 		</View>
 	);
 }
-
 
 
 const styles = StyleSheet.create({

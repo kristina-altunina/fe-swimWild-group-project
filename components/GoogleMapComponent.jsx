@@ -1,8 +1,13 @@
 import React from 'react'
-import { StyleSheet, Text } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import MapView, { Marker, Callout } from 'react-native-maps'
 
-export default function GoogleMapComponent({ onRegionChange, region, locations, userLocation }) {
+export default function GoogleMapComponent({ onRegionChange, region, locations, userLocation, navigation }) {
+
+	function handleClick(uid) {
+		return navigation.navigate('SingleLocation', { uid })
+	}
+
 	return (
 		<MapView
 			style={{ width: '100%', height: '50%', padding: 100 }}
@@ -34,10 +39,12 @@ export default function GoogleMapComponent({ onRegionChange, region, locations, 
 					title={location.name}
 					description={location.type}
 				>
-					<Callout>
-						<Text>{location.name} - {location.type}</Text>
-						<Text>Stars: {location.avStars}</Text>
-						<Text>Distance: {location.distanceKm} km</Text>
+					<Callout onPress={() => handleClick(location._id)}>
+						<TouchableOpacity activeOpacity={0.8}>
+							<Text>{location.name} - {location.type}</Text>
+							<Text>Stars: {location.avStars}</Text>
+							<Text>Distance: {location.distanceKm} km</Text>
+						</TouchableOpacity>
 					</Callout>
 				</Marker>
 			))}
