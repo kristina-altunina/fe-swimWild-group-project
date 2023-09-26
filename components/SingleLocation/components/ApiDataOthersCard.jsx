@@ -302,6 +302,7 @@ export default function ApiDataSeaCard({ apiData, uid }) {
                   valueField="value"
                   placeholderStyle={styles["displayText--large"]}
                   selectedTextStyle={styles.displayText}
+                  itemTextStyle={styles.forecastDates}
                   iconColor="white"
                   placeholder={siteData[selectedSite].label}
                   onChange={(item) => {
