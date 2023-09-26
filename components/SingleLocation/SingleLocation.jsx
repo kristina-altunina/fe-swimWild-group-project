@@ -89,8 +89,17 @@ useEffect(() => {
                                     )
                                 )
                             }
+                            
                             <UserDataCard userData={userData}/>
                             <InfoCard info={infoData}/>
+                            <TouchableWithoutFeedback
+                            onPress={() => navigation.navigate('PostSwimSpot', {locationName: locationData.name})}>
+                            <View>
+                                <Text>
+                                    post swim test
+                                </Text>
+                            </View>
+                            </TouchableWithoutFeedback>
                             <SwimReviewData swimsData={swimsData}
                             navigation={navigation}/>
                         </View>

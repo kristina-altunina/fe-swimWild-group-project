@@ -4,20 +4,10 @@ import { styles } from "../../../styles/swimReviewData"
 import StarRating from 'react-native-star-rating'
 
 export default function SwimReviewData({swimsData, navigation}) {
-    // const [expandReview, setExpandReview] = useState([])
 
     function handleExpandSwimReview(swim) {
         return navigation.navigate('SwimSpot', {swim})
     }
-
-    // function handleExpandSwimReviewStyle(i) {
-        
-    //     if(expandReview.includes(i)) {
-    //         return styles.hideContent 
-    //     } else {
-    //         return styles.showContent
-    //     }
-    // }
 
     function StarRatingDisplay({num}) {
         return (
@@ -29,7 +19,7 @@ export default function SwimReviewData({swimsData, navigation}) {
                 disabled={true}
                 maxStars={5}
                 starSize={18}
-                rating={4}
+                rating={num}
                 fullStarColor="yellow"
                 />
             </View>
@@ -72,31 +62,6 @@ export default function SwimReviewData({swimsData, navigation}) {
                                 <Text style={styles.showContent}>
                                     See Swimmer's Experience...
                                 </Text>
-                                {/* {expandReview.includes(i) && (
-                                    <>
-                                    <Text>
-                                        Recorded Temp: {swim.recordTemp}
-                                    </Text>
-                                    <Text>
-                                        Feels like Temp: {swim.feelTemp}
-                                    </Text>
-                                    <Text>
-                                        Swim Duration: {swim.mins} mins
-                                    </Text>
-                                    <Text>
-                                        Out of Depth: {swim.outOfDepth}
-                                    </Text>
-                                    <Text>
-                                        Shore Condition: {swim.shore}
-                                    </Text>
-                                    <Text>
-                                        Bank Angle: {swim.bankAngle}
-                                    </Text>
-                                    <Text>
-                                        Clarity: {swim.clarity}
-                                    </Text>
-                                    </>
-                                )} */}
                             </View>
                         </View>
                     </TouchableWithoutFeedback>
