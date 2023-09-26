@@ -64,6 +64,20 @@ export const styles = StyleSheet.create({
     opacity: 0,
     height: 0,
   },
+  postButton: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 16,
+    backgroundColor: colours.blueAccent,
+    borderRadius: 50,
+    padding: 8,
+    paddingLeft: 10,
+    color: "white",
+    elevation: 5,
+    height: 40,
+    width: "50%",
+    textAlign: "center",
+    marginLeft: "25%",
+  },
 });
 
 export const props = {

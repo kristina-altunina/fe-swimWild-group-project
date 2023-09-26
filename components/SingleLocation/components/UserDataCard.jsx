@@ -66,7 +66,7 @@ export default function UserDataCard({ userData }) {
           <ActivityIndicator size="large" />
         ) : (
           <View style={styles.AveUserData}>
-            <Text style={styles.titleText}>What our users think</Text>
+            <Text style={styles.titleText}>User Verdict</Text>
             {!expandUserData ? (
               <>
                 <StarRatingDisplay num={userData.avStars} />

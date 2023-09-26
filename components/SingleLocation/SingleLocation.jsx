@@ -62,7 +62,6 @@ export default function SingleLocation({
         setIsLoading(false);
       })
       .catch((err) => {
-        setIsLoading(false);
         console.log(err);
       });
   }, []);
@@ -125,7 +124,7 @@ export default function SingleLocation({
                 }
               >
                 <View>
-                  <Text>post swim test</Text>
+                  <Text style={styles.postButton}>Record a swim!</Text>
                 </View>
               </TouchableWithoutFeedback>
               <SwimReviewData swimsData={swimsData} navigation={navigation} />
