@@ -49,46 +49,78 @@ export default function SingleLocation({
       });
   }, []);
 
-  return (
-    <KeyboardAvoidingView
-      behavior={props.KeyboardAvoidingView.behavior}
-      keyboardVerticalOffset={props.KeyboardAvoidingView.keyboardVerticalOffset}
-      style={styles.KeyboardAvoidingView}
-    >
-      <ScrollView>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.screen}>
-            <NavBar navigation={navigation} />
-            <View style={styles.display}>
-              {!Object.keys(locationData).length ? (
-                <>
-                  <ActivityIndicator size="large" />
-                </>
-              ) : (
-                <View style={styles.title}>
-                  <Text style={styles.title_text}>{locationData.name}</Text>
-                  <Text style={styles.title_text_center}>
-                    Type: {locationData.type}
-                  </Text>
-                </View>
-              )}
-              {!Object.keys(apiData).length &&
-              !Object.keys(locationData).length ? (
-                <>
-                  <ActivityIndicator size="large" />
-                </>
-              ) : locationData.type === "sea" ? (
-                <ApiDataSeaCard apiData={apiData} uid={uid} />
-              ) : (
-                <ApiDataOthersCard apiData={apiData} uid={uid} />
-              )}
-              <UserDataCard userData={userData} />
-              <InfoCard info={infoData} />
-              <SwimReviewData swimsData={swimsData} />
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </ScrollView>
-    </KeyboardAvoidingView>
-  );
+    return (
+			<KeyboardAvoidingView
+				behavior={props.KeyboardAvoidingView.behavior}
+				keyboardVerticalOffset={props.KeyboardAvoidingView.keyboardVerticalOffset}
+                
+				style={styles.KeyboardAvoidingView}>
+                    <ScrollView>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                
+					<View style={styles.screen}>
+						<NavBar navigation={navigation}/>
+                        <View style={styles.display}>
+                            {
+                                !Object.keys(locationData).length
+                                ? (
+                                    <>
+                                    <ActivityIndicator size='large'/>
+                                    </>
+                                )
+                                : (
+                                    <View style={styles.title}>
+                                        <Text style={styles.title_text}>
+                                            {locationData.name}
+                                        </Text>
+                                        <Text style={styles.title_text_center}>
+                                            Type: {locationData.type}
+                                        </Text>
+                                    </View>
+                                )
+                            }
+                            {
+                                !Object.keys(apiData).length && !Object.keys(locationData).length
+                                ? (
+                                    <>
+                                    <ActivityIndicator size='large'/>
+                                    </>
+                                )
+                                : (
+                                    locationData.type === 'sea'
+                                    ? (
+                                        <ApiDataSeaCard
+                                        apiData={apiData}
+                                        uid={uid}/>
+                                    )
+                                    : (
+                                        <ApiDataOthersCard
+                                        apiData={apiData}
+                                        uid={uid}/>
+                                    )
+                                )
+                            }
+                            
+                            <UserDataCard userData={userData}/>
+                            <InfoCard info={infoData}/>
+                            <TouchableWithoutFeedback
+                            onPress={() => navigation.navigate('PostSwimSpot', {location: {
+                                name: locationData.name,
+                                id: locationData._id
+                            }})}>
+                            <View>
+                                <Text>
+                                    post swim test
+                                </Text>
+                            </View>
+                            </TouchableWithoutFeedback>
+                            <SwimReviewData swimsData={swimsData}
+                            navigation={navigation}/>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+                </ScrollView>
+            </KeyboardAvoidingView>
+    )
+        
 }
