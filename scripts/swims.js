@@ -66,9 +66,9 @@ export function favouriteSwim(swims) {
 }
 
 export function hottest(swims) {
-  const hottest = { temp: null, name: 0, date: "" };
+  const hottest = { temp: null, name: null, date: null };
   for (const swim of swims) {
-    if (+swim.recordTemp > hottest) {
+    if (+swim.recordTemp > hottest.temp) {
       hottest.temp = +swim.recordTemp;
       hottest.name = swim.location.name;
       hottest.date = new Date(swim.date)
@@ -83,9 +83,9 @@ export function hottest(swims) {
 }
 
 export function coldest(swims) {
-  const coldest = { temp: null, name: 0, date: "" };
+  const coldest = { temp: 100, name: null, date: null };
   for (const swim of swims) {
-    if (+swim.recordTemp < coldest) {
+    if (+swim.recordTemp < coldest.temp) {
       coldest.temp = +swim.recordTemp;
       coldest.name = swim.location.name;
       coldest.date = new Date(swim.date)
@@ -99,4 +99,32 @@ export function coldest(swims) {
   return `${coldest.temp}°C, ${coldest.name}, ${coldest.date}`;
 }
 
-export function swimTheLakeDistrict(swims) {}
+export function swimTheLakes(swims) {
+  const challenge = [
+    "Coniston Water, Cumbria",
+    "Rydal, Lake District",
+    "Grasmere Lake, Lake District",
+    "Black Moss Pot, Keswick",
+    "Tongue Pot, Eskdale",
+    "Wast Water, Lake District",
+    "Styhead Tarn, Borrowdale",
+    "Ullswater, Lake District",
+    "Watendlath Tarn, Keswick",
+    "Buttermere Pools, Lake District",
+    "Derwentwater, Lake District",
+    "Crummock Water, Lake District",
+    "Loweswater, Cumbria",
+    "Bassenthwaite Lake, Cumbria",
+  ];
+  const locations = new Set();
+  for (const swim of swims) {
+    locations.add(swim.location.name);
+  }
+  let count = 0;
+  locations.forEach((location) => {
+    if (challenge.includes(location)) {
+      count++;
+    }
+  });
+  return Math.ceil((count / 14) * 100).toString() + "%";
+}

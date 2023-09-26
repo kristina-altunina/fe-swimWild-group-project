@@ -10,4 +10,6 @@ export const colours = {
   accent5: "#E5E8B6",
   expandButton: "rgb(139, 83, 190)",
   accent3Weak: "#cad5c6",
+  orangeAccent: "#fc6f03",
+  blueAccent: "#029e8e",
 };

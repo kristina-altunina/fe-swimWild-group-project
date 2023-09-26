@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 
 import { colours } from "../styles/base";
@@ -20,7 +21,7 @@ import {
   coldest,
   favouriteSwim,
   hottest,
-  swimTheLakeDistrict,
+  swimTheLakes,
   swimsThisMonth,
 } from "../scripts/swims";
 import StarRating from "react-native-star-rating";
@@ -33,39 +34,47 @@ export default Profile = ({ navigation, route }) => {
   const [swims, setSwims] = useState([]);
   const [filtSwims, setFiltSwims] = useState([]);
   const refreshToken = route.params.refresh_token;
+  const [isLoading, setIsLoading] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
     "Poppins-Regular_Italic": require("../assets/fonts/Poppins-Italic.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Bold_Italic": require("../assets/fonts/Poppins-BoldItalic.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
   });
 
-  async function getProfile() {
-    const tokenObj = await tokenRefresh(refreshToken);
-    const url = BACKEND_API_URL + "/users/profile";
-
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${tokenObj.access_token}`,
-      },
-    })
-      .then((response) => response.json())
+  useEffect(() => {
+    setIsLoading(true);
+    tokenRefresh(refreshToken)
+      .then((tokenObj) => {
+        const url = BACKEND_API_URL + "/users/profile";
+        const options = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tokenObj.access_token}`,
+          },
+        };
+        return fetch(url, options);
+      })
+      .then((response) => {
+        console.log(response);
+        return response.json();
+      })
       .then((json) => {
         json.dob = formatDate(json.dob.split("T")[0], "-");
         setProfileData(() => json);
-        setSwims(() => addMonthToSwims(json.swims));
+        const swimData = addMonthToSwims(json.swims);
+        setIsLoading(false);
+        setSwims(swimData);
+        setFiltSwims(swimData);
       })
       .catch((error) => {
         console.log(error);
+        setIsLoading(false);
       });
-  }
-
-  useEffect(() => {
-    getProfile();
   }, []);
 
   useEffect(() => {
@@ -79,8 +88,13 @@ export default Profile = ({ navigation, route }) => {
     });
   }, []);
 
-  if (!swims.length) {
-    return <ActivityIndicator size="large" />;
+  if (!swims.length || isLoading) {
+    return (
+      <View>
+        <NavBar navigation={navigation} />
+        <ActivityIndicator style={styles.loader} size="xlarge" />
+      </View>
+    );
   }
 
   return (
@@ -132,20 +146,22 @@ export default Profile = ({ navigation, route }) => {
           <Text style={styles.stats__label}>
             Loves <Text style={styles.stats__stat}>{favouriteSwim(swims)}</Text>
           </Text>
-          <Text style={styles.stats__label}>
-            Swim the Lake District:{" "}
-            <Text style={styles.stats__stat}>{swimTheLakeDistrict(swims)}</Text>
+          <Text style={styles.stats__challenge}>
+            Swim the Lakes:{"  "}
+            <Text style={styles.stats__stat}>{swimTheLakes(swims)}</Text>
           </Text>
         </View>
         <View style={styles.stats__bottom}>
           {coldest(swims) && (
-            <Text style={styles.stats__label}>
-              Coldest: <Text style={styles.stats__stat}>{coldest(swims)}</Text>,
+            <Text style={styles.stats__stat}>
+              Coldest:{"  "}
+              <Text style={styles.stats__label}>{coldest(swims)}</Text>
             </Text>
           )}
           {hottest(swims) && (
-            <Text>
-              Warmest: <Text style={styles.stats__stat}>{hottest(swims)}</Text>
+            <Text style={styles.stats__stat}>
+              Warmest:{"  "}
+              <Text style={styles.stats__label}>{hottest(swims)}</Text>
             </Text>
           )}
         </View>
@@ -155,12 +171,12 @@ export default Profile = ({ navigation, route }) => {
         filtSwims={filtSwims}
         setFiltSwims={setFiltSwims}
       />
-      <SwimGrid />
-      <View>
+      <ScrollView>
+        {!filtSwims.length && <Text style={styles.empty}>Nothing here!</Text>}
         {filtSwims.map((swim) => {
           return <SwimRecord swim={swim} key={swim._id} />;
         })}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -182,6 +198,7 @@ const styles = StyleSheet.create({
     width: "60%",
     margin: 2,
     padding: 0,
+    color: colours.text,
   },
   profile__name: {
     fontSize: 22,
@@ -203,6 +220,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
     fontFamily: "Poppins-Regular_Italic",
+    color: colours.text,
   },
   profile__img: {
     minWidth: 0,
@@ -231,8 +249,25 @@ const styles = StyleSheet.create({
   },
   stats__label: {
     fontFamily: "Poppins-Light",
+    color: colours.text,
+  },
+  stats__challenge: {
+    fontFamily: "Poppins-Bold_Italic",
+    color: colours.blueAccent,
   },
   stats__stat: {
     fontFamily: "Poppins-Bold",
+    color: colours.text,
+  },
+  loader: {
+    height: "100%",
+    position: "absolute",
+    top: 350,
+    left: "45%",
+  },
+  empty: {
+    fontFamily: "Poppins-Light",
+    color: colours.lightText,
+    textAlign: "center",
   },
 });

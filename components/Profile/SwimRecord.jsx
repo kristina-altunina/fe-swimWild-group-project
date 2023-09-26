@@ -1,15 +1,20 @@
 import StarRating from "react-native-star-rating";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { styles } from "../../styles/swimReviewData";
 import { colours } from "../../styles/base";
 import { useFonts } from "expo-font";
 import { Stat } from "../reuse/Stat";
+import { Stats } from "../reuse/Stats";
 
 export function SwimRecord({ swim }) {
   const [fontsLoaded] = useFonts({
     "Poppins-SemiBold": require("../../assets/fonts/Poppins-SemiBold.ttf"),
     "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
   });
+
+  if (!fontsLoaded) {
+    return;
+  }
 
   return (
     <View style={changeMe.swimRecord}>
@@ -29,13 +34,8 @@ export function SwimRecord({ swim }) {
             fullStarColor="#FFC033"
             emptyStarColor="#DBDBDB"
           />
-          <Stat val={swim.feelTemp} icon={"feelTemp"} />
-          <Stat val={swim.bankAngle} icon={"bankAngle"} />
-          <Stat val={swim.clarity} icon={"clarity"} />
-          <Stat val={swim.recordTemp} icon={"recordTemp"} />
-          <Stat val={swim.shore} icon={"shore"} />
-          <Stat val={swim.sizeKey} icon={"sizeKey"} />
         </View>
+        <Stats data={swim} />
       </View>
     </View>
   );
@@ -57,13 +57,17 @@ const changeMe = StyleSheet.create({
     flexWrap: "nowrap",
     justifyContent: "space-between",
     alignItems: "top",
+    width: "100%",
   },
   swimRecord__name: {
     fontSize: 16,
     fontFamily: "Poppins-SemiBold",
+    color: colours.text,
+    width: "70%",
   },
   swimRecord__date: {
     fontSize: 12,
     fontFamily: "Poppins-Light",
+    color: colours.text,
   },
 });
