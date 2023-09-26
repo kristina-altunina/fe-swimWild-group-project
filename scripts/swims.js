@@ -85,6 +85,7 @@ export function hottest(swims) {
 export function coldest(swims) {
   const coldest = { temp: 100, name: null, date: null };
   for (const swim of swims) {
+    if (swim.recordTemp === null) continue;
     if (+swim.recordTemp < coldest.temp) {
       coldest.temp = +swim.recordTemp;
       coldest.name = swim.location.name;

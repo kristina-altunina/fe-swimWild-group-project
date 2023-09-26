@@ -24,10 +24,9 @@ import {
   swimTheLakes,
   swimsThisMonth,
 } from "../scripts/swims";
-import StarRating from "react-native-star-rating";
-import SwimGrid from "./Profile/SwimGrid";
 import { SwimRecord } from "./Profile/SwimRecord";
 import { useFonts } from "expo-font";
+import { useAssets } from "expo-asset";
 
 export default Profile = ({ navigation, route }) => {
   const [profileData, setProfileData] = useState({ swims: [] });
@@ -44,6 +43,7 @@ export default Profile = ({ navigation, route }) => {
     "Poppins-Bold_Italic": require("../assets/fonts/Poppins-BoldItalic.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
   });
+  const [assets, error] = useAssets([require("../assets/icons/pencil.png")]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -102,7 +102,14 @@ export default Profile = ({ navigation, route }) => {
       <NavBar navigation={navigation} />
       <View style={styles.profile}>
         <View style={styles.profile__text}>
-          <Text style={styles.profile__name}>{profileData.name}</Text>
+          <View style={styles.profile__header}>
+            <Text style={styles.profile__name}>{profileData.name}</Text>
+            <Image
+              source={assets[0]}
+              resizeMode={"cover"}
+              style={styles.profile__edit}
+            ></Image>
+          </View>
           <Text style={styles.profile__nickname}>{profileData.nickname}</Text>
           <Text style={styles.profile__home}>{profileData.home || ""}</Text>
           <Text style={styles.profile__bio}>{profileData.bio || ""}</Text>
@@ -200,11 +207,25 @@ const styles = StyleSheet.create({
     padding: 0,
     color: colours.text,
   },
+  profile__header: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
   profile__name: {
     fontSize: 22,
     fontFamily: "Poppins-Bold",
     color: colours.text,
     height: 28,
+  },
+  profile__edit: {
+    minHeight: 0,
+    height: 20,
+    width: 20,
+    margin: 0,
+    padding: 0,
+    marginLeft: 7,
   },
   profile__nickname: {
     fontSize: 16,
@@ -221,6 +242,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontFamily: "Poppins-Regular_Italic",
     color: colours.text,
+    marginRight: 6,
   },
   profile__img: {
     minWidth: 0,
