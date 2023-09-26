@@ -1,32 +1,18 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
-
 import { isCurrentUserAuthenticated } from "../firebaseConfig";
-import {
-  useFonts,
-  Poppins_600SemiBold,
-  Poppins_900Black,
-  Poppins_500Medium,
-  Poppins_300Light_Italic,
-  Poppins_200ExtraLight,
-} from "@expo-google-fonts/poppins";
-
 import { useState } from "react";
+import { useFonts } from "expo-font";
 
 export default NavBar = ({ navigation }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [fontsLoaded] = useFonts({
-    Poppins_600SemiBold,
-    Poppins_900Black,
-    Poppins_500Medium,
-    Poppins_300Light_Italic,
-    Poppins_200ExtraLight,
+    "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
+    "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
   });
 
   if (!fontsLoaded) {
@@ -104,6 +90,7 @@ export default NavBar = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   app: {
     backgroundColor: colours.bg,
@@ -125,7 +112,7 @@ const styles = StyleSheet.create({
   },
   header__title: {
     fontSize: 32,
-    fontFamily: "Poppins_900Black",
+    fontFamily: "Poppins-Black",
     color: colours.text,
   },
   header__titleAccent: {
@@ -141,7 +128,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   header__buttonText: {
-    fontFamily: "Poppins_600SemiBold",
+    fontFamily: "Poppins-SemiBold",
     fontSize: 20,
     color: colours.bg,
   },
