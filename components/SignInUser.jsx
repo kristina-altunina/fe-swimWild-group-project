@@ -19,6 +19,8 @@ import { getFirebaseError } from "../extentions";
 import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { refreshToken } from '../redux/reducers';
 
 export default SignInUser = ({ navigation }) => {
   
@@ -27,6 +29,8 @@ export default SignInUser = ({ navigation }) => {
   const [firebaseError, setFirebaseError] = useState('');
   const [sending, setSending] = useState(false);
 
+  const dispatch = useDispatch();
+
   async function handleSignIn(values) {
     setFirebaseError('')
     setSending(true)
@@ -34,8 +38,8 @@ export default SignInUser = ({ navigation }) => {
     try {
         const response = await signInWithEmailAndPassword(auth, values.email, values.password)
         const user = response.user;
-        navigation.navigate('Profile',
-        {refresh_token: user.stsTokenManager.refreshToken})
+        dispatch(refreshToken({ refresh_token:user.stsTokenManager.refreshToken }))
+        navigation.navigate('Profile')
     }
     catch(error) {
         setSending(false)
@@ -106,10 +110,15 @@ return (
                           </>
                         )}
                       </Formik>
-                      <Text style={styles.link}
-                      onPress={() => navigation.navigate("ResetPassword")}>
-                        Forgot Password
-                      </Text>
+                      <View>
+                        <Text style={styles.link}
+                        onPress={() => {
+                          console.log("CLICK RESET PASS")
+                          navigation.navigate("ResetPassword");
+                      }}>
+                          Forgot Password
+                        </Text>
+                      </View>
                     </ScrollView>
                   </View>
               </View>

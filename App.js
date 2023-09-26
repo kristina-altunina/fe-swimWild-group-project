@@ -1,99 +1,115 @@
+import 'react-native-gesture-handler';
 import { colours } from "./styles/base";
-
 import RegisterUser from "./components/RegisterUser";
 import SignInUser from "./components/SignInUser";
 import Profile from "./components/Profile";
-import NavBar from "./components/NavBar";
 import ResetPassword from "./components/ResetPassword";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import HomeScreen from "./components/HomeScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import { Image } from "react-native"
+import { useState } from "react";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from '@react-navigation/drawer';
 
 import {
-  useFonts,
-  Poppins_600SemiBold,
-  Poppins_900Black,
-  Poppins_500Medium,
-  Poppins_300Light_Italic,
-  Poppins_200ExtraLight,
-} from "@expo-google-fonts/poppins";
-import {
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Button
 } from "react-native";
 
-
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SingleLocation from "./components/SingleLocation/SingleLocation";
+import { isCurrentUserAuthenticated } from "./firebaseConfig";
+import { signOut } from "firebase/auth";
+import { auth } from "./firebaseConfig";
+import { Provider, useSelector } from 'react-redux';
+import store  from './redux/store';
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
+
+function handleSignOut(navigation) {
+  signOut(auth)
+    .then(() => {
+      navigation.navigate('Home')
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+}
+function CustomDrawerContent(props) {
+  const { isAuthenticated } = props;
+  const profileUrl = useSelector(state => state.profileUrl); 
+  console.log('Profile URL', profileUrl)
+  return (
+    <DrawerContentScrollView {...props}>
+       <Image source={
+        {uri: profileUrl}
+      } style={{width: 80, height: 80, borderRadius:40, marginLeft:10, marginBottom:10}}/>
+      <DrawerItemList {...props} />
+      {isAuthenticated ? 
+      <DrawerItem
+        label="Sign Out"
+        onPress={() => handleSignOut(props.navigation)}
+      />: null}
+      {isAuthenticated ? 
+       <DrawerItem
+        label="Delete Account"
+        onPress={() => props.navigation.closeDrawer()}
+      /> : null }
+    </DrawerContentScrollView>
+  );
+}
+
+function Root() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+ 
+  isCurrentUserAuthenticated((isAuth)=>{
+    
+    setIsAuthenticated(isAuth)
+  });
+
+  return (
+    
+    <Drawer.Navigator drawerContent={(props) =>  <CustomDrawerContent isAuthenticated={isAuthenticated} {...props} />}
+    screenOptions={
+      {drawerPosition:'right',headerShown:false, swipeEdgeWidth: 0}
+    } initialRouteName="Home">
+        <Drawer.Screen name="Home" component={HomeScreen} options={{headerShown: false} }/>
+        <Drawer.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true, drawerLabel:'Sign Up', drawerItemStyle: { display: isAuthenticated? 'none':'block' }}}/>
+        <Drawer.Screen name="SignIn" component={SignInUser} options={{headerShown: false,gestureEnabled: true, drawerLabel: 'Sign In', drawerItemStyle: { display: isAuthenticated? 'none':'block' }}}/>
+        <Drawer.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false,gestureEnabled: true, drawerLabel: 'Reset Password', drawerItemStyle: { display: 'none' } }}/>
+        <Drawer.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true, drawerItemStyle: { display: !isAuthenticated? 'none':'block' }}}/>
+        <Drawer.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false,gestureEnabled: true, drawerItemStyle: { display: 'none'}}}/>
+    </Drawer.Navigator>
+
+  );
+}
+
+const StackNavigation = () =>{
+  return (
+  <Stack.Navigator>
+      <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false} }/>
+      <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
+      <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
+      <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
+      <Stack.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false, gestureEnabled: true}}/>
+      <Stack.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false, gestureEnabled: true}}/>
+  </Stack.Navigator>
+  );
+}
 
 export default function App() {
 
   return (
-<NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="HomePage" component={HomeScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="LogIn" component={LogIn} options={{headerShown: false}}/>
-        <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false, gestureEnabled: true}}/>
-        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false, gestureEnabled: true}}/>
-      </Stack.Navigator>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Root/> 
     </NavigationContainer>
+  </Provider>
   );
-
-function LogIn({navigation}) {
-
-  let [fontsLoaded] = useFonts({
-    Poppins_600SemiBold,
-    Poppins_900Black,
-    Poppins_500Medium,
-    Poppins_300Light_Italic,
-    Poppins_200ExtraLight,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
-  return (
-    <SafeAreaView style={styles.app}>
-      <KeyboardAwareScrollView> 
-      <NavBar navigation={navigation}/>
-      <View>
-        <ScrollView contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps="handled">
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              navigation.navigate('SignIn')
-            }}
-          >
-            <Text>Sign In</Text>
-          </TouchableOpacity>
-        
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              navigation.navigate('Register')
-            }}
-          >
-            <Text>Sign Up</Text>
-          </TouchableOpacity>
-          {/* <Button title="test Location" onPress={() => {navigation.navigate('SingleLocation', {uid: '650dd24c667ea748708385aa'})}}></Button> */}
-        </ScrollView>          
-      </View>
-      </KeyboardAwareScrollView>
-    </SafeAreaView>
-    )
-  }
 }
   //for lake: 650dd24c667ea748708385aa
   //for sea: 650dd24c667ea748708385ad

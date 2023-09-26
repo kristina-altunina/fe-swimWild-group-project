@@ -15,7 +15,6 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { colours } from "../styles/base";
 import { styles } from '../styles/layout';
 import { pickImage, takePhoto } from "../scripts/image-picker";
 import * as ImagePicker from 'expo-image-picker';
@@ -24,7 +23,8 @@ import { getFirebaseError, formatDate } from "../extentions";
 import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from 'yup';
-
+import { useDispatch } from 'react-redux';
+import { refreshToken } from '../redux/reducers';
 export default RegisterUser = ({ navigation }) => {
 	const dateNow = new Date()
 	const minimumDate = new Date(dateNow.getFullYear() - 18, dateNow.getMonth(), dateNow.getDay())
@@ -52,7 +52,9 @@ export default RegisterUser = ({ navigation }) => {
 		setDatePickerVisible(false);
 	};
 
-	async function swimWildSignUp(token, refresh_token, uid, formData) {
+	const dispatch = useDispatch();
+
+	async function swimWildSignUp(token, uid, formData) {
 		const data = {
 			uid: uid,
 			name: formData.fullName,
@@ -80,8 +82,7 @@ export default RegisterUser = ({ navigation }) => {
 			}
 		} else {
 			await response.json()
-			navigation.navigate('Profile',
-				{ refresh_token: refresh_token })
+			navigation.navigate('Profile')
 		}
 	}
 
@@ -169,7 +170,9 @@ export default RegisterUser = ({ navigation }) => {
 										try {
 											const response = await createUserWithEmailAndPassword(auth, values.email, values.password)
 											const user = response.user
-											swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid, values)
+											console.log('TOKEN',user.stsTokenManager.accessToken)
+											dispatch(refreshToken({ refresh_token:user.stsTokenManager.refreshToken }))
+											swimWildSignUp(user.stsTokenManager.accessToken, user.uid, values)
 										}
 										catch (error) {
 											setSending(false)

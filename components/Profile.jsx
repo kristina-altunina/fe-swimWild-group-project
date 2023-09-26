@@ -14,12 +14,18 @@ import { BACKEND_API_URL, DEFAULT_IMAGE_URL } from "@env"
 import { useState, useEffect } from "react";
 import {formatDate} from '../extentions'
 import BuddiesDisplay from "./Buddies/BuddiesDisplay";
+import { login } from '../redux/reducers'; // Import your slice and actions
+import { useSelector, useDispatch } from 'react-redux';
 export default Profile = ({ navigation, route }) => {
+
  const [profileData, setProfileData] = useState({})
  const [canEditAboutMe, setCanEditAboutMe] = useState(false)
  const [canEditImage, setCanEditImage] = useState(false)
- const refreshToken = route.params.refresh_token;
  
+ const refreshToken = useSelector(state => state.refresh_token); 
+ 
+ const dispatch = useDispatch();
+
 async function getProfile(){
 
   const tokenObj = await tokenRefresh(refreshToken)
@@ -43,20 +49,13 @@ async function getProfile(){
 }
 useEffect(() => {
    getProfile()
-  }, [])  
-
-  useEffect(() => {
-    const { routes } = navigation.getState();
-
-    const filteredRoutes = routes.filter(
-      route => route.name !== 'Register' && route.name !== 'SignIn',
-    );
-
-    navigation.reset({
-      index: filteredRoutes.length - 1,
-      routes: filteredRoutes,
-    });
   }, [])
+
+useEffect(() =>{
+  console.log('dispatching to store', dispatch)
+  dispatch(login({ profileUrl:profileData.profileImg }))
+},[profileData])
+
 
 return (
     <View style={styles.app}>

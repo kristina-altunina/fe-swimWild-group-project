@@ -5,10 +5,8 @@ import {
   TouchableOpacity,
 } from "react-native"
 
-import { signOut } from "firebase/auth";
-import { auth } from "../firebaseConfig";
 import { colours } from "../styles/base";
-
+import { Entypo } from '@expo/vector-icons';
 import { isCurrentUserAuthenticated } from "../firebaseConfig";
 import {
   useFonts,
@@ -42,49 +40,23 @@ if (!fontsLoaded) {
    setIsAuthenticated(isAuth)
  });
 
- function handleSignOut() {
-    signOut(auth)
-      .then(() => {
-        setIsAuthenticated(false)
-        navigation.navigate('Home')
-      })
-      .catch((error) => {
-        console.log(error)
-      });
-  }
+
 return(
     <View style={styles.header}>
         <View style={styles.header__titleContainer}>
           <Text style={styles.header__title} onPress={() => {
-            navigation.navigate('HomePage')
+            navigation.navigate('Home')
           }}>
             Swim <Text style={styles.header__titleAccent} onPress={() => {
-            navigation.navigate('HomePage')
+            navigation.navigate('Home')
           }}>Wild</Text>
           </Text>
         </View>
-        <View style={styles.header__buttons}>
-          <TouchableOpacity style={styles.header__button}>
-            <Text style={styles.header__buttonText} onPress={() => {
-            navigation.navigate('Register')
-          }}>Sign Up</Text>
+        <View>
+          <TouchableOpacity onPress={()=> navigation.toggleDrawer() }>
+            <Entypo style={{marginLeft: -25}} name={'dots-three-vertical'} size={25} color={'black'}/>
           </TouchableOpacity>
-          { isAuthenticated ? <TouchableOpacity style={styles.header__button}
-          onPress={() => {
-            handleSignOut();
-          }}
-          >
-            <Text style={styles.header__buttonText}>Sign Out</Text>
-          </TouchableOpacity>
-
-          : <TouchableOpacity style={styles.header__button}
-          onPress={() => {
-            navigation.navigate('SignIn')
-          }}
-          >
-            <Text style={styles.header__buttonText}>Sign In</Text>
-          </TouchableOpacity> }
-         
+        
         </View>
       </View>
 )
