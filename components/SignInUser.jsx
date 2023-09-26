@@ -23,25 +23,29 @@ import { useDispatch } from 'react-redux';
 import { refreshToken } from '../redux/reducers';
 
 export default SignInUser = ({ navigation }) => {
-  
+
+  const dispatch = useDispatch();
+
   const [focusedInput, setFocusedInput] = useState(null);
   const [isSignInClicked, setIsSignInClicked] = useState(false);
   const [firebaseError, setFirebaseError] = useState('');
   const [sending, setSending] = useState(false);
 
-  const dispatch = useDispatch();
-
   async function handleSignIn(values) {
     setFirebaseError('')
     setSending(true)
     setIsSignInClicked(true)
+ 
     try {
         const response = await signInWithEmailAndPassword(auth, values.email, values.password)
         const user = response.user;
-        dispatch(refreshToken({ refresh_token:user.stsTokenManager.refreshToken }))
+        const token = user.stsTokenManager.accessToken;
+        console.log('TOKEN',user.stsTokenManager.accessToken)
+        dispatch(refreshToken({ refresh_token: token }))
         navigation.navigate('Profile')
     }
     catch(error) {
+       console.log("ERROR", error)
         setSending(false)
         setIsSignInClicked(false)
         const firebaseError = getFirebaseError(error);

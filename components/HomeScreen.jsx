@@ -45,7 +45,7 @@ export default function HomeScreen({navigation}) {
 			Location.getCurrentPositionAsync({})
 				.then(({ coords }) => {
 					const { latitude, longitude } = coords; //<--
-					console.log('CURRENT_LOCATION: ', { coords });
+					// console.log('CURRENT_LOCATION: ', { coords });
 					setUserLocation({
 						latitude, //<--
 						longitude,//<--

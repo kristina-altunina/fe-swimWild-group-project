@@ -54,7 +54,7 @@ export default RegisterUser = ({ navigation }) => {
 
 	const dispatch = useDispatch();
 
-	async function swimWildSignUp(token, uid, formData) {
+	async function swimWildSignUp(token,refresh_token, uid, formData) {
 		const data = {
 			uid: uid,
 			name: formData.fullName,
@@ -81,6 +81,7 @@ export default RegisterUser = ({ navigation }) => {
 				setGenericError('Something went wrong. Please try again later.')
 			}
 		} else {
+			//dispatch(refreshToken({ refresh_token:refresh_token }))
 			await response.json()
 			navigation.navigate('Profile')
 		}
@@ -170,9 +171,9 @@ export default RegisterUser = ({ navigation }) => {
 										try {
 											const response = await createUserWithEmailAndPassword(auth, values.email, values.password)
 											const user = response.user
+											console.log('USERID',user.uid)
 											console.log('TOKEN',user.stsTokenManager.accessToken)
-											dispatch(refreshToken({ refresh_token:user.stsTokenManager.refreshToken }))
-											swimWildSignUp(user.stsTokenManager.accessToken, user.uid, values)
+											swimWildSignUp(user.stsTokenManager.accessToken, user.stsTokenManager.refreshToken, user.uid, values)
 										}
 										catch (error) {
 											setSending(false)
