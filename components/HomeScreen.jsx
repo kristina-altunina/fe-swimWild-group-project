@@ -10,12 +10,12 @@ import {
 
 import * as Location from "expo-location";
 import { Marker } from "react-native-maps";
-import LocationSearch from "./LocationSearch";
-import GoogleMapComponent from "./GoogleMapComponent";
-import LocationPermission from "./LocationPermission";
+import LocationSearch from "./HomeScreen/LocationSearch";
+import GoogleMapComponent from "./HomeScreen/GoogleMapComponent";
+import LocationPermission from "./HomeScreen/LocationPermission";
 import NavBar from "./NavBar";
 import { getAllLocations } from "../scripts/axios";
-import { LocationPreview } from "./LocationPreview";
+import { LocationPreview } from "./HomeScreen/LocationPreview";
 
 export default function HomeScreen({ navigation }) {
   const [noLocationsFound, setNoLocationsFound] = useState(false);
@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     flex: 3,
+    marginBottom: 4,
   },
   locationSearch: {
     position: "absolute",

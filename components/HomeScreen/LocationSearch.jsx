@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { TextInput, StyleSheet, View } from "react-native";
 import { debounce } from "lodash";
+import { colours } from "../../styles/base";
 
 export default function LocationSearch({ setUserLocation }) {
   const [inputValue, setInputValue] = useState("");
@@ -58,12 +59,13 @@ export default function LocationSearch({ setUserLocation }) {
 
 const styles = StyleSheet.create({
   input: {
-    width: "100%",
+    width: "50%",
     height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    margin: 10,
+    borderColor: "#e1e3e6",
+    borderWidth: 1.5,
+    borderRadius: 8,
+    padding: 8,
+    margin: 8,
+    backgroundColor: colours.bg,
   },
 });
