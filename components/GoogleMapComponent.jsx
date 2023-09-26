@@ -25,8 +25,8 @@ export default function GoogleMapComponent({ onRegionChange, locations, region, 
 					coordinate={{
 						latitude: userLocation.latitude,
 						longitude: userLocation.longitude,
-						// latitudeDelta: 1,
-						// longitudeDelta: 1,
+						latitudeDelta: 1,
+						longitudeDelta: 1,
 					}}
 					title="You are here!"
 				/>

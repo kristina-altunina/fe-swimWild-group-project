@@ -23,8 +23,8 @@ export default function HomeScreen({ navigation }) {
 	useEffect(() => {
 		getAllLocations()
 			.then(data => {
-				console.log('DATA: ', data);
-				setLocations(locations => [...data])
+				console.log('DATA: ', data[0].coords);
+				setLocations(() => [...data])
 			})
 
 	}, [])
@@ -81,8 +81,8 @@ export default function HomeScreen({ navigation }) {
 				longitudeDelta: 10,
 			});
 			getAllLocations(`locations?lat=${region.latitude}&lon=${region.longitude}&limit=3`)
-				.then(({ data }) => {
-					setLocations(data);
+				.then((data) => {
+					setLocations(() => [...data]);
 					console.log('TOP_LOCATIONS: ', data[0].name);
 				})
 				.catch((error) => {
@@ -155,9 +155,10 @@ const styles = StyleSheet.create({
 	},
 	locationSearch: {
 		position: 'absolute',
-		top: 10,
-		left: 10,
+		top: 0,
+		left: 0,
 		zIndex: 2,
+		width: '100%'
 	},
 	locationList: {
 		flex: 2
