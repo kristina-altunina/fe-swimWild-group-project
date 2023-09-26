@@ -5,6 +5,7 @@ import {
   Text,
   ActivityIndicator,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 
 import * as Location from "expo-location";
@@ -14,6 +15,7 @@ import GoogleMapComponent from "./GoogleMapComponent";
 import LocationPermission from "./LocationPermission";
 import NavBar from "./NavBar";
 import { getAllLocations } from "../scripts/axios";
+import { LocationPreview } from "./LocationPreview";
 
 export default function HomeScreen({ navigation }) {
   const [noLocationsFound, setNoLocationsFound] = useState(false);
@@ -51,10 +53,6 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  const handleRegionChange = (newRegion) => {
-    setUserLocation(newRegion);
-  };
-
   function handleClick(uid) {
     return navigation.navigate("SingleLocation", { uid });
   }
@@ -65,8 +63,8 @@ export default function HomeScreen({ navigation }) {
       <LocationPermission onPermissionChange={handlePermissionChange} />
       <View style={styles.mapContainer}>
         <GoogleMapComponent
-          region={region}
-          onRegionChange={handleRegionChange}
+          region={userLocation}
+          onRegionChange={setUserLocation}
           locations={locations}
           userLocation={userLocation}
           navigation={navigation}
@@ -74,7 +72,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.locationSearch}>
           <LocationSearch
             style={styles.locationSearch}
-            onSelect={handleRegionSelect}
+            setUserLocation={setUserLocation}
           />
         </View>
       </View>
