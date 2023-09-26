@@ -1,10 +1,10 @@
 // reducers.js
 import { createSlice } from '@reduxjs/toolkit';
-import { DEFAULT_IMAGE_URL } from "@env"
 
 const initialState = {
-  profileUrl: DEFAULT_IMAGE_URL,
-  refresh_token: ''
+  profileUrl: '',
+  refresh_token: '',
+  name:''
 };
 
 const profileSlice = createSlice({
@@ -12,40 +12,20 @@ const profileSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
+      console.log('SETTING STORE', action.payload)
       state.profileUrl = action.payload.profileUrl;
+      state.name = action.payload.name;
     },
     logout: (state) => {
-      state.profileUrl = DEFAULT_IMAGE_URL;
+      state.profileUrl = '';
+      state.refresh_token = '';
+      state.name = ''
     },
-    refreshToken: (state) =>{
+    refreshToken: (state, action) =>{
         state.refresh_token = action.payload.refresh_token
     }
-  },
+  }
 });
 
 export const { login, logout, refreshToken } = profileSlice.actions;
 export default profileSlice.reducer;
-
-
-// import { DEFAULT_IMAGE_URL } from "@env"
-
-// const initialState = {
-//     profileUrl: DEFAULT_IMAGE_URL
-// };
-   
-// export default (state = initialState, action) => {
-//     switch (action.type) {
-//       case 'LOGIN':
-//         return {
-//           ...state,
-//           profileUrl: action.payload.profileUrl,
-//         };
-//       case 'LOGOUT':
-//         return {
-//           ...state,
-//            profileUrl: DEFAULT_IMAGE_URL,
-//         };
-//       default:
-//         return state;
-//     }
-// };

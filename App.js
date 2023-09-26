@@ -6,7 +6,7 @@ import Profile from "./components/Profile";
 import ResetPassword from "./components/ResetPassword";
 import HomeScreen from "./components/HomeScreen";
 import { NavigationContainer } from "@react-navigation/native";
-import { Image } from "react-native"
+import { Image, Text } from "react-native"
 import { useState } from "react";
 import {
   createDrawerNavigator,
@@ -24,15 +24,18 @@ import SingleLocation from "./components/SingleLocation/SingleLocation";
 import { isCurrentUserAuthenticated } from "./firebaseConfig";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig";
-import { Provider, useSelector } from 'react-redux';
+import { Provider, useSelector, useDispatch } from 'react-redux';
+import { logout } from './redux/reducers';
 import store  from './redux/store';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-function handleSignOut(navigation) {
+function handleSignOut(navigation, dispatch) {
+
   signOut(auth)
     .then(() => {
+      dispatch(logout()) //  remove the profile picture
       navigation.navigate('Home')
     })
     .catch((error) => {
@@ -40,19 +43,24 @@ function handleSignOut(navigation) {
     });
 }
 function CustomDrawerContent(props) {
+
   const { isAuthenticated } = props;
-  const profileUrl = useSelector(state => state.profileUrl); 
-  console.log('Profile URL', profileUrl)
+  const {profileUrl, name } = useSelector(state => state); 
+  
+  console.log("STATE",profileUrl, name)
+  const dispatch = useDispatch();
   return (
     <DrawerContentScrollView {...props}>
-       <Image source={
+      { profileUrl ? <Image source={
         {uri: profileUrl}
       } style={{width: 80, height: 80, borderRadius:40, marginLeft:10, marginBottom:10}}/>
+    :null}
+     <Text style={{marginLeft:10}}>{name}</Text>
       <DrawerItemList {...props} />
       {isAuthenticated ? 
       <DrawerItem
         label="Sign Out"
-        onPress={() => handleSignOut(props.navigation)}
+        onPress={() => handleSignOut(props.navigation, dispatch)}
       />: null}
       {isAuthenticated ? 
        <DrawerItem

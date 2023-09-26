@@ -28,8 +28,9 @@ export default Profile = ({ navigation, route }) => {
 
 async function getProfile(){
 
+  console.log('TOKEN PROFILE',refreshToken)
   const tokenObj = await tokenRefresh(refreshToken)
- 
+  
   const url = BACKEND_API_URL + "/users/profile"
   fetch(url, {
     method: "GET",
@@ -53,7 +54,7 @@ useEffect(() => {
 
 useEffect(() =>{
   console.log('dispatching to store', dispatch)
-  dispatch(login({ profileUrl:profileData.profileImg }))
+  dispatch(login({ profileUrl:profileData.profileImg, name: profileData.name }))
 },[profileData])
 
 

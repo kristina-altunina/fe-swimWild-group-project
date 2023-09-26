@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavBar from "./NavBar";
 import {
   ScrollView,
@@ -30,7 +30,7 @@ export default SignInUser = ({ navigation }) => {
   const [isSignInClicked, setIsSignInClicked] = useState(false);
   const [firebaseError, setFirebaseError] = useState('');
   const [sending, setSending] = useState(false);
-
+ 
   async function handleSignIn(values) {
     setFirebaseError('')
     setSending(true)
@@ -39,9 +39,11 @@ export default SignInUser = ({ navigation }) => {
     try {
         const response = await signInWithEmailAndPassword(auth, values.email, values.password)
         const user = response.user;
-        const token = user.stsTokenManager.accessToken;
-        console.log('TOKEN',user.stsTokenManager.accessToken)
-        dispatch(refreshToken({ refresh_token: token }))
+        const token = user.stsTokenManager.refreshToken;
+        console.log('TOKEN',token)
+        dispatch(refreshToken({ refresh_token: token}))
+        setSending(false)
+        setIsSignInClicked(false)
         navigation.navigate('Profile')
     }
     catch(error) {

@@ -3,6 +3,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Image
 } from "react-native"
 
 import { colours } from "../styles/base";
@@ -18,11 +19,15 @@ import {
 } from "@expo-google-fonts/poppins";
 
 import { useState } from "react";
+import { useSelector } from 'react-redux';
 
 export default NavBar = ({navigation}) => {
 
  const [isAuthenticated, setIsAuthenticated] = useState(false)
- 
+
+  
+ const profileUrl  = useSelector(state => state.profileUrl); 
+  
  const [fontsLoaded] = useFonts({
   Poppins_600SemiBold,
   Poppins_900Black,
@@ -54,7 +59,15 @@ return(
         </View>
         <View>
           <TouchableOpacity onPress={()=> navigation.toggleDrawer() }>
-            <Entypo style={{marginLeft: -25}} name={'dots-three-vertical'} size={25} color={'black'}/>
+          { profileUrl ? <Image source={
+              {uri: profileUrl}
+             } style={{width: 45, height: 45, borderRadius:40,
+               marginRight:10, 
+              borderColor: colours.accent4, borderWidth:1}}/>
+             :
+             <Entypo style={{marginRight: 10}} name={'dots-three-vertical'} size={25} color={colours.accent4}/>
+             }
+            
           </TouchableOpacity>
         
         </View>
