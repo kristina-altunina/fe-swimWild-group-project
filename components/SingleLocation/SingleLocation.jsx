@@ -93,7 +93,10 @@ useEffect(() => {
                             <UserDataCard userData={userData}/>
                             <InfoCard info={infoData}/>
                             <TouchableWithoutFeedback
-                            onPress={() => navigation.navigate('PostSwimSpot', {locationName: locationData.name})}>
+                            onPress={() => navigation.navigate('PostSwimSpot', {location: {
+                                name: locationData.name,
+                                id: locationData._id
+                            }})}>
                             <View>
                                 <Text>
                                     post swim test
