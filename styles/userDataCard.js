@@ -1,56 +1,71 @@
-import { StyleSheet } from "react-native"
-import { colours } from "./base"
+import { StyleSheet } from "react-native";
+import { colours } from "./base";
 
 export const styles = StyleSheet.create({
-    AveUserData: {
-        padding: '2%',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        borderStyle: 'solid',
-        borderColor: 'white',
-        borderWidth: 1,
-        elevation: 10,
-        backgroundColor: colours.accent2,
-        display: 'flex',
-        gap: 2
-    },
-    titleText: {
-        fontSize: 25,
-        textAlign: "center",
-        color: 'white'
-    },
-    displayText: {
-        color: 'white'
-    },
-    expandedData: {
-        display: 'flex',
-        gap: 2
-    },
-    showContent: {
-        color: 'rgb(139, 83, 190)',
-        opacity:1
-    },
-    hideContent: {
-        opacity: 0,
-        height: 0
-    },flexRow: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    starRatingDisplay: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 3
-    }, marginLeft: {
-        color: 'white',
-        marginLeft: '5%'
-    }
-})
+  AveUserData: {
+    padding: 12,
+    margin: 4,
+    marginTop: 0,
+    backgroundColor: "white",
+    borderRadius: 20,
+    backgroundColor: colours.accent5,
+    display: "flex",
+    gap: 2,
+  },
+  titleText: {
+    fontSize: 20,
+    color: colours.accent1,
+    fontFamily: "Poppins-Bold",
+  },
+  displayText: {
+    color: colours.text,
+    fontFamily: "Poppins-Regular",
+  },
+  stat__label: {
+    color: colours.text,
+    fontFamily: "Poppins-Bold",
+  },
+  stat__extra: {
+    color: colours.accent1,
+    fontFamily: "Poppins-Regular",
+  },
+  stat__highlight: {
+    color: colours.accent1,
+    fontFamily: "Poppins-Bold",
+  },
+  expandedData: {
+    display: "flex",
+    gap: 2,
+  },
+  showContent: {
+    color: colours.lightText,
+    fontFamily: "Poppins-Medium",
+    fontSize: 12,
+    opacity: 1,
+  },
+  hideContent: {
+    opacity: 0,
+    height: 0,
+  },
+  flexRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  starRatingDisplay: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 3,
+  },
+  marginLeft: {
+    color: "white",
+    marginLeft: "5%",
+  },
+});
 
 export const props = {
-    KeyboardAvoidingView: {
-        behavior: Platform.OS === 'ios' ? 'padding' : 'height',
-        keyboardVerticalOffset: Platform.OS === 'ios' ? 0 : -300
-    }
-}
+  KeyboardAvoidingView: {
+    behavior: Platform.OS === "ios" ? "padding" : "height",
+    keyboardVerticalOffset: Platform.OS === "ios" ? 0 : -300,
+  },
+};

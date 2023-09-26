@@ -16,6 +16,11 @@ import UserDataCard from "./components/UserDataCard";
 import SwimReviewData from "./components/SwimReviewData";
 import ApiDataSeaCard from "./components/ApiDataSeaCard";
 import InfoCard from "./components/InfoCard";
+import { useFonts } from "expo-font";
+
+export function capitalise(str) {
+  return str[0].toUpperCase() + str.split("").slice(1).join("");
+}
 
 export default function SingleLocation({
   route: {
@@ -28,8 +33,19 @@ export default function SingleLocation({
   const [swimsData, setSwimsData] = useState([]);
   const [locationData, setLocationData] = useState([]);
   const [infoData, setInfoData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
+    "Poppins-Regular": require("../../assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-Regular_Italic": require("../../assets/fonts/Poppins-Italic.ttf"),
+    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-ExtraBold": require("../../assets/fonts/Poppins-ExtraBold.ttf"),
+    "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
+  });
 
   useEffect(() => {
+    setIsLoading(true);
     getLocationByID(uid)
       .then((data) => {
         const { apiData, userData, swims, location, info } = data;
@@ -43,11 +59,21 @@ export default function SingleLocation({
         setApiData((apiData) => requestedApiData);
         setLocationData((locationData) => requestedLocationData);
         setInfoData((infoData) => requestInfoData);
+        setIsLoading(false);
       })
       .catch((err) => {
+        setIsLoading(false);
         console.log(err);
       });
   }, []);
+
+  function formatCoords(coords) {
+    return `${coords[0].toFixed(4)}°N, ${coords[0].toFixed(4)}°W`;
+  }
+
+  if (isLoading) {
+    return <ActivityIndicator style={styles.loader} size="xlarge" />;
+  }
 
   return (
     <KeyboardAvoidingView
@@ -66,12 +92,16 @@ export default function SingleLocation({
                 </>
               ) : (
                 <View style={styles.title}>
-                  <Text style={styles.title_text}>{locationData.name}</Text>
-                  <Text style={styles.title_text_center}>
-                    Type: {locationData.type}
+                  <Text style={styles.title__text}>{locationData.name}</Text>
+                  <Text style={styles.title__type}>
+                    {capitalise(locationData.type)}
+                  </Text>
+                  <Text style={styles.title__coords}>
+                    {formatCoords(locationData.coords)}
                   </Text>
                 </View>
               )}
+              <UserDataCard userData={userData} />
               {!Object.keys(apiData).length &&
               !Object.keys(locationData).length ? (
                 <>
@@ -83,7 +113,6 @@ export default function SingleLocation({
                 <ApiDataOthersCard apiData={apiData} uid={uid} />
               )}
 
-              <UserDataCard userData={userData} />
               <InfoCard info={infoData} />
               <TouchableWithoutFeedback
                 onPress={() =>
