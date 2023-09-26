@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import MapView, { Marker, Callout } from 'react-native-maps'
 
-export default function GoogleMapComponent({ onRegionChange, region, locations, userLocation, navigation }) {
+export default function GoogleMapComponent({ onRegionChange, locations, region, userLocation, navigation }) {
 
 	function handleClick(uid) {
 		return navigation.navigate('SingleLocation', { uid })
@@ -14,8 +14,8 @@ export default function GoogleMapComponent({ onRegionChange, region, locations, 
 			onRegionChangeComplete={onRegionChange}
 			region={region}
 			initialRegion={{
-				latitude: 54.6360,
-				longitude: -3.3631,
+				latitude: 55.36,
+				longitude: -3.44,
 				latitudeDelta: 10,
 				longitudeDelta: 10,
 			}}
@@ -25,6 +25,8 @@ export default function GoogleMapComponent({ onRegionChange, region, locations, 
 					coordinate={{
 						latitude: userLocation.latitude,
 						longitude: userLocation.longitude,
+						// latitudeDelta: 1,
+						// longitudeDelta: 1,
 					}}
 					title="You are here!"
 				/>

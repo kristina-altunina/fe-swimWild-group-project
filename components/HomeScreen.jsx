@@ -13,20 +13,21 @@ export default function HomeScreen({ navigation }) {
 	const [noLocationsFound, setNoLocationsFound] = useState(false);
 	const [userLocation, setUserLocation] = useState(null);
 	const [locations, setLocations] = useState([]);
+	const [region, setRegion] = useState({
+		latitude: 55.36,
+		longitude: -3.44,
+		latitudeDelta: 10,
+		longitudeDelta: 10,
+	});
 
 	useEffect(() => {
 		getAllLocations()
 			.then(data => {
+				console.log('DATA: ', data);
 				setLocations(locations => [...data])
 			})
 
 	}, [])
-	const [region, setRegion] = useState({
-		latitude: 54.6360,
-		longitude: -3.3631,
-		latitudeDelta: 10,
-		longitudeDelta: 10,
-	});
 
 	const handleRegionSelect = (selectedRegion) => {
 		console.log('SELECTED_REGION: ', selectedRegion);
@@ -50,7 +51,7 @@ export default function HomeScreen({ navigation }) {
 						latitudeDelta: 0.0922,
 						longitudeDelta: 0.0421,
 					});
-					return instance.get(`locations?lat=${coords.latitude}&lon=${coords.longitude}&limit=5`);
+					return getAllLocations(`locations?lat=${coords.latitude}&lon=${coords.longitude}`);
 				})
 				.then(({ data }) => {
 					const filteredLocations = data.filter(location => {
@@ -59,7 +60,7 @@ export default function HomeScreen({ navigation }) {
 							// { latitude: userLocation.latitude, longitude: userLocation.longitude },
 							{ latitude: location.coords[0], longitude: location.coords[1] }
 						) / 1000;
-						return distance <= 1000; //  km
+						return distance <= 300; //  km
 					});
 					if (filteredLocations.length === 0) {
 						setNoLocationsFound(true)
@@ -74,12 +75,12 @@ export default function HomeScreen({ navigation }) {
 				});
 		} else {
 			setRegion({
-				latitude: 54.6360, // UK latitude
-				longitude: -3.3631, // UK longitude
+				latitude: 55.36, // UK latitude
+				longitude: -3.44, // UK longitude
 				latitudeDelta: 10,
 				longitudeDelta: 10,
 			});
-			instance.get(`locations?lat=${region.latitude}&lon=${region.longitude}&limit=6`)
+			getAllLocations(`locations?lat=${region.latitude}&lon=${region.longitude}&limit=3`)
 				.then(({ data }) => {
 					setLocations(data);
 					console.log('TOP_LOCATIONS: ', data[0].name);
@@ -118,7 +119,7 @@ export default function HomeScreen({ navigation }) {
 
 			<View style={styles.locationList}>
 				<ScrollView>
-					{locations.map(location => (
+					{locations && locations.map(location => (
 						<TouchableOpacity onPress={() => handleClick(location._id)}>
 							<LocationPreview
 								key={location._id}

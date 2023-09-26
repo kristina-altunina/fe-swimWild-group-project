@@ -20,7 +20,6 @@ export default function LocationPermission({ onPermissionChange }) {
 		requestPermission();
 	}, []);
 
-	if (permission === 'granted') return <Text>Permission Granted</Text>;
-	if (permission === 'denied') return <Text>Permission Denied</Text>;
+
 	return <View />;
 }
