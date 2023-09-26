@@ -12,7 +12,6 @@ const profileSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      console.log('SETTING STORE', action.payload)
       state.profileUrl = action.payload.profileUrl;
       state.name = action.payload.name;
     },

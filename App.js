@@ -5,8 +5,17 @@ import SignInUser from "./components/SignInUser";
 import Profile from "./components/Profile";
 import ResetPassword from "./components/ResetPassword";
 import HomeScreen from "./components/HomeScreen";
+import {
+  useFonts,
+  Poppins_600SemiBold,
+  Poppins_900Black,
+  Poppins_500Medium,
+  Poppins_300Light_Italic,
+  Poppins_200ExtraLight,
+} from "@expo-google-fonts/poppins";
+
 import { NavigationContainer } from "@react-navigation/native";
-import { Image, Text } from "react-native"
+import { StyleSheet, Image, Text } from "react-native"
 import { useState } from "react";
 import {
   createDrawerNavigator,
@@ -15,12 +24,9 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 
-import {
-  StyleSheet,
-} from "react-native";
-
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SingleLocation from "./components/SingleLocation/SingleLocation";
+import SwimSpot from "./components/SwimSpot";
+import PostSwimSpot from "./components/PostSwimSpot";
 import { isCurrentUserAuthenticated } from "./firebaseConfig";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebaseConfig";
@@ -28,7 +34,6 @@ import { Provider, useSelector, useDispatch } from 'react-redux';
 import { logout } from './redux/reducers';
 import store  from './redux/store';
 
-const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 function handleSignOut(navigation, dispatch) {
@@ -47,7 +52,6 @@ function CustomDrawerContent(props) {
   const { isAuthenticated } = props;
   const {profileUrl, name } = useSelector(state => state); 
   
-  console.log("STATE",profileUrl, name)
   const dispatch = useDispatch();
   return (
     <DrawerContentScrollView {...props}>
@@ -91,25 +95,26 @@ function Root() {
         <Drawer.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false,gestureEnabled: true, drawerLabel: 'Reset Password', drawerItemStyle: { display: 'none' } }}/>
         <Drawer.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true, drawerItemStyle: { display: !isAuthenticated? 'none':'block' }}}/>
         <Drawer.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false,gestureEnabled: true, drawerItemStyle: { display: 'none'}}}/>
+        <Drawer.Screen name="SwimSpot" component={SwimSpot} options={{headerShown: false, gestureEnabled: true, drawerItemStyle: { display: 'none'}}}/>
+        <Drawer.Screen name="PostSwimSpot" component={PostSwimSpot} options={{headerShown: false, gestureEnabled: true, drawerItemStyle: { display: 'none'}}}/>
     </Drawer.Navigator>
 
   );
 }
 
-const StackNavigation = () =>{
-  return (
-  <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false} }/>
-      <Stack.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true}}/>
-      <Stack.Screen name="SignIn" component={SignInUser} options={{headerShown: false, gestureEnabled: true}}/>
-      <Stack.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true}}/>
-      <Stack.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false, gestureEnabled: true}}/>
-      <Stack.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false, gestureEnabled: true}}/>
-  </Stack.Navigator>
-  );
-}
-
 export default function App() {
+
+  let [fontsLoaded] = useFonts({
+    Poppins_600SemiBold,
+    Poppins_900Black,
+    Poppins_500Medium,
+    Poppins_300Light_Italic,
+    Poppins_200ExtraLight,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <Provider store={store}>
@@ -118,74 +123,6 @@ export default function App() {
     </NavigationContainer>
   </Provider>
   );
+
 }
-  //for lake: 650dd24c667ea748708385aa
-  //for sea: 650dd24c667ea748708385ad
-const styles = StyleSheet.create({
-  app: {
-    backgroundColor: colours.bg,
-    height: "100%",
-    width: "100%",
-  },
-  header: {
-    backgroundColor: colours.accent1,
-    height: "fit-content",
-    color: colours.text,
-    marginTop: 50,
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  header__titleContainer: {
-    margin: 10,
-  },
-  header__title: {
-    fontSize: 32,
-    fontFamily: "Poppins_900Black",
-    color: colours.text,
-  },
-  header__titleAccent: {
-    color: colours.accent4,
-  },
-  header__buttons: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    justifyContent: "space-around",
-  },
-  header__button: {
-    marginRight: 20,
-  },
-  header__buttonText: {
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 20,
-    color: colours.bg,
-  },
-  container: {
-    paddingTop: 200,
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  input: {
-    width: "50%",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    marginBottom: 5,
-    padding: 5,
-  },
-  button: {
-    width: "50%",
-    alignItems: "center",
-    backgroundColor: "#ababab",
-    padding: 5,
-    borderRadius: 3,
-    marginBottom: 5,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-});
+

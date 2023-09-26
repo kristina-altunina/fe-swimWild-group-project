@@ -1,42 +1,53 @@
-import { View, Text, TouchableWithoutFeedback, Keyboard, ScrollView, ActivityIndicator } from "react-native"
-import { KeyboardAvoidingView } from "react-native"
-import NavBar from "../NavBar"
-import { getLocationByID, test } from "../../scripts/axios"
-import { useEffect, useState } from "react"
-import { styles, props } from '../../styles/singleLocation'
-import ApiDataOthersCard from "./components/ApiDataOthersCard"
-import UserDataCard from "./components/UserDataCard"
-import SwimReviewData from "./components/SwimReviewData"
-import ApiDataSeaCard from "./components/ApiDataSeaCard"
+import {
+  View,
+  Text,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import { KeyboardAvoidingView } from "react-native";
+import NavBar from "../NavBar";
+import { getLocationByID, test } from "../../scripts/axios";
+import { useEffect, useState } from "react";
+import { styles, props } from "../../styles/singleLocation";
+import ApiDataOthersCard from "./components/ApiDataOthersCard";
+import UserDataCard from "./components/UserDataCard";
+import SwimReviewData from "./components/SwimReviewData";
+import ApiDataSeaCard from "./components/ApiDataSeaCard";
+import InfoCard from "./components/InfoCard";
 
-export default function SingleLocation({route:{params:{uid}}, navigation}) {
-const [userData, setUserData] = useState({})
-const [apiData, setApiData] = useState({})
-const [swimsData, setSwimsData] = useState([])
-const [locationData, setLocationData] = useState([])
+export default function SingleLocation({
+  route: {
+    params: { uid },
+  },
+  navigation,
+}) {
+  const [userData, setUserData] = useState({});
+  const [apiData, setApiData] = useState({});
+  const [swimsData, setSwimsData] = useState([]);
+  const [locationData, setLocationData] = useState([]);
+  const [infoData, setInfoData] = useState({});
 
-useEffect(() => {
-    // const {apiData, userData, swims, location} = test()
-    // const requestedSwimsData = swims;
-    // setSwimsData(swimsData => requestedSwimsData)
-
+  useEffect(() => {
     getLocationByID(uid)
-    .then(data => {
-        const {apiData, userData, swims, location} = data
+      .then((data) => {
+        const { apiData, userData, swims, location, info } = data;
         const requestedUserData = userData;
         const requestedApiData = apiData;
         const requestedSwimsData = swims;
-        const requestedLocation = location;
-        setUserData(userData => requestedUserData);
-        setSwimsData(swimsData => requestedSwimsData)
-        setApiData(apiData => requestedApiData)
-        setLocationData(locationData => requestedLocation)
-    })
-    .catch(err => {
-        console.log(err)
-    })
-},[])
-
+        const requestedLocationData = location;
+        const requestInfoData = info;
+        setUserData((userData) => requestedUserData);
+        setSwimsData((swimsData) => requestedSwimsData);
+        setApiData((apiData) => requestedApiData);
+        setLocationData((locationData) => requestedLocationData);
+        setInfoData((infoData) => requestInfoData);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
     return (
 			<KeyboardAvoidingView
@@ -89,11 +100,22 @@ useEffect(() => {
                                     )
                                 )
                             }
+                            
                             <UserDataCard userData={userData}/>
-                            <View style={styles.summary}>
-                                <Text>plan a new swim, summary pop up etc(no data)</Text>
+                            <InfoCard info={infoData}/>
+                            <TouchableWithoutFeedback
+                            onPress={() => navigation.navigate('PostSwimSpot', {location: {
+                                name: locationData.name,
+                                id: locationData._id
+                            }})}>
+                            <View>
+                                <Text>
+                                    post swim test
+                                </Text>
                             </View>
-                        <SwimReviewData swimsData={swimsData}/>
+                            </TouchableWithoutFeedback>
+                            <SwimReviewData swimsData={swimsData}
+                            navigation={navigation}/>
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
@@ -102,4 +124,3 @@ useEffect(() => {
     )
         
 }
-

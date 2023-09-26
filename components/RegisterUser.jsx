@@ -25,7 +25,7 @@ import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
-import { refreshToken } from "../redux/reducers";
+import { refreshToken, logout } from "../redux/reducers";
 export default RegisterUser = ({ navigation }) => {
   const dateNow = new Date();
   const minimumDate = new Date(
@@ -93,7 +93,8 @@ export default RegisterUser = ({ navigation }) => {
         setGenericError("Something went wrong. Please try again later.");
       }
     } else {
-      //dispatch(refreshToken({ refresh_token:refresh_token }))
+      dispatch(logout())
+      dispatch(refreshToken({ refresh_token:refresh_token }))
       await response.json();
       navigation.navigate("Profile");
     }
