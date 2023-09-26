@@ -80,12 +80,14 @@ export function Stat({ icon, val, big }) {
           source={assets[lookup[icon]]}
         />
       )}
-      <View style={styles.stat__info}>
-        {big && <Text style={styles.stat__extra}>{lookupExtra[icon]}</Text>}
-        <Text style={big ? styles["stat__text--big"] : styles.stat__text}>
-          {val}
-        </Text>
-      </View>
+      {big ? (
+        <View style={styles.stat__info}>
+          <Text style={styles.stat__extra}>{lookupExtra[icon]}</Text>
+          <Text style={styles["stat__text--big"]}>{val}</Text>
+        </View>
+      ) : (
+        <Text style={styles.stat__text}>{val}</Text>
+      )}
     </View>
   );
 }
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-SemiBold",
     fontSize: 10,
     marginRight: 10,
-    marginLeft: 10,
+    marginLeft: 0,
     color: colours.text,
   },
   stat__extra: {

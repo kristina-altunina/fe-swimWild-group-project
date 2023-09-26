@@ -44,7 +44,7 @@ export default function SwimReviewData({ swimsData, navigation }) {
   return (
     <>
       <View style={styles.swimReviewGroup}>
-        <Text style={styles.titleText}>Reviews</Text>
+        <Text style={styles.titleText}>Latest Reviews</Text>
         {!Object.keys(swimsData).length ? (
           <ActivityIndicator size="large" />
         ) : (
