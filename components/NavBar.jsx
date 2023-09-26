@@ -1,93 +1,67 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image
+} from "react-native"
+
 import { colours } from "../styles/base";
-import { isCurrentUserAuthenticated } from "../firebaseConfig";
-import { useState } from "react";
-import { useFonts } from "expo-font";
+import { Entypo } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
-export default NavBar = ({ navigation }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+import {
+  useFonts,
+  Poppins_600SemiBold,
+  Poppins_900Black,
+  Poppins_500Medium,
+  Poppins_300Light_Italic,
+  Poppins_200ExtraLight,
+} from "@expo-google-fonts/poppins";
 
-  const [fontsLoaded] = useFonts({
-    "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
-    "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
-  });
+export default NavBar = ({navigation}) => {
+  
+ const profileUrl  = useSelector(state => state.profileUrl); 
+  
+ const [fontsLoaded] = useFonts({
+  Poppins_600SemiBold,
+  Poppins_900Black,
+  Poppins_500Medium,
+  Poppins_300Light_Italic,
+  Poppins_200ExtraLight,
+});
 
   if (!fontsLoaded) {
     // Return a loading indicator or placeholder
     return <Text>Loading fonts...</Text>;
   }
 
-  isCurrentUserAuthenticated((isAuth) => {
-    setIsAuthenticated(isAuth);
-  });
-
-  function handleSignOut() {
-    signOut(auth)
-      .then(() => {
-        setIsAuthenticated(false);
-        navigation.navigate("Home");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-  return (
-    <SafeAreaView>
-      <View style={styles.header}>
+return(
+    <View style={styles.header}>
         <View style={styles.header__titleContainer}>
-          <Text
-            style={styles.header__title}
-            onPress={() => {
-              navigation.navigate("HomePage");
-            }}
-          >
-            Swim{" "}
-            <Text
-              style={styles.header__titleAccent}
-              onPress={() => {
-                navigation.navigate("HomePage");
-              }}
-            >
-              Wild
-            </Text>
+          <Text style={styles.header__title} onPress={() => {
+            navigation.navigate('Home')
+          }}>
+            Swim <Text style={styles.header__titleAccent} onPress={() => {
+            navigation.navigate('Home')
+          }}>Wild</Text>
           </Text>
         </View>
-        <View style={styles.header__buttons}>
-          <TouchableOpacity style={styles.header__button}>
-            <Text
-              style={styles.header__buttonText}
-              onPress={() => {
-                navigation.navigate("Register");
-              }}
-            >
-              Sign Up
-            </Text>
+        <View>
+          <TouchableOpacity onPress={()=> navigation.toggleDrawer() }>
+          { profileUrl ? <Image source={
+              {uri: profileUrl}
+             } style={{width: 45, height: 45, borderRadius:40,
+               marginRight:10, 
+              borderColor: colours.accent4, borderWidth:1}}/>
+             :
+             <Entypo style={{marginRight: 10}} name={'dots-three-vertical'} size={25} color={colours.accent4}/>
+             }
+            
           </TouchableOpacity>
-          {isAuthenticated ? (
-            <TouchableOpacity
-              style={styles.header__button}
-              onPress={() => {
-                handleSignOut();
-              }}
-            >
-              <Text style={styles.header__buttonText}>Sign Out</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={styles.header__button}
-              onPress={() => {
-                navigation.navigate("SignIn");
-              }}
-            >
-              <Text style={styles.header__buttonText}>Sign In</Text>
-            </TouchableOpacity>
-          )}
+        
         </View>
       </View>
-    </SafeAreaView>
   );
 };
 
@@ -106,6 +80,7 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
     justifyContent: "space-between",
     alignItems: "center",
+    marginTop: 40
   },
   header__titleContainer: {
     margin: 10,

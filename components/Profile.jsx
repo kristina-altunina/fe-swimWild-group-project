@@ -28,11 +28,13 @@ import { SwimRecord } from "./Profile/SwimRecord";
 import { useFonts } from "expo-font";
 import { useAssets } from "expo-asset";
 
+import { login } from '../redux/reducers'; // Import your slice and actions
+import { useSelector, useDispatch } from 'react-redux';
 export default Profile = ({ navigation, route }) => {
+  
   const [profileData, setProfileData] = useState({ swims: [] });
   const [swims, setSwims] = useState([]);
   const [filtSwims, setFiltSwims] = useState([]);
-  const refreshToken = route.params.refresh_token;
   const [isLoading, setIsLoading] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -44,58 +46,56 @@ export default Profile = ({ navigation, route }) => {
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
   });
   const [assets, error] = useAssets([require("../assets/icons/pencil.png")]);
+  
+ const refreshToken = useSelector(state => state.refresh_token); 
+ console.log('INITIAL PROFILE',profileData)
+ const dispatch = useDispatch();
 
-  useEffect(() => {
-    setIsLoading(true);
-    tokenRefresh(refreshToken)
-      .then((tokenObj) => {
-        const url = BACKEND_API_URL + "/users/profile";
-        const options = {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${tokenObj.access_token}`,
-          },
-        };
-        return fetch(url, options);
-      })
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((json) => {
-        json.dob = formatDate(json.dob.split("T")[0], "-");
-        setProfileData(() => json);
-        const swimData = addMonthToSwims(json.swims);
-        setIsLoading(false);
-        setSwims(swimData);
-        setFiltSwims(swimData);
-      })
-      .catch((error) => {
-        console.log(error);
-        setIsLoading(false);
-      });
-  }, []);
+async function getProfile(){
+  
+  const tokenObj = await tokenRefresh(refreshToken)
+  const url = BACKEND_API_URL + "/users/profile"
+  setIsLoading(true);
+  fetch(url, {
+    method: "GET",
+    headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${tokenObj.access_token}`,
+    }
+  })
+  .then(response => response.json())
+  .then((json)=> {
+    console.log("PROFILE DATA", json)
+    json.dob = formatDate(json.dob.split('T')[0],'-')
+    setProfileData(json)
+    const swimData = addMonthToSwims(json.swims);
+    setSwims(swimData);
+    setFiltSwims(swimData);
+    setIsLoading(false);
+    console.log('ENDO PROF')
+  }).catch((error)=>{
+    console.log('PROFILE ERROR', error)
+    setIsLoading(false);
+  })
+}
+useEffect(() => {
+   getProfile()
+  }, [])
 
-  useEffect(() => {
-    const { routes } = navigation.getState();
-    const filteredRoutes = routes.filter(
-      (route) => route.name !== "Register" && route.name !== "SignIn"
-    );
-    navigation.reset({
-      index: filteredRoutes.length - 1,
-      routes: filteredRoutes,
-    });
-  }, []);
+useEffect(() =>{
+  console.log('dispatching to store', dispatch)
+  dispatch(login({ profileUrl:profileData.profileImg, name: profileData.name }))
+},[profileData])
 
-  if (!swims.length || isLoading) {
-    return (
-      <View>
-        <NavBar navigation={navigation} />
-        <ActivityIndicator style={styles.loader} size="xlarge" />
-      </View>
-    );
-  }
+if (isLoading) {
+  console.log('LOADIND', isLoading)
+  return (
+    <View>
+      <NavBar navigation={navigation} />
+      <ActivityIndicator style={styles.loader} size="xlarge" />
+    </View>
+  );
+}
 
   return (
     <View style={styles.app}>
@@ -104,11 +104,11 @@ export default Profile = ({ navigation, route }) => {
         <View style={styles.profile__text}>
           <View style={styles.profile__header}>
             <Text style={styles.profile__name}>{profileData.name}</Text>
-            <Image
+            {/* <Image
               source={assets[0]}
               resizeMode={"cover"}
               style={styles.profile__edit}
-            ></Image>
+            ></Image> */}
           </View>
           <Text style={styles.profile__nickname}>{profileData.nickname}</Text>
           <Text style={styles.profile__home}>{profileData.home || ""}</Text>
@@ -140,13 +140,13 @@ export default Profile = ({ navigation, route }) => {
           </Text>
           <Text style={styles.stats__label}>
             Last swam on{" "}
-            <Text style={styles.stats__stat}>
+            {swims.length > 0 ? <Text style={styles.stats__stat}>
               {new Date(swims[0].date)
                 .toDateString()
                 .split(" ")
                 .slice(1, 3)
                 .join(" ")}
-            </Text>
+            </Text>: <Text>No records</Text>}
           </Text>
         </View>
         <View style={styles.stats__right}>

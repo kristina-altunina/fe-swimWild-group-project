@@ -40,11 +40,8 @@ return data;
  function isCurrentUserAuthenticated(callback) {
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // User is signed in, see docs for a list of available properties
       callback(true)
-      // ...
     } else {
-      // User is signed out
      callback(false)
     }
   });
