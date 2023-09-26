@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavBar from "./NavBar";
 import {
   ScrollView,
@@ -19,25 +19,35 @@ import { getFirebaseError } from "../extentions";
 import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { refreshToken } from '../redux/reducers';
 
 export default SignInUser = ({ navigation }) => {
-  
+
+  const dispatch = useDispatch();
+
   const [focusedInput, setFocusedInput] = useState(null);
   const [isSignInClicked, setIsSignInClicked] = useState(false);
   const [firebaseError, setFirebaseError] = useState('');
   const [sending, setSending] = useState(false);
-
+ 
   async function handleSignIn(values) {
     setFirebaseError('')
     setSending(true)
     setIsSignInClicked(true)
+ 
     try {
         const response = await signInWithEmailAndPassword(auth, values.email, values.password)
         const user = response.user;
-        navigation.navigate('Profile',
-        {refresh_token: user.stsTokenManager.refreshToken})
+        const token = user.stsTokenManager.refreshToken;
+        console.log('TOKEN',token)
+        dispatch(refreshToken({ refresh_token: token}))
+        setSending(false)
+        setIsSignInClicked(false)
+        navigation.navigate('Profile')
     }
     catch(error) {
+       console.log("ERROR", error)
         setSending(false)
         setIsSignInClicked(false)
         const firebaseError = getFirebaseError(error);
@@ -106,10 +116,15 @@ return (
                           </>
                         )}
                       </Formik>
-                      <Text style={styles.link}
-                      onPress={() => navigation.navigate("ResetPassword")}>
-                        Forgot Password
-                      </Text>
+                      <View>
+                        <Text style={styles.link}
+                        onPress={() => {
+                          console.log("CLICK RESET PASS")
+                          navigation.navigate("ResetPassword");
+                      }}>
+                          Forgot Password
+                        </Text>
+                      </View>
                     </ScrollView>
                   </View>
               </View>

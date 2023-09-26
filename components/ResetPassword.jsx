@@ -28,11 +28,14 @@ export default ResetPassword = ({ navigation }) => {
     async function handleResetPassword(values) {
         setFirebaseError('')
         setResetting(true)
+        setResettingClicked(true)
         try {
             console.log(auth, "<--- auth");
             const user = auth.currentUser;
             await sendPasswordResetEmail(auth, values.email)
             console.log(user);
+            setResetting(false);
+            setResettingClicked(false);
             navigation.navigate('SignIn')
         }
         catch(error) {
