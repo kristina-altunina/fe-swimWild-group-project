@@ -27,7 +27,7 @@ import {
 
 import SingleLocation from "./components/SingleLocation/SingleLocation";
 import SwimSpot from "./components/SwimSpot";
-import PostSwimSpot from "./components/PostSwimSpot";
+import PostSwims from "./components/PostSwims";
 import { isCurrentUserAuthenticated, deleteCurrentUser } from "./firebaseConfig";
 import { signOut } from "firebase/auth";
 import { auth,tokenRefresh } from "./firebaseConfig";
