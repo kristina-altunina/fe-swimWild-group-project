@@ -13,7 +13,7 @@ export default function GoogleMapComponent({
   setNewLocation,
 }) {
   function handleClick(id) {
-    return navigation.navigate("SingleLocation", { id });
+    return navigation.navigate("SingleLocation", { uid: id });
   }
 
   return (
