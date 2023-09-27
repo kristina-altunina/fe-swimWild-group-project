@@ -67,7 +67,7 @@ export default RegisterUser = ({ navigation }) => {
     setDatePickerVisible(false);
   };
 
-  async function swimWildSignUp(token, refresh_token, uid, formData) {
+  async function swimWildSignUp(token, refresh_token, uid, formData, callbackFunc) {
     const data = {
       uid: uid,
       name: formData.fullName,
@@ -107,6 +107,7 @@ export default RegisterUser = ({ navigation }) => {
     } else {
       dispatch(refreshToken({ refresh_token:refresh_token }))
       await response.json();
+      callbackFunc();//The function passed from the formik onSumit event
       navigation.navigate("Profile", {refresh_token: refresh_token, guid: generateGuid()});
     }
   }
@@ -193,22 +194,26 @@ export default RegisterUser = ({ navigation }) => {
                     confirmPassword: "",
                     profileImgURL: "",
                   }}
-                  onSubmit={async (values) => {
+                  onSubmit={async (values, {resetForm}) => {
                     setFirebaseError("");
                     setSending(true);
                     setIsSignUpClicked(true);
                     try {
-                      const response = await createUserWithEmailAndPassword(
+                      const response = await createUserWithEmailAndPassword( //create user in FB
                         auth,
                         values.email,
                         values.password
                       );
                       const user = response.user;
-                      swimWildSignUp(
+                      swimWildSignUp(//create user in our system
                         user.stsTokenManager.accessToken,
                         user.stsTokenManager.refreshToken,
                         user.uid,
-                        values
+                        values,
+                        function(){ //callback function to be called when user created with success
+                            resetForm()
+                            setDob('')
+                        }
                       );
                     } catch (error) {
                       console.log('Register ERROR',error)

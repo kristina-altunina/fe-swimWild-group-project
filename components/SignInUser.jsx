@@ -30,8 +30,8 @@ export default SignInUser = ({ navigation }) => {
   const [isSignInClicked, setIsSignInClicked] = useState(false);
   const [firebaseError, setFirebaseError] = useState('');
   const [sending, setSending] = useState(false);
- 
-  async function handleSignIn(values) {
+
+  async function handleSignIn(values, callbackFunc) {
     setFirebaseError('')
     setSending(true)
     setIsSignInClicked(true)
@@ -43,6 +43,7 @@ export default SignInUser = ({ navigation }) => {
         dispatch(refreshToken({ refresh_token: user.stsTokenManager.refreshToken}))
         setSending(false)
         setIsSignInClicked(false)
+        callbackFunc();
         navigation.navigate('Profile', {refresh_token: user.stsTokenManager.refreshToken, guid: generateGuid()})
     }
     catch(error) {
@@ -80,15 +81,20 @@ return (
                             email: '',
                             password: ''
                           }}
-                        onSubmit={async(values) => {
-                          handleSignIn(values)
+                        onSubmit={async(values, {resetForm}) => {
+                          handleSignIn(values,
+                            function (){
+                              console.log('reset form')
+                              resetForm()
+                          })
                           }}
                         >
-                          {({ handleSubmit, isValid, setFieldValue }) => (
+                          {({ handleSubmit, isValid, setFieldValue, values }) => (
                             <>
                              <View style={{ width: "100%" }}> 
                                 <TextInput style={[styles.input, focusedInput === "email" && styles.input_focused]}
                                   placeholder="Email"
+                                  value={values.email}
                                   onChangeText={(value) => {
                                     setFirebaseError('')
                                     setFieldValue("email", value)
