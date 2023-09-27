@@ -10,6 +10,7 @@ export default function GoogleMapComponent({
   navigation,
   showNewLocation,
   newLocation,
+  setNewLocation,
 }) {
   function handleClick(id) {
     return navigation.navigate("SingleLocation", { id });
@@ -31,6 +32,13 @@ export default function GoogleMapComponent({
           }}
           title={"Post new swim location here?"}
           pinColor={colours.accent1}
+          onDragEnd={(e) => {
+            console.log("the coordinate", e.nativeEvent.coordinate);
+            setNewLocation({
+              latitude: e.nativeEvent.coordinate.latitude,
+              longitude: e.nativeEvent.coordinate.longitude,
+            });
+          }}
           description="Press and hold to drag."
         ></Marker>
       )}

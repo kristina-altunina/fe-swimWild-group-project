@@ -2,9 +2,13 @@ import React, { useState, useCallback } from "react";
 import { TextInput, StyleSheet, View } from "react-native";
 import { debounce } from "lodash";
 import { colours } from "../../styles/base";
+import { useFonts } from "expo-font";
 
 export default function LocationSearch({ setUserLocation }) {
   const [inputValue, setInputValue] = useState("");
+  const [fontsLoaded] = useFonts({
+    "Poppins-Regular": require("../../assets/fonts/Poppins-Regular.ttf"),
+  });
 
   const fetchGeocode = (text) => {
     const apiKey = "AIzaSyB9lp6ylbRyXKynILcL29iLUUrUAQwM5aI";
@@ -59,12 +63,15 @@ export default function LocationSearch({ setUserLocation }) {
 
 const styles = StyleSheet.create({
   input: {
+    fontFamily: "Poppins-Regular",
+    color: colours.text,
     width: "50%",
     height: 40,
     borderColor: "#e1e3e6",
     borderWidth: 1.5,
     borderRadius: 8,
-    padding: 8,
+    padding: 0,
+    paddingLeft: 12,
     margin: 8,
     backgroundColor: colours.bg,
   },

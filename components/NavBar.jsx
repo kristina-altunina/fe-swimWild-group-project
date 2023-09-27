@@ -1,67 +1,68 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Image
-} from "react-native"
+import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 
 import { colours } from "../styles/base";
-import { Entypo } from '@expo/vector-icons';
-import { useSelector } from 'react-redux';
+import { Entypo } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import { useFonts } from "expo-font";
 
-import {
-  useFonts,
-  Poppins_600SemiBold,
-  Poppins_900Black,
-  Poppins_500Medium,
-  Poppins_300Light_Italic,
-  Poppins_200ExtraLight,
-} from "@expo-google-fonts/poppins";
+export default NavBar = ({ navigation }) => {
+  const profileUrl = useSelector((state) => state.profileUrl);
 
-export default NavBar = ({navigation}) => {
-  
- const profileUrl  = useSelector(state => state.profileUrl); 
-  
- const [fontsLoaded] = useFonts({
-  Poppins_600SemiBold,
-  Poppins_900Black,
-  Poppins_500Medium,
-  Poppins_300Light_Italic,
-  Poppins_200ExtraLight,
-});
+  const [fontsLoaded] = useFonts({
+    "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
+    "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
+  });
 
   if (!fontsLoaded) {
     // Return a loading indicator or placeholder
     return <Text>Loading fonts...</Text>;
   }
 
-return(
+  return (
     <View style={styles.header}>
-        <View style={styles.header__titleContainer}>
-          <Text style={styles.header__title} onPress={() => {
-            navigation.navigate('Home')
-          }}>
-            Swim <Text style={styles.header__titleAccent} onPress={() => {
-            navigation.navigate('Home')
-          }}>Wild</Text>
+      <View style={styles.header__titleContainer}>
+        <Text
+          style={styles.header__title}
+          onPress={() => {
+            navigation.navigate("Home");
+          }}
+        >
+          Swim{" "}
+          <Text
+            style={styles.header__titleAccent}
+            onPress={() => {
+              navigation.navigate("Home");
+            }}
+          >
+            Wild
           </Text>
-        </View>
-        <View>
-          <TouchableOpacity onPress={()=> navigation.toggleDrawer() }>
-          { profileUrl ? <Image source={
-              {uri: profileUrl}
-             } style={{width: 45, height: 45, borderRadius:40,
-               marginRight:10, 
-              borderColor: colours.accent4, borderWidth:1}}/>
-             :
-             <Entypo style={{marginRight: 10}} name={'dots-three-vertical'} size={25} color={colours.accent4}/>
-             }
-            
-          </TouchableOpacity>
-        
-        </View>
+        </Text>
       </View>
+      <View>
+        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+          {profileUrl ? (
+            <Image
+              source={{ uri: profileUrl }}
+              style={{
+                width: 45,
+                height: 45,
+                borderRadius: 40,
+                marginRight: 10,
+                borderColor: colours.accent4,
+                borderWidth: 1,
+              }}
+            />
+          ) : (
+            <Entypo
+              style={{ marginRight: 10 }}
+              name={"dots-three-vertical"}
+              size={25}
+              color={colours.accent4}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 40
+    marginTop: 40,
   },
   header__titleContainer: {
     margin: 10,
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
   header__title: {
     fontSize: 32,
     fontFamily: "Poppins-Black",
+    height: 50,
     color: colours.text,
   },
   header__titleAccent: {

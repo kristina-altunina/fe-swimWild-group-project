@@ -23,7 +23,6 @@ import { useSelector } from "react-redux";
 import { tokenRefresh } from "../firebaseConfig";
 
 export default function HomeScreen({ navigation }) {
-  const [noLocationsFound, setNoLocationsFound] = useState(false);
   const [userLocation, setUserLocation] = useState({
     latitude: 54.636,
     longitude: -3.3631,
@@ -40,6 +39,7 @@ export default function HomeScreen({ navigation }) {
   const [type, setType] = useState(null);
   const [name, setName] = useState(null);
   const [postingLocation, setPostingLocation] = useState(false);
+  const [tooClose, setTooClose] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
@@ -61,7 +61,7 @@ export default function HomeScreen({ navigation }) {
       setLocations(() => [...data]);
       setLoadingLocations(false);
     });
-  }, []);
+  }, [refreshToken]);
 
   const handlePermissionChange = (isGranted) => {
     if (isGranted) {
@@ -81,21 +81,20 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  function handleClick(uid) {
-    return navigation.navigate("SingleLocation", { uid });
-  }
-
   function handleRegionChange({ latitude, longitude, latitudeDelta }) {
+    console.log(newLocation);
     if (loadingLocations) return;
     setLoadingLocations(() => true);
+    setNewLocation({
+      latitude,
+      longitude,
+    });
     getAllLocations(
       [latitude, longitude],
       8 + Math.floor(10 * latitudeDelta)
     ).then((data) => {
       setLocations(() => [...data]);
-      setNewLocation(() => {
-        return { latitude, longitude };
-      });
+
       setLoadingLocations(() => false);
     });
   }
@@ -111,11 +110,23 @@ export default function HomeScreen({ navigation }) {
       type,
       coords: [newLocation.latitude, newLocation.longitude],
     };
-    console.log(body);
-    console.log(refreshToken);
     const tokenObj = await tokenRefresh(refreshToken);
-    console.log(tokenObj.access_token);
-    //postSwimLocation(token, body);
+    postSwimLocation(tokenObj.access_token, body)
+      .then((data) => {
+        setPostingLocation(false);
+        return navigation.navigate("SingleLocation", { uid: data._id });
+      })
+      .catch((response) => {
+        setPostingLocation(false);
+        setTooClose(true);
+        setTimeout(() => {
+          setTooClose(false);
+        }, 2000);
+      });
+  }
+
+  if (!fontsLoaded) {
+    return <ActivityIndicator></ActivityIndicator>;
   }
 
   return (
@@ -130,15 +141,18 @@ export default function HomeScreen({ navigation }) {
           navigation={navigation}
           showNewLocation={showNewLocation}
           newLocation={newLocation}
+          setNewLocation={setNewLocation}
         />
-        <TouchableOpacity
-          style={styles.postSwim}
-          onPress={showNewLocationMarker}
-        >
-          <Text style={styles.postSwim__text}>
-            {showNewLocation ? `Hide new swim spot` : `Post a new swim spot!`}
-          </Text>
-        </TouchableOpacity>
+        {refreshToken && (
+          <TouchableOpacity
+            style={styles.postSwim}
+            onPress={showNewLocationMarker}
+          >
+            <Text style={styles.postSwim__text}>
+              {showNewLocation ? `Hide new swim spot` : `Post a new swim spot!`}
+            </Text>
+          </TouchableOpacity>
+        )}
         <View style={styles.locationSearch}>
           <LocationSearch
             style={styles.locationSearch}
@@ -151,6 +165,10 @@ export default function HomeScreen({ navigation }) {
         {showNewLocation ? (
           postingLocation ? (
             <ActivityIndicator></ActivityIndicator>
+          ) : tooClose ? (
+            <Text style={styles.form__error}>
+              This is too close to an existing location - sorry!
+            </Text>
           ) : (
             <View style={styles.form}>
               <Text style={styles.form__title}>Post a new swim-spot</Text>
@@ -194,23 +212,19 @@ export default function HomeScreen({ navigation }) {
           <ScrollView>
             {locations &&
               locations.map((location) => (
-                <TouchableOpacity
-                  onPress={() => handleClick(location._id)}
+                <LocationPreview
                   key={location._id}
-                >
-                  <LocationPreview
-                    key={location._id}
-                    name={location.name}
-                    type={location.type}
-                    distance={location.distanceKm.toFixed(2)}
-                    avStars={location.avStars}
-                  />
-                </TouchableOpacity>
+                  _id={location._id}
+                  name={location.name}
+                  type={location.type}
+                  distance={location.distanceKm.toFixed(2)}
+                  avStars={location.avStars}
+                  navigation={navigation}
+                />
               ))}
           </ScrollView>
         )}
       </View>
-      {/* {noLocationsFound && <Text style={styles.noLocationsText}>No locations found nearby!</Text>} */}
     </View>
   );
 }
@@ -317,5 +331,12 @@ const styles = StyleSheet.create({
     width: 140,
     borderRadius: 12,
     marginTop: 10,
+  },
+  form__error: {
+    color: "red",
+    fontFamily: "Poppins-Bold",
+    textAlign: "center",
+    marginTop: 30,
+    fontSize: 16,
   },
 });

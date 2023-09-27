@@ -1,11 +1,25 @@
 import React from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { colours } from "../../styles/base";
 import { useFonts } from "expo-font";
 import StarRating from "react-native-star-rating";
 
-export function LocationPreview({ name, type, distance, avStars }) {
+export function LocationPreview({
+  key,
+  name,
+  type,
+  distance,
+  avStars,
+  navigation,
+  _id,
+}) {
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
@@ -16,26 +30,30 @@ export function LocationPreview({ name, type, distance, avStars }) {
     "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
   });
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{name}</Text>
-      <View style={styles.info}>
-        <Text style={styles.text}>
-          {type[0].toUpperCase() +
-            type.split("").slice(1).join("") +
-            `  |  ${distance}km`}
-        </Text>
-        <View style={styles.starContainer}>
-          <StarRating
-            disabled={true}
-            maxStars={5}
-            starSize={18}
-            rating={avStars}
-            fullStarColor="#FFC033"
-            emptyStarColor="#DBDBDB"
-          />
+    <TouchableOpacity
+      onPress={() => navigation.navigate("SingleLocation", { uid: _id })}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>{name}</Text>
+        <View style={styles.info}>
+          <Text style={styles.text}>
+            {type[0].toUpperCase() +
+              type.split("").slice(1).join("") +
+              `  |  ${distance}km`}
+          </Text>
+          <View style={styles.starContainer}>
+            <StarRating
+              disabled={true}
+              maxStars={5}
+              starSize={18}
+              rating={avStars}
+              fullStarColor="#FFC033"
+              emptyStarColor="#DBDBDB"
+            />
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -59,11 +77,12 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     fontSize: 16,
     color: colours.text,
-    height: 20,
+    height: 25,
   },
   text: {
     fontSize: 14,
     color: colours.lightText,
+    fontFamily: "Poppins-Regular",
   },
   starContainer: {
     flexDirection: "row",

@@ -31,5 +31,6 @@ export const styles = StyleSheet.create({
   hazardText: {
     color: colours.text,
     fontFamily: "Poppins-Bold",
+    width: "90%",
   },
 });
