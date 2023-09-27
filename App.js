@@ -211,6 +211,7 @@ function Root() {
           headerShown: false,
           gestureEnabled: true,
           drawerItemStyle: { display: "none" },
+          unmountOnBlur: true
         }}
       />
       <Drawer.Screen
@@ -229,6 +230,7 @@ function Root() {
           headerShown: false,
           gestureEnabled: true,
           drawerItemStyle: { display: "none" },
+          unmountOnBlur: true
         }}
       />
     </Drawer.Navigator>
