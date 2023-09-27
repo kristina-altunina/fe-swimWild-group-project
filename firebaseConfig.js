@@ -1,5 +1,5 @@
 import { initializeApp, getApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, deleteUser } from "firebase/auth";
 import {FIREBASE_API_KEY, FIREBASE_STORAGE_BUCKET, FIREBASE_APP_ID, FIREBASE_PROJECT_ID, FIREBASE_AUTH_DOMAIN, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_MEASUREMENT_ID} from "@env"
 import { getStorage } from "firebase/storage";
 
@@ -37,6 +37,15 @@ const data = await response.json()
 return data;
 }
 
+  function deleteCurrentUser(callback){
+    const user = auth.currentUser
+    user.delete()
+      .then(() => {
+        console.log('delete from FB');
+        callback()
+      })
+      .catch((error) => console.log('ERROR DELETING FROM FIREBASE', error));
+ }
  function isCurrentUserAuthenticated(callback) {
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -50,4 +59,4 @@ return data;
 
 
 
-export {auth, fbApp, fbStorage, tokenRefresh, isCurrentUserAuthenticated}
+export {auth, fbApp, fbStorage, tokenRefresh, isCurrentUserAuthenticated, deleteCurrentUser}

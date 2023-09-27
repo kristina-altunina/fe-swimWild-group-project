@@ -115,7 +115,7 @@ export default function SingleLocation({
               <InfoCard info={infoData} />
               <TouchableWithoutFeedback
                 onPress={() =>
-                  navigation.navigate("PostSwimSpot", {
+                  navigation.navigate("PostSwims", {
                     location: {
                       name: locationData.name,
                       id: locationData._id,
