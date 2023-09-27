@@ -25,20 +25,18 @@ export function getLocationByID(uid, day, station) {
     });
 }
 
-
 export function postSwimSpot(token, body) {
-
-		return instance.post('users/swim', body, {
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-			}
-		})
-		.then(res => {
-			console.log(res, 'look here')
-		})
-		.catch(err => {
-			console.log(err, 'err')
-		})
+  return instance
+    .post("users/swim", body, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      console.log(res, "look here");
+    })
+    .catch((err) => {
+      console.log(err, "err");
+    });
 }
-  

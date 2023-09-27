@@ -9,7 +9,6 @@ import {
 } from "react-native";
 
 import * as Location from "expo-location";
-import { Marker } from "react-native-maps";
 import LocationSearch from "./HomeScreen/LocationSearch";
 import GoogleMapComponent from "./HomeScreen/GoogleMapComponent";
 import LocationPermission from "./HomeScreen/LocationPermission";
@@ -22,25 +21,26 @@ export default function HomeScreen({ navigation }) {
   const [userLocation, setUserLocation] = useState({
     latitude: 54.636,
     longitude: -3.3631,
-    latitudeDelta: 10,
-    longitudeDelta: 10,
+    latitudeDelta: 0.0922 * 2,
+    longitudeDelta: 0.0421 * 2,
   });
   const [locations, setLocations] = useState([]);
-  const [loadingLocations, setLoadingLocations] = useState(true);
+  const [loadingLocations, setLoadingLocations] = useState(false);
 
   useEffect(() => {
+    console.log(userLocation);
     setLoadingLocations(true);
-    getAllLocations([userLocation.latitude, userLocation.longitude, 1000]).then(
-      (data) => {
-        setLocations((locations) => [...data]);
-        setLoadingLocations(false);
-      }
-    );
-  }, [userLocation]);
+    getAllLocations(
+      [userLocation.latitude, userLocation.longitude],
+      8 + Math.floor(10 * userLocation.latitudeDelta)
+    ).then((data) => {
+      setLocations(() => [...data]);
+      setLoadingLocations(false);
+    });
+  }, []);
 
   const handlePermissionChange = (isGranted) => {
     if (isGranted) {
-      // set user location to device location
       Location.getCurrentPositionAsync({}).then(({ coords }) => {
         const { latitude, longitude } = coords;
         setUserLocation({
@@ -57,6 +57,18 @@ export default function HomeScreen({ navigation }) {
     return navigation.navigate("SingleLocation", { uid });
   }
 
+  function handleRegionChange({ latitude, longitude, latitudeDelta }) {
+    if (loadingLocations) return;
+    setLoadingLocations(() => true);
+    getAllLocations(
+      [latitude, longitude],
+      8 + Math.floor(10 * latitudeDelta)
+    ).then((data) => {
+      setLocations(() => [...data]);
+      setLoadingLocations(() => false);
+    });
+  }
+
   return (
     <View style={styles.container}>
       <NavBar navigation={navigation} />
@@ -64,16 +76,15 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.mapContainer}>
         <GoogleMapComponent
           region={userLocation}
-          onRegionChange={setUserLocation}
+          onRegionChange={handleRegionChange}
           locations={locations}
-          userLocation={userLocation}
           navigation={navigation}
         />
         <View style={styles.locationSearch}>
-          <LocationSearch
+          {/* <LocationSearch
             style={styles.locationSearch}
             setUserLocation={setUserLocation}
-          />
+          /> */}
         </View>
       </View>
 
@@ -102,7 +113,7 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "fff"
+    backgroundColor: "fff",
   },
   noLocationsText: {
     color: "red",

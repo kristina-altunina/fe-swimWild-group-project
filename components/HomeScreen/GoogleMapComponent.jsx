@@ -6,11 +6,10 @@ export default function GoogleMapComponent({
   onRegionChange,
   locations,
   region,
-  userLocation,
   navigation,
 }) {
-  function handleClick(uid) {
-    return navigation.navigate("SingleLocation", { uid });
+  function handleClick(id) {
+    return navigation.navigate("SingleLocation", { id });
   }
 
   return (
@@ -18,12 +17,6 @@ export default function GoogleMapComponent({
       style={{ width: "100%", height: "100%", padding: 100 }}
       onRegionChangeComplete={onRegionChange}
       region={region}
-      initialRegion={{
-        latitude: 55.36,
-        longitude: -3.44,
-        latitudeDelta: 10,
-        longitudeDelta: 10,
-      }}
     >
       {locations &&
         locations.map((location) => (
