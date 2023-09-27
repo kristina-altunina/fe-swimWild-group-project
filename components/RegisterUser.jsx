@@ -19,8 +19,9 @@ import { auth,deleteCurrentUser } from "../firebaseConfig";
 import { styles } from "../styles/layout";
 import { pickImage, takePhoto } from "../scripts/image-picker";
 import * as ImagePicker from "expo-image-picker";
+import { BACKEND_API_URL, DEFAULT_IMAGE_URL } from "@env";
 
-import { getFirebaseError, formatDate } from "../extentions";
+import { getFirebaseError, formatDate, generateGuid } from "../extentions";
 import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from "yup";
@@ -77,9 +78,9 @@ export default RegisterUser = ({ navigation }) => {
     console.log(data);
 
     setGenericError("");
+    const url = BACKEND_API_URL + "/users"
     const response = await fetch(
-      "https://spike-auth-server.onrender.com/users",
-      {
+      url,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +107,7 @@ export default RegisterUser = ({ navigation }) => {
     } else {
       dispatch(refreshToken({ refresh_token:refresh_token }))
       await response.json();
-      navigation.navigate("Profile", {refresh_token: refresh_token});
+      navigation.navigate("Profile", {refresh_token: refresh_token, guid: generateGuid()});
     }
   }
 

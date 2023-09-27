@@ -142,7 +142,7 @@ function Root() {
         <Drawer.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true, drawerItemStyle: { display: !isAuthenticated? 'none':'block' }}}/>
         <Drawer.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false,gestureEnabled: true, drawerItemStyle: { display: 'none'}}}/>
         <Drawer.Screen name="SwimSpot" component={SwimSpot} options={{headerShown: false, gestureEnabled: true, drawerItemStyle: { display: 'none'}}}/>
-        <Drawer.Screen name="PostSwimSpot" component={PostSwimSpot} options={{headerShown: false, gestureEnabled: true, drawerItemStyle: { display: 'none'}}}/>
+        <Drawer.Screen name="PostSwims" component={PostSwims} options={{headerShown: false, gestureEnabled: true, drawerItemStyle: { display: 'none'}}}/>
     </Drawer.Navigator>
 
   );
