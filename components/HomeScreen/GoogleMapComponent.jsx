@@ -1,12 +1,15 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
+import { colours } from "../../styles/base";
 
 export default function GoogleMapComponent({
   onRegionChange,
   locations,
   region,
   navigation,
+  showNewLocation,
+  newLocation,
 }) {
   function handleClick(id) {
     return navigation.navigate("SingleLocation", { id });
@@ -18,6 +21,19 @@ export default function GoogleMapComponent({
       onRegionChangeComplete={onRegionChange}
       region={region}
     >
+      {showNewLocation && (
+        <Marker
+          key={"newLocation"}
+          draggable
+          coordinate={{
+            latitude: newLocation.latitude,
+            longitude: newLocation.longitude,
+          }}
+          title={"Post new swim location here?"}
+          pinColor={colours.accent1}
+          description="Press and hold to drag."
+        ></Marker>
+      )}
       {locations &&
         locations.map((location) => (
           <Marker

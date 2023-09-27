@@ -40,3 +40,16 @@ export function postSwimSpot(token, body) {
       console.log(err, "err");
     });
 }
+
+export function postSwimLocation(token, body) {
+  return instance
+    .post(`locations`, body, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      return res;
+    });
+}
