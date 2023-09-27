@@ -40,6 +40,7 @@ export default function HomeScreen({ navigation }) {
   const [type, setType] = useState(null);
   const [name, setName] = useState(null);
   const [postingLocation, setPostingLocation] = useState(false);
+  const [tooClose, setTooClose] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
@@ -86,16 +87,19 @@ export default function HomeScreen({ navigation }) {
   }
 
   function handleRegionChange({ latitude, longitude, latitudeDelta }) {
+    console.log(newLocation);
     if (loadingLocations) return;
     setLoadingLocations(() => true);
+    setNewLocation({
+      latitude,
+      longitude,
+    });
     getAllLocations(
       [latitude, longitude],
       8 + Math.floor(10 * latitudeDelta)
     ).then((data) => {
       setLocations(() => [...data]);
-      setNewLocation(() => {
-        return { latitude, longitude };
-      });
+
       setLoadingLocations(() => false);
     });
   }
@@ -111,11 +115,19 @@ export default function HomeScreen({ navigation }) {
       type,
       coords: [newLocation.latitude, newLocation.longitude],
     };
-    console.log(body);
-    console.log(refreshToken);
     const tokenObj = await tokenRefresh(refreshToken);
-    console.log(tokenObj.access_token);
-    //postSwimLocation(token, body);
+    postSwimLocation(tokenObj.access_token, body)
+      .then((data) => {
+        setPostingLocation(false);
+        return navigation.navigate("SingleLocation", { uid: data._id });
+      })
+      .catch((response) => {
+        setPostingLocation(false);
+        setTooClose(true);
+        setTimeout(() => {
+          setTooClose(false);
+        }, 2000);
+      });
   }
 
   return (
@@ -130,6 +142,7 @@ export default function HomeScreen({ navigation }) {
           navigation={navigation}
           showNewLocation={showNewLocation}
           newLocation={newLocation}
+          setNewLocation={setNewLocation}
         />
         <TouchableOpacity
           style={styles.postSwim}
@@ -151,6 +164,10 @@ export default function HomeScreen({ navigation }) {
         {showNewLocation ? (
           postingLocation ? (
             <ActivityIndicator></ActivityIndicator>
+          ) : tooClose ? (
+            <Text style={styles.form__error}>
+              This is too close to an existing location - sorry!
+            </Text>
           ) : (
             <View style={styles.form}>
               <Text style={styles.form__title}>Post a new swim-spot</Text>
@@ -317,5 +334,12 @@ const styles = StyleSheet.create({
     width: 140,
     borderRadius: 12,
     marginTop: 10,
+  },
+  form__error: {
+    color: "red",
+    fontFamily: "Poppins-Bold",
+    textAlign: "center",
+    marginTop: 30,
+    fontSize: 16,
   },
 });

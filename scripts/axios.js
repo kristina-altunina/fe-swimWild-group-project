@@ -6,7 +6,9 @@ const instance = axios.create({
 
 export function getAllLocations(coords = [52, -2], limit = 8, page = 1) {
   return instance
-    .get(`locations?lat=${coords[0]}&lon=${coords[1]}&limit=${limit}&p=${page}`)
+    .get(
+      `locations?lat=${coords[0]}&long=${coords[1]}&limit=${limit}&p=${page}`
+    )
     .then(({ data }) => {
       return data;
     });
@@ -49,7 +51,7 @@ export function postSwimLocation(token, body) {
         Authorization: `Bearer ${token}`,
       },
     })
-    .then((res) => {
-      return res;
+    .then(({ data }) => {
+      return data;
     });
 }
