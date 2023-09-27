@@ -5,8 +5,8 @@ function formatDate(strDate, delimiter) {
  return dateSplit[2] + "/" + dateSplit[1] + "/" + dateSplit[0]
 }
 
-const simpleAlert = () =>
-    Alert.alert('Delete Account', 'Failed to delete account', [
+const simpleAlert = (title, msg) =>
+    Alert.alert(title, msg, [
       {text: 'OK', onPress: () => console.log('OK Pressed')},
     ]);
 

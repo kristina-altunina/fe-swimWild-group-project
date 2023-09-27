@@ -51,7 +51,7 @@ async function handleDeleteAccount(navigation, refresh_token, dispatch) {
     },
   });
   if (!response.ok) {
-    simpleAlert();
+    simpleAlert("Delete Account", "Failed to Delete Account");
   } else {
     deleteCurrentUser(() => {
       console.log("PROFILE DELETED FROM FIREBASE");

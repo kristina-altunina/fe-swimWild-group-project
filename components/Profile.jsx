@@ -9,13 +9,12 @@ import {
   ScrollView,
 } from "react-native";
 
-import  { useCallback } from 'react';
 import { colours } from "../styles/base";
 import NavBar from "./NavBar";
 import { tokenRefresh } from "../firebaseConfig";
 import { BACKEND_API_URL, DEFAULT_IMAGE_URL } from "@env";
 import { useState, useEffect } from "react";
-import { formatDate } from "../extentions";
+import { formatDate, simpleAlert } from "../extentions";
 import SwimFilter from "./Profile/SwimFilter";
 import {
   addMonthToSwims,
@@ -28,12 +27,11 @@ import {
 import { SwimRecord } from "./Profile/SwimRecord";
 import { useFonts } from "expo-font";
 import { useAssets } from "expo-asset";
-import { generateGuid } from "../extentions";
 import { login, refreshToken} from '../redux/reducers'; // Import your slice and actions
 import { useSelector, useDispatch } from 'react-redux';
 export default Profile = ({ navigation, route }) => {
-  console.log('ROUTE GUID', route.params.guid)
-  const [isLoading, setIsLoading] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(true);
   const [profileData, setProfileData] = useState({});
   const [swims, setSwims] = useState([]);
   const [filtSwims, setFiltSwims] = useState([]);
@@ -76,12 +74,11 @@ async function getProfile(){
     console.log('FETCHED PROFILE',json)
   }).catch((error)=>{
     console.log('PROFILE ERROR', error)
-    setIsLoading(false);
+    simpleAlert("Profile", "Failed to load profile");
   })
 }
 
 useEffect(() => {
-  console.log('FETCH NEW PROFILE')
   getProfile()
 }, [guid]);
 
