@@ -72,6 +72,11 @@ export const styles = StyleSheet.create({
     fontFamily: "Poppins-Light",
     marginRight: 8,
   },
+  empty: {
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 14,
+    color: colours.accent2,
+  },
 });
 
 export const props = {

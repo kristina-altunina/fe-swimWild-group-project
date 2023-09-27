@@ -10,7 +10,7 @@ import { styles } from "../../../styles/infoCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useFonts } from "expo-font";
 
-export default function InfoCard({ info }) {
+export default function InfoCard({ info, api }) {
   const [expandData, setExpandData] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../../../assets/fonts/Poppins-Bold.ttf"),
@@ -50,6 +50,20 @@ export default function InfoCard({ info }) {
             </View>
             {expandData ? (
               <>
+                {api?.nearestAab && (
+                  <Text style={styles.aabText}>
+                    The nearest government Advice Against Bathing warning is in
+                    place for{" "}
+                    <Text style={styles.aabHighlight}>
+                      {api?.nearestAab.name}
+                    </Text>
+                    ,{" "}
+                    <Text style={styles.aabHighlight}>
+                      {api?.nearestAab.distanceKm} km
+                    </Text>{" "}
+                    away.
+                  </Text>
+                )}
                 <Text style={styles.displayText}>{info.msg}</Text>
                 <Text style={styles.displayText}>
                   {info.warnings[Math.floor(Math.random() * 5)]}

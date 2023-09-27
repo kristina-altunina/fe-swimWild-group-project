@@ -36,7 +36,7 @@ export default function SingleLocation({
   const [locationData, setLocationData] = useState([]);
   const [infoData, setInfoData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
@@ -63,10 +63,9 @@ export default function SingleLocation({
         setLocationData((locationData) => requestedLocationData);
         setInfoData((infoData) => requestInfoData);
         setIsLoading(false);
-        isCurrentUserAuthenticated(bool => {
-          setIsLoggedIn(isLoggedIn => bool)
-        })
-
+        isCurrentUserAuthenticated((bool) => {
+          setIsLoggedIn((isLoggedIn) => bool);
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -82,27 +81,31 @@ export default function SingleLocation({
   }
 
   function checkUserIfLoggedIn() {
-    if(isLoggedIn) {
+    if (isLoggedIn) {
       navigation.navigate("PostSwims", {
         location: {
           name: locationData.name,
           id: locationData._id,
-        }
-      })
+        },
+      });
     } else {
-      Alert.alert('Not Logged In', 'You need to be logged in to be able to post your swim.', [
-        {
-          text: 'Cancel'
-        },
-        {
-          text: 'Sign In',
-          onPress: () => navigation.navigate('SignIn')
-        },
-        {
-          text: 'Sign Up',
-          onPress: () => navigation.navigate('Register')
-        }
-      ])
+      Alert.alert(
+        "Not Logged In",
+        "You need to be logged in to be able to post your swim.",
+        [
+          {
+            text: "Cancel",
+          },
+          {
+            text: "Sign In",
+            onPress: () => navigation.navigate("SignIn"),
+          },
+          {
+            text: "Sign Up",
+            onPress: () => navigation.navigate("Register"),
+          },
+        ]
+      );
     }
   }
 
@@ -144,12 +147,8 @@ export default function SingleLocation({
                 <ApiDataOthersCard apiData={apiData} uid={uid} />
               )}
 
-              <InfoCard info={infoData} />
-              <TouchableWithoutFeedback
-                onPress={() =>
-                  checkUserIfLoggedIn()
-                }
-              >
+              <InfoCard info={infoData} api={apiData} />
+              <TouchableWithoutFeedback onPress={() => checkUserIfLoggedIn()}>
                 <View>
                   <Text style={styles.postButton}>Record a swim!</Text>
                 </View>

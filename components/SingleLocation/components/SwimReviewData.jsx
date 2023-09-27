@@ -46,7 +46,9 @@ export default function SwimReviewData({ swimsData, navigation }) {
       <View style={styles.swimReviewGroup}>
         <Text style={styles.titleText}>Latest Reviews</Text>
         {!Object.keys(swimsData).length ? (
-          <ActivityIndicator size="large" />
+          <Text style={styles.empty}>
+            Be the first to review this location!
+          </Text>
         ) : (
           swimsData.map((swim, i) => {
             return (

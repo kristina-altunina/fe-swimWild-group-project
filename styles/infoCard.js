@@ -33,4 +33,12 @@ export const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     width: "90%",
   },
+  aabText: {
+    color: "white",
+    fontFamily: "Poppins-Regular",
+  },
+  aabHighlight: {
+    color: colours.accent5,
+    fontFamily: "Poppins-SemiBold",
+  },
 });
