@@ -7,7 +7,6 @@ import { Stat } from "../reuse/Stat";
 import { Stats } from "../reuse/Stats";
 
 export function SwimRecord({ swim, navigation }) {
-  console.log(swim.location.id, 'look here')
   const [fontsLoaded] = useFonts({
     "Poppins-SemiBold": require("../../assets/fonts/Poppins-SemiBold.ttf"),
     "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
