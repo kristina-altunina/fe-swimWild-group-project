@@ -33,14 +33,14 @@ export default function PostSwims({
   const [starRating, setStartRating] = useState(0);
   const [recordTemp, setRecordTemp] = useState(null);
   const [showTempWarning, setShowTempWarning] = useState(false);
-  const [feelTemp, setFeelTemp] = useState(null);
+  const [feelTemp, setFeelTemp] = useState('Select Feels like');
   const [mins, onChangeMins] = useState("");
   const [outOfDepth, setOutOfDepth] = useState(false);
-  const [size, setSize] = useState(null);
-  const [shore, setShore] = useState(null);
-  const [bankAngle, setBankAngle] = useState(null);
-  const [clarity, setClarity] = useState(null);
-  const [km, onChangeKm] = useState(null);
+  const [size, setSize] = useState('Select Size');
+  const [shore, setShore] = useState('Select Shore');
+  const [bankAngle, setBankAngle] = useState('Select Bank Angle');
+  const [clarity, setClarity] = useState('Select Clarity');
+  const [km, onChangeKm] = useState('');
   const [imgUrls, setImgUrls] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -49,45 +49,25 @@ export default function PostSwims({
   
   const refreshToken = useSelector((state) => state.refresh_token);
 
-  function handleFeelTempRef() {
-    const feelTempRef = ["freezing", "cold", "average", "warm", "hot"];
+  const feelTempRef = ["freezing", "cold", "average", "warm", "hot"].map((item, i) => {
+    return { value: i, label: item };
+  })
 
-    return feelTempRef.map((item, i) => {
-      return { value: i, label: item };
-    });
-  }
+  const sizeRef = ["tiny", "small", "medium", "large"].map((item, i) => {
+    return { value: i, label: item }
+  });
 
-  function handleSizeRef() {
-    const sizeRef = ["tiny", "small", "medium", "large"];
+  const shoreRef = ["muddy", "rocky", "sandy", "pebbly", "grassy", "swampy"].map((item, i) => {
+    return { value: i, label: item };
+  });
 
-    return sizeRef.map((item, i) => {
-      return { value: i, label: item };
-    });
-  }
+  const bankAngleRef = ["shallow", "medium", "steep", "jump-in"].map((item, i) => {
+    return { value: i, label: item };
+  });
 
-  function handleShoreRef() {
-    const shoreRef = ["muddy", "rocky", "sandy", "pebbly", "grassy", "swampy"];
-
-    return shoreRef.map((item, i) => {
-      return { value: i, label: item };
-    });
-  }
-
-  function handleBankAngleRef() {
-    const bankAngleRef = ["shallow", "medium", "steep", "jump-in"];
-
-    return bankAngleRef.map((item, i) => {
-      return { value: i, label: item };
-    });
-  }
-
-  function handleClarityRef() {
-    const clarityRef = ["muddy", "murky", "average", "clear", "perfect"];
-
-    return clarityRef.map((item, i) => {
-      return { value: i, label: item };
-    });
-  }
+  const clarityRef = ["muddy", "murky", "average", "clear", "perfect"].map((item, i) => {
+    return { value: i, label: item }
+  });
 
   function imageUploadFromGallery() {
     if (mediaPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
@@ -130,12 +110,12 @@ export default function PostSwims({
       notes: notes === "Enter comment here..." ? "" : notes,
       stars: starRating,
       recordTemp: +recordTemp,
-      feelTemp,
-      outOfDepth,
-      size,
-      shore,
-      bankAngle,
-      clarity,
+      feelTemp: /Select/gi.test(feelTemp) ? null : feelTemp,
+      outOfDepth: /Select/gi.test(outOfDepth) ? null : outOfDepth,
+      size: /Select/gi.test(size) ? null : size,
+      shore: /Select/gi.test(shore) ? null : shore,
+      bankAngle: /Select/gi.test(bankAngle) ? null : bankAngle,
+      clarity: /Select/gi.test(clarity) ? null : clarity,
       km,
       imgUrls,
     };
@@ -286,74 +266,69 @@ export default function PostSwims({
               <Text style={showTempWarning ? { color: "black" } : { height: 0 }}>
                 min : -5, max: 60, unit Celsius
               </Text>
-              <View style={{ width: "40%" }}>
+              <View style={{ width: "50%" }}>
                 <Text>Feel Temp:</Text>
                 <Dropdown
-                  data={handleFeelTempRef()}
+                  data={feelTempRef}
                   labelField="label"
                   valueField="value"
-                  value={feelTemp}
                   iconColor="black"
-                  placeholder='Select Feels like'
+                  placeholder={feelTemp}
                   onChange={(item) => {
-                    setFeelTemp((feelTemp) => item.label);
+                    setFeelTemp(item.label);
                   }}
                 />
               </View>
 
-              <View style={{ width: "40%" }}>
+              <View style={{ width: "50%" }}>
                 <Text>Size:</Text>
                 <Dropdown
-                  data={handleSizeRef()}
+                  data={sizeRef}
                   labelField="label"
                   valueField="value"
-                  value={size}
                   iconColor="black"
-                  placeholder='Select Size'
+                  placeholder={size}
                   onChange={(item) => {
-                    setSize((size) => item.label);
+                    setSize(item.label);
                   }}
                 />
               </View>
-              <View style={{ width: "40%" }}>
+              <View style={{ width: "50%" }}>
                 <Text>Shore:</Text>
                 <Dropdown
-                  data={handleShoreRef()}
+                  data={shoreRef}
                   labelField="label"
                   valueField="value"
-                  value={shore}
                   iconColor="black"
-                  placeholder='Select Shore'
+                  placeholder={shore}
                   onChange={(item) => {
-                    setShore((shore) => item.label);
+                    setShore(item.label);
                   }}
                 />
               </View>
-              <View style={{ width: "40%" }}>
-                <Text>Shore:</Text>
+              <View style={{ width: "50%" }}>
+                <Text>Bank Angle:</Text>
                 <Dropdown
-                  data={handleBankAngleRef()}
+                  data={bankAngleRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  value={bankAngle}
-                  placeholder='Select Bank Angle'
+                  placeholder={bankAngle}
                   onChange={(item) => {
-                    setBankAngle((bankAngle) => item.label);
+                    setBankAngle(item.label);
                   }}
                 />
               </View>
-              <View style={{ width: "40%" }}>
+              <View style={{ width: "50%" }}>
                 <Text>Clarity:</Text>
                 <Dropdown
-                  data={handleClarityRef()}
+                  data={clarityRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  value={clarity}
-                  placeholder='Select Clarity'
+                  placeholder={clarity}
                   onChange={(item) => {
-                    setClarity((clarity) => item.label);
+                    setClarity(item.label);
                   }}
                 />
               </View>
