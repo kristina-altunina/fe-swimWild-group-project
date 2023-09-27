@@ -39,12 +39,7 @@ export default function SingleLocation({
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
-    "Poppins-Regular": require("../../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Regular_Italic": require("../../assets/fonts/Poppins-Italic.ttf"),
-    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-ExtraBold": require("../../assets/fonts/Poppins-ExtraBold.ttf"),
-    "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
   });
 
   useEffect(() => {

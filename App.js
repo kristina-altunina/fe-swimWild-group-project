@@ -5,17 +5,9 @@ import SignInUser from "./components/SignInUser";
 import Profile from "./components/Profile";
 import ResetPassword from "./components/ResetPassword";
 import HomeScreen from "./components/HomeScreen";
-import {
-  useFonts,
-  Poppins_600SemiBold,
-  Poppins_900Black,
-  Poppins_500Medium,
-  Poppins_300Light_Italic,
-  Poppins_200ExtraLight,
-} from "@expo-google-fonts/poppins";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { StyleSheet, Image, Text, Alert } from "react-native";
+import { Image, Text, Alert } from "react-native";
 import { useState } from "react";
 import { simpleAlert } from "./extentions";
 import {
@@ -211,7 +203,7 @@ function Root() {
           headerShown: false,
           gestureEnabled: true,
           drawerItemStyle: { display: "none" },
-          unmountOnBlur: true
+          unmountOnBlur: true,
         }}
       />
       <Drawer.Screen
@@ -230,7 +222,7 @@ function Root() {
           headerShown: false,
           gestureEnabled: true,
           drawerItemStyle: { display: "none" },
-          unmountOnBlur: true
+          unmountOnBlur: true,
         }}
       />
     </Drawer.Navigator>
@@ -238,18 +230,6 @@ function Root() {
 }
 
 export default function App() {
-  let [fontsLoaded] = useFonts({
-    Poppins_600SemiBold,
-    Poppins_900Black,
-    Poppins_500Medium,
-    Poppins_300Light_Italic,
-    Poppins_200ExtraLight,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
     <Provider store={store}>
       <NavigationContainer>

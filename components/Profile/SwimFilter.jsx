@@ -13,12 +13,8 @@ export default function SwimFilter({ allSwims, filtSwims, setFiltSwims }) {
   const [locationDropdownData, setLocationDropdownData] = useState([]);
   const [sortByValue, setSortByValue] = useState(null);
   const [fontsLoaded] = useFonts({
-    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
     "Poppins-Regular": require("../../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Regular_Italic": require("../../assets/fonts/Poppins-Italic.ttf"),
-    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
   });
 
   const sortByDropdownData = [

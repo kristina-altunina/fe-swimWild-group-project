@@ -23,7 +23,6 @@ import * as ImagePicker from "expo-image-picker";
 import { useSelector } from "react-redux";
 import { tokenRefresh } from "../firebaseConfig";
 
-import { CommonActions } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stat } from "./reuse/Stat";
 
@@ -56,12 +55,7 @@ export default function PostSwims({
   const refreshToken = useSelector((state) => state.refresh_token);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Regular_Italic": require("../assets/fonts/Poppins-Italic.ttf"),
-    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Bold_Italic": require("../assets/fonts/Poppins-BoldItalic.ttf"),
-    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
   });
 
   const feelTempRef = ["freezing", "cold", "average", "warm", "hot"].map(

@@ -14,11 +14,8 @@ import { useFonts } from "expo-font";
 export default function SwimReviewData({ swimsData, navigation }) {
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../../../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Light": require("../../../assets/fonts/Poppins-Light.ttf"),
+    "Poppins-SemiBold": require("../../../assets/fonts/Poppins-SemiBold.ttf"),
     "Poppins-Regular": require("../../../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Regular_Italic": require("../../../assets/fonts/Poppins-Italic.ttf"),
-    "Poppins-Bold": require("../../../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-ExtraBold": require("../../../assets/fonts/Poppins-ExtraBold.ttf"),
     "Poppins-Light": require("../../../assets/fonts/Poppins-Light.ttf"),
   });
 
@@ -65,7 +62,11 @@ export default function SwimReviewData({ swimsData, navigation }) {
                   <View style={styles.swimReviewItem__header}>
                     <Image
                       style={styles.profileImage}
-                      source={{ uri: swim.profileImg || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" }}
+                      source={{
+                        uri:
+                          swim.profileImg ||
+                          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
+                      }}
                     />
                     <View style={styles.textContainer}>
                       <View style={styles.flexRow}>

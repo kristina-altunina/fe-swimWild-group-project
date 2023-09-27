@@ -100,6 +100,33 @@ export function coldest(swims) {
   return `${coldest.temp}°C, ${coldest.name}, ${coldest.date}`;
 }
 
+export function totalDistance(swims) {
+  return (
+    swims
+      .reduce((a, b) => {
+        return a.km + b.km;
+      }, 0)
+      .toString() + "km"
+  );
+}
+
+export function totalMinutes(swims) {
+  const totalMins = swims.reduce((a, b) => {
+    return a.mins + b.mins;
+  }, 0);
+  const hours = Math.floor(totalMins / 60);
+  if (hours) return `${hours}h ${totalMins % 60}m`;
+  return totalMins.toString() + "mins";
+}
+
+export function totalLocations(swims) {
+  const locations = new Set();
+  for (const swim of swims) {
+    locations.add(swim.location.name);
+  }
+  return locations.length;
+}
+
 export function swimTheLakes(swims) {
   const challenge = [
     "Coniston Water, Cumbria",

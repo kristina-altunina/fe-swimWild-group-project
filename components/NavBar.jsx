@@ -81,7 +81,6 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 40,
   },
   header__titleContainer: {
     margin: 10,
