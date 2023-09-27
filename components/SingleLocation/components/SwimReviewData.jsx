@@ -65,7 +65,7 @@ export default function SwimReviewData({ swimsData, navigation }) {
                   <View style={styles.swimReviewItem__header}>
                     <Image
                       style={styles.profileImage}
-                      source={{ uri: swim.profileImg }}
+                      source={{ uri: swim.profileImg || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" }}
                     />
                     <View style={styles.textContainer}>
                       <View style={styles.flexRow}>
