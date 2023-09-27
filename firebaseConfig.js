@@ -47,7 +47,7 @@ return data;
       .catch((error) => console.log('ERROR DELETING FROM FIREBASE', error));
  }
  function isCurrentUserAuthenticated(callback) {
-  onAuthStateChanged(auth, (user) => {
+  return onAuthStateChanged(auth, (user) => {
     if (user) {
       callback(true)
     } else {
