@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
   },
   "displayText--large": {
-    fonSize: 16,
+    fontSize: 16,
     color: colours.lightText,
     fontFamily: "Poppins-Bold",
     height: 25,

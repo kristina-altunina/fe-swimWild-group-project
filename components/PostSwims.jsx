@@ -29,17 +29,17 @@ export default function PostSwims({
     params: { location },
   },
 }) {
-  const [notes, onChangeNotesInput] = useState("Enter comment here...");
+  const [notes, onChangeNotesInput] = useState("");
   const [starRating, setStartRating] = useState(0);
   const [recordTemp, setRecordTemp] = useState(null);
   const [showTempWarning, setShowTempWarning] = useState(false);
-  const [feelTemp, setFeelTemp] = useState("Select Feels like");
+  const [feelTemp, setFeelTemp] = useState(null);
   const [mins, onChangeMins] = useState("");
   const [outOfDepth, setOutOfDepth] = useState(false);
-  const [size, setSize] = useState("Select Size");
-  const [shore, setShore] = useState("Select Shore");
-  const [bankAngle, setBankAngle] = useState("Select Bank Angle");
-  const [clarity, setClarity] = useState("Select Clarity");
+  const [size, setSize] = useState(null);
+  const [shore, setShore] = useState(null);
+  const [bankAngle, setBankAngle] = useState(null);
+  const [clarity, setClarity] = useState(null);
   const [km, onChangeKm] = useState(null);
   const [imgUrls, setImgUrls] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -145,6 +145,9 @@ export default function PostSwims({
       .then(({access_token}) => {
         postSwimSpot(access_token, body)
       })
+      .then(() => {
+        navigation.navigate('SingleLocation',{uid: location.id})
+      })
     }
   }
 
@@ -191,6 +194,7 @@ export default function PostSwims({
                 multiline={true}
                 numberOfLines={5}
                 maxLength={250}
+                placeholder="Enter Comments Here.."
                 onChangeText={(text) => onChangeNotesInput(text)}
                 value={notes}
                 style={{ padding: 10 }}
@@ -288,8 +292,9 @@ export default function PostSwims({
                   data={handleFeelTempRef()}
                   labelField="label"
                   valueField="value"
+                  value={feelTemp}
                   iconColor="black"
-                  placeholder={feelTemp}
+                  placeholder='Select Feels like'
                   onChange={(item) => {
                     setFeelTemp((feelTemp) => item.label);
                   }}
@@ -302,8 +307,9 @@ export default function PostSwims({
                   data={handleSizeRef()}
                   labelField="label"
                   valueField="value"
+                  value={size}
                   iconColor="black"
-                  placeholder={size}
+                  placeholder='Select Size'
                   onChange={(item) => {
                     setSize((size) => item.label);
                   }}
@@ -315,8 +321,9 @@ export default function PostSwims({
                   data={handleShoreRef()}
                   labelField="label"
                   valueField="value"
+                  value={shore}
                   iconColor="black"
-                  placeholder={shore}
+                  placeholder='Select Shore'
                   onChange={(item) => {
                     setShore((shore) => item.label);
                   }}
@@ -329,7 +336,8 @@ export default function PostSwims({
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={bankAngle}
+                  value={bankAngle}
+                  placeholder='Select Bank Angle'
                   onChange={(item) => {
                     setBankAngle((bankAngle) => item.label);
                   }}
@@ -342,7 +350,8 @@ export default function PostSwims({
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={clarity}
+                  value={clarity}
+                  placeholder='Select Clarity'
                   onChange={(item) => {
                     setClarity((clarity) => item.label);
                   }}

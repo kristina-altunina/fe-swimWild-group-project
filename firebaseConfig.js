@@ -38,7 +38,7 @@ return data;
 }
 
  function isCurrentUserAuthenticated(callback) {
-  onAuthStateChanged(auth, (user) => {
+  return onAuthStateChanged(auth, (user) => {
     if (user) {
       callback(true)
     } else {
