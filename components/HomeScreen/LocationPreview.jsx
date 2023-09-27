@@ -59,11 +59,12 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     fontSize: 16,
     color: colours.text,
-    height: 20,
+    height: 25,
   },
   text: {
     fontSize: 14,
     color: colours.lightText,
+    fontFamily: "Poppins-Regular",
   },
   starContainer: {
     flexDirection: "row",
