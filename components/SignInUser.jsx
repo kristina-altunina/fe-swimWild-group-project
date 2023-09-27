@@ -39,12 +39,11 @@ export default SignInUser = ({ navigation }) => {
     try {
         const response = await signInWithEmailAndPassword(auth, values.email, values.password)
         const user = response.user;
-        const token = user.stsTokenManager.refreshToken;
-        console.log('TOKEN',token)
-        dispatch(refreshToken({ refresh_token: token}))
+        console.log(user)
+        dispatch(refreshToken({ refresh_token: user.stsTokenManager.refreshToken}))
         setSending(false)
         setIsSignInClicked(false)
-        navigation.navigate('Profile')
+        navigation.navigate('Profile', {refresh_token: user.stsTokenManager.refreshToken})
     }
     catch(error) {
        console.log("ERROR", error)

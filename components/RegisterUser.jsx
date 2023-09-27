@@ -15,7 +15,7 @@ import {
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { auth,deleteCurrentUser } from "../firebaseConfig";
 import { styles } from "../styles/layout";
 import { pickImage, takePhoto } from "../scripts/image-picker";
 import * as ImagePicker from "expo-image-picker";
@@ -26,7 +26,13 @@ import { Formik, Field } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { refreshToken, logout } from "../redux/reducers";
+
 export default RegisterUser = ({ navigation }) => {
+  
+  const dispatch = useDispatch();
+
+  dispatch(logout())
+  
   const dateNow = new Date();
   const minimumDate = new Date(
     dateNow.getFullYear() - 18,
@@ -59,8 +65,6 @@ export default RegisterUser = ({ navigation }) => {
     setDatePickerVisible(false);
   };
 
-  const dispatch = useDispatch();
-
   async function swimWildSignUp(token, refresh_token, uid, formData) {
     const data = {
       uid: uid,
@@ -83,9 +87,10 @@ export default RegisterUser = ({ navigation }) => {
         body: JSON.stringify(data),
       }
     );
+    setSending(false);
+    setIsSignUpClicked(false);
     if (!response.ok) {
-      setSending(false);
-      setIsSignUpClicked(false);
+      deleteCurrentUser(()=> console.log('user deleted from firebase'));
       console.log(response, "User----");
       const body = await response.json();
       console.log(body);
@@ -93,10 +98,10 @@ export default RegisterUser = ({ navigation }) => {
         setGenericError("Something went wrong. Please try again later.");
       }
     } else {
-      dispatch(logout())
+
       dispatch(refreshToken({ refresh_token:refresh_token }))
       await response.json();
-      navigation.navigate("Profile");
+      navigation.navigate("Profile", {refresh_token: refresh_token});
     }
   }
 
@@ -193,8 +198,6 @@ export default RegisterUser = ({ navigation }) => {
                         values.password
                       );
                       const user = response.user;
-                      console.log("USERID", user.uid);
-                      console.log("TOKEN", user.stsTokenManager.accessToken);
                       swimWildSignUp(
                         user.stsTokenManager.accessToken,
                         user.stsTokenManager.refreshToken,
@@ -202,6 +205,7 @@ export default RegisterUser = ({ navigation }) => {
                         values
                       );
                     } catch (error) {
+                      console.log('Register ERROR',error)
                       setSending(false);
                       setIsSignUpClicked(false);
                       const firebaseEmailError = getFirebaseError(error);

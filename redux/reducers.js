@@ -22,6 +22,7 @@ const profileSlice = createSlice({
     },
     refreshToken: (state, action) =>{
         state.refresh_token = action.payload.refresh_token
+        console.log('STORE TOKEN', state.refresh_token)
     }
   }
 });

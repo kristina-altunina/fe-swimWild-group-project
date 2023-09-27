@@ -1,7 +1,14 @@
+import { Alert } from "react-native"
+
 function formatDate(strDate, delimiter) {
  let dateSplit = strDate.split(delimiter)
  return dateSplit[2] + "/" + dateSplit[1] + "/" + dateSplit[0]
 }
+
+const simpleAlert = () =>
+    Alert.alert('Delete Account', 'Failed to delete account', [
+      {text: 'OK', onPress: () => console.log('OK Pressed')},
+    ]);
 
 function getFirebaseError(error) {
     if (error.code.includes("auth/email-already-in-use")){
@@ -19,4 +26,4 @@ function getFirebaseError(error) {
     return ""
 }
 
-export {getFirebaseError, formatDate}
+export {getFirebaseError, formatDate, simpleAlert }
