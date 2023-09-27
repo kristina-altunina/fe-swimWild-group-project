@@ -23,12 +23,15 @@ import * as ImagePicker from "expo-image-picker";
 import { useSelector } from "react-redux";
 import { tokenRefresh } from "../firebaseConfig";
 
+import { CommonActions } from "@react-navigation/native";
+
 export default function PostSwims({
   navigation,
   route: {
     params: { location },
   },
 }) {
+  console.log(navigation, 'look here')
   const [notes, onChangeNotesInput] = useState("");
   const [starRating, setStartRating] = useState(0);
   const [recordTemp, setRecordTemp] = useState(null);
@@ -123,7 +126,7 @@ export default function PostSwims({
     if (!showTempWarning) {
       tokenRefresh(refreshToken)
       .then(({access_token}) => {
-        postSwimSpot(access_token, body)
+        return postSwimSpot(access_token, body)
       })
       .then(() => {
         navigation.navigate('SingleLocation',{uid: location.id})
