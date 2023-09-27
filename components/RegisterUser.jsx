@@ -15,18 +15,25 @@ import {
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { auth,deleteCurrentUser } from "../firebaseConfig";
 import { styles } from "../styles/layout";
 import { pickImage, takePhoto } from "../scripts/image-picker";
 import * as ImagePicker from "expo-image-picker";
+import { BACKEND_API_URL, DEFAULT_IMAGE_URL } from "@env";
 
-import { getFirebaseError, formatDate } from "../extentions";
+import { getFirebaseError, formatDate, generateGuid } from "../extentions";
 import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { refreshToken, logout } from "../redux/reducers";
+
 export default RegisterUser = ({ navigation }) => {
+  
+  const dispatch = useDispatch();
+
+  dispatch(logout())
+  
   const dateNow = new Date();
   const minimumDate = new Date(
     dateNow.getFullYear() - 18,
@@ -41,6 +48,7 @@ export default RegisterUser = ({ navigation }) => {
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [profileImgURL, setProfileImgURL] = useState("");
   const [firebaseError, setFirebaseError] = useState("");
+  const [nicknameError, setNicknameError] = useState("");
   const [sending, setSending] = useState(false);
   const [genericError, setGenericError] = useState("");
 
@@ -59,8 +67,6 @@ export default RegisterUser = ({ navigation }) => {
     setDatePickerVisible(false);
   };
 
-  const dispatch = useDispatch();
-
   async function swimWildSignUp(token, refresh_token, uid, formData) {
     const data = {
       uid: uid,
@@ -72,9 +78,9 @@ export default RegisterUser = ({ navigation }) => {
     console.log(data);
 
     setGenericError("");
+    const url = BACKEND_API_URL + "/users"
     const response = await fetch(
-      "https://spike-auth-server.onrender.com/users",
-      {
+      url,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,20 +89,25 @@ export default RegisterUser = ({ navigation }) => {
         body: JSON.stringify(data),
       }
     );
+    setSending(false);
+    setIsSignUpClicked(false);
     if (!response.ok) {
-      setSending(false);
-      setIsSignUpClicked(false);
+      deleteCurrentUser(()=> console.log('user deleted from firebase'));
       console.log(response, "User----");
       const body = await response.json();
       console.log(body);
       if (response.status !== 400) {
         setGenericError("Something went wrong. Please try again later.");
+      } else {
+          // If here it is a 400 error
+          if(body.errorCode === 'duplicate-nickname'){
+              setNicknameError(body.msg);
+          }
       }
     } else {
-      dispatch(logout())
       dispatch(refreshToken({ refresh_token:refresh_token }))
       await response.json();
-      navigation.navigate("Profile");
+      navigation.navigate("Profile", {refresh_token: refresh_token, guid: generateGuid()});
     }
   }
 
@@ -193,8 +204,6 @@ export default RegisterUser = ({ navigation }) => {
                         values.password
                       );
                       const user = response.user;
-                      console.log("USERID", user.uid);
-                      console.log("TOKEN", user.stsTokenManager.accessToken);
                       swimWildSignUp(
                         user.stsTokenManager.accessToken,
                         user.stsTokenManager.refreshToken,
@@ -202,6 +211,7 @@ export default RegisterUser = ({ navigation }) => {
                         values
                       );
                     } catch (error) {
+                      console.log('Register ERROR',error)
                       setSending(false);
                       setIsSignUpClicked(false);
                       const firebaseEmailError = getFirebaseError(error);
@@ -222,6 +232,15 @@ export default RegisterUser = ({ navigation }) => {
                           name="nickname"
                           placeholder="Nickname"
                         />
+                         <Text
+                          style={
+                            nicknameError.length === 0
+                              ? styles.textHide
+                              : styles.textShow
+                          }
+                        >
+                          {nicknameError}
+                        </Text>
                         <TextInput
                           style={[
                             styles.input,

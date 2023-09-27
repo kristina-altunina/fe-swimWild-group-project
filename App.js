@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import { colours } from "./styles/base";
+import { BACKEND_API_URL } from "@env";
 import RegisterUser from "./components/RegisterUser";
 import SignInUser from "./components/SignInUser";
 import Profile from "./components/Profile";
@@ -15,8 +15,9 @@ import {
 } from "@expo-google-fonts/poppins";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { StyleSheet, Image, Text } from "react-native"
+import { StyleSheet, Image, Text, Alert } from "react-native"
 import { useState } from "react";
+import { simpleAlert } from './extentions';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -26,31 +27,64 @@ import {
 
 import SingleLocation from "./components/SingleLocation/SingleLocation";
 import SwimSpot from "./components/SwimSpot";
-import PostSwims from "./components/PostSwims";
-import { isCurrentUserAuthenticated } from "./firebaseConfig";
+import PostSwimSpot from "./components/PostSwimSpot";
+import { isCurrentUserAuthenticated, deleteCurrentUser } from "./firebaseConfig";
 import { signOut } from "firebase/auth";
-import { auth } from "./firebaseConfig";
+import { auth,tokenRefresh } from "./firebaseConfig";
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { logout } from './redux/reducers';
 import store  from './redux/store';
 
 const Drawer = createDrawerNavigator();
 
+async function handleDeleteAccount(navigation,refresh_token, dispatch){
+  const tokenObj = await tokenRefresh(refresh_token)
+  const url = BACKEND_API_URL + "/users/profile"
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${tokenObj.access_token}`,
+    }
+  });
+  if (!response.ok) {
+    simpleAlert()
+  }else {
+    deleteCurrentUser(()=>{
+      console.log('PROFILE DELETED FROM FIREBASE')
+    })
+    navigation.toggleDrawer()
+    navigation.navigate('Home')
+    dispatch(logout())
+  }
+}
 function handleSignOut(navigation, dispatch) {
 
   signOut(auth)
     .then(() => {
-      dispatch(logout()) //  remove the profile picture
+      navigation.toggleDrawer()
+      dispatch(logout())
       navigation.navigate('Home')
     })
     .catch((error) => {
-      console.log(error)
+      console.log('LOGOUT ERROR',error)
     });
 }
+
+const createDeleteAccountAlert = (refresh_token,dispatch,props) =>
+    Alert.alert('Delete Account', 'You are about to delete your account.Are you sure?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {text: 'Yes', onPress: () => handleDeleteAccount(props.navigation,refresh_token,dispatch)}
+    ]);
+
 function CustomDrawerContent(props) {
 
   const { isAuthenticated } = props;
-  const {profileUrl, name } = useSelector(state => state); 
+  const {profileUrl, name, refresh_token } = useSelector(state => state); 
   
   const dispatch = useDispatch();
   return (
@@ -64,12 +98,24 @@ function CustomDrawerContent(props) {
       {isAuthenticated ? 
       <DrawerItem
         label="Sign Out"
-        onPress={() => handleSignOut(props.navigation, dispatch)}
+        onPress={() => {
+          handleSignOut(props.navigation, dispatch)
+        }}
+      />: null}
+      {!isAuthenticated ? 
+      <DrawerItem
+        label="Sign In"
+        onPress={() => {
+          dispatch(logout())
+          props.navigation.navigate('SignIn')
+        }}
       />: null}
       {isAuthenticated ? 
        <DrawerItem
         label="Delete Account"
-        onPress={() => props.navigation.closeDrawer()}
+        onPress={() => {
+          createDeleteAccountAlert(refresh_token,dispatch,props)
+        }}
       /> : null }
     </DrawerContentScrollView>
   );
@@ -91,7 +137,7 @@ function Root() {
     } initialRouteName="Home">
         <Drawer.Screen name="Home" component={HomeScreen} options={{headerShown: false} }/>
         <Drawer.Screen name="Register" component={RegisterUser} options={{headerShown: false, gestureEnabled: true, drawerLabel:'Sign Up', drawerItemStyle: { display: isAuthenticated? 'none':'block' }}}/>
-        <Drawer.Screen name="SignIn" component={SignInUser} options={{headerShown: false,gestureEnabled: true, drawerLabel: 'Sign In', drawerItemStyle: { display: isAuthenticated? 'none':'block' }}}/>
+        <Drawer.Screen name="SignIn" component={SignInUser} options={{headerShown: false,gestureEnabled: true, drawerLabel: 'Sign In', drawerItemStyle: { display: 'none' }}}/>
         <Drawer.Screen name="ResetPassword" component={ResetPassword} options={{headerShown: false,gestureEnabled: true, drawerLabel: 'Reset Password', drawerItemStyle: { display: 'none' } }}/>
         <Drawer.Screen name="Profile" component={Profile} options={{headerShown: false, gestureEnabled: true, drawerItemStyle: { display: !isAuthenticated? 'none':'block' }}}/>
         <Drawer.Screen name="SingleLocation" component={SingleLocation} options={{headerShown: false,gestureEnabled: true, drawerItemStyle: { display: 'none'}}}/>

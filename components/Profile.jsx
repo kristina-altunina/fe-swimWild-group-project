@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 
+import  { useCallback } from 'react';
 import { colours } from "../styles/base";
 import NavBar from "./NavBar";
 import { tokenRefresh } from "../firebaseConfig";
@@ -27,15 +28,15 @@ import {
 import { SwimRecord } from "./Profile/SwimRecord";
 import { useFonts } from "expo-font";
 import { useAssets } from "expo-asset";
-
-import { login } from '../redux/reducers'; // Import your slice and actions
+import { generateGuid } from "../extentions";
+import { login, refreshToken} from '../redux/reducers'; // Import your slice and actions
 import { useSelector, useDispatch } from 'react-redux';
 export default Profile = ({ navigation, route }) => {
-  
-  const [profileData, setProfileData] = useState({ swims: [] });
+  console.log('ROUTE GUID', route.params.guid)
+  const [isLoading, setIsLoading] = useState(false);
+  const [profileData, setProfileData] = useState({});
   const [swims, setSwims] = useState([]);
   const [filtSwims, setFiltSwims] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
@@ -47,13 +48,13 @@ export default Profile = ({ navigation, route }) => {
   });
   const [assets, error] = useAssets([require("../assets/icons/pencil.png")]);
   
- const refreshToken = useSelector(state => state.refresh_token); 
- console.log('INITIAL PROFILE',profileData)
- const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  
+  const token = route.params.refresh_token;
+  const guid = route.params.guid;
 
 async function getProfile(){
-  
-  const tokenObj = await tokenRefresh(refreshToken)
+  const tokenObj = await tokenRefresh(token)
   const url = BACKEND_API_URL + "/users/profile"
   setIsLoading(true);
   fetch(url, {
@@ -65,27 +66,29 @@ async function getProfile(){
   })
   .then(response => response.json())
   .then((json)=> {
-    console.log("PROFILE DATA", json)
+
     json.dob = formatDate(json.dob.split('T')[0],'-')
     setProfileData(json)
     const swimData = addMonthToSwims(json.swims);
     setSwims(swimData);
     setFiltSwims(swimData);
     setIsLoading(false);
-    console.log('ENDO PROF')
+    console.log('FETCHED PROFILE',json)
   }).catch((error)=>{
     console.log('PROFILE ERROR', error)
     setIsLoading(false);
   })
 }
-useEffect(() => {
-   getProfile()
-  }, [])
 
-useEffect(() =>{
-  console.log('dispatching to store', dispatch)
+useEffect(() => {
+  console.log('FETCH NEW PROFILE')
+  getProfile()
+}, [guid]);
+
+useEffect(() => {
   dispatch(login({ profileUrl:profileData.profileImg, name: profileData.name }))
-},[profileData])
+}, [profileData]); 
+
 
 if (isLoading) {
   console.log('LOADIND', isLoading)
