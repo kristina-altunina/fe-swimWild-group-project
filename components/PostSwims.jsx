@@ -31,7 +31,6 @@ export default function PostSwims({
     params: { location },
   },
 }) {
-  console.log(navigation, 'look here')
   const [notes, onChangeNotesInput] = useState("");
   const [starRating, setStartRating] = useState(0);
   const [recordTemp, setRecordTemp] = useState(null);
@@ -115,7 +114,7 @@ export default function PostSwims({
       recordTemp: +recordTemp,
       feelTemp: /Select/gi.test(feelTemp) ? null : feelTemp,
       outOfDepth: /Select/gi.test(outOfDepth) ? null : outOfDepth,
-      size: /Select/gi.test(size) ? null : size,
+      sizeKey: /Select/gi.test(size) ? null : size,
       shore: /Select/gi.test(shore) ? null : shore,
       bankAngle: /Select/gi.test(bankAngle) ? null : bankAngle,
       clarity: /Select/gi.test(clarity) ? null : clarity,
