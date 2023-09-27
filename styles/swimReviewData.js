@@ -96,12 +96,14 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Poppins-SemiBold",
     color: colours.text,
-    width: "70%",
   },
   swimRecord__date: {
     fontSize: 12,
     fontFamily: "Poppins-Light",
     color: colours.text,
+  },
+  swimRecord__locationLink: {
+    width: "65%",
   },
 });
 

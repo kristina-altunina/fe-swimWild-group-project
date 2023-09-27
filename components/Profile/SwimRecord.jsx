@@ -2,14 +2,13 @@ import StarRating from "react-native-star-rating";
 import { Text, View, TouchableOpacity } from "react-native";
 import { styles } from "../../styles/swimReviewData";
 import { useFonts } from "expo-font";
-import { Stats } from "../reuse/Stats";
 
 export function SwimRecord({ swim, navigation }) {
   const [fontsLoaded] = useFonts({
     "Poppins-SemiBold": require("../../assets/fonts/Poppins-SemiBold.ttf"),
     "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
     "Poppins-Regular": require("../../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
   });
 
   if (!fontsLoaded) {
@@ -19,12 +18,19 @@ export function SwimRecord({ swim, navigation }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("SingleLocation", { uid: swim.location.id });
+        return navigation.navigate("SwimSpot", { swim });
       }}
     >
       <View style={styles.swimRecord}>
         <View style={styles.swimRecord__text}>
-          <Text style={styles.swimRecord__name}>{swim.location.name}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("SingleLocation", { uid: swim.location.id });
+            }}
+            style={styles.swimRecord__locationLink}
+          >
+            <Text style={styles.swimRecord__name}>{swim.location.name}</Text>
+          </TouchableOpacity>
           <Text style={styles.swimRecord__date}>
             {new Date(swim.date).toDateString()}
           </Text>
@@ -40,7 +46,6 @@ export function SwimRecord({ swim, navigation }) {
               emptyStarColor="#DBDBDB"
             />
           </View>
-          <Stats data={swim} />
         </View>
       </View>
     </TouchableOpacity>

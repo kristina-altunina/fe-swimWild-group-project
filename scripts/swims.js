@@ -79,7 +79,7 @@ export function hottest(swims) {
     }
   }
   if (hottest.temp === null) return;
-  return `${hottest.temp}°C, ${hottest.name}, ${hottest.date}`;
+  return `${hottest.temp}°C, ${hottest.date}, ${hottest.name}`;
 }
 
 export function coldest(swims) {
@@ -97,23 +97,22 @@ export function coldest(swims) {
     }
   }
   if (coldest.temp === null) return;
-  return `${coldest.temp}°C, ${coldest.name}, ${coldest.date}`;
+  return `${coldest.temp}°C, ${coldest.date}, ${coldest.name}`;
 }
 
 export function totalDistance(swims) {
-  return (
-    swims
-      .reduce((a, b) => {
-        return a.km + b.km;
-      }, 0)
-      .toString() + "km"
-  );
+  let totalKm = 0;
+  for (const swim of swims) {
+    if (swim.km !== null) totalKm += +swim.km;
+  }
+  return `${totalKm}km`;
 }
 
 export function totalMinutes(swims) {
-  const totalMins = swims.reduce((a, b) => {
-    return a.mins + b.mins;
-  }, 0);
+  let totalMins = 0;
+  for (const swim of swims) {
+    if (swim.mins !== null) totalMins += +swim.mins;
+  }
   const hours = Math.floor(totalMins / 60);
   if (hours) return `${hours}h ${totalMins % 60}m`;
   return totalMins.toString() + "mins";
@@ -124,7 +123,7 @@ export function totalLocations(swims) {
   for (const swim of swims) {
     locations.add(swim.location.name);
   }
-  return locations.length;
+  return locations.size;
 }
 
 export function swimTheLakes(swims) {

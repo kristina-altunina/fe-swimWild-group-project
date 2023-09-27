@@ -31,7 +31,7 @@ import {
 import { SwimRecord } from "./Profile/SwimRecord";
 import { useFonts } from "expo-font";
 import { useAssets } from "expo-asset";
-import { login, refreshToken } from "../redux/reducers"; // Import your slice and actions
+import { login, refreshToken } from "../redux/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 export default Profile = ({ navigation, route }) => {
@@ -55,9 +55,9 @@ export default Profile = ({ navigation, route }) => {
   const guid = route.params.guid;
 
   async function getProfile() {
+    setIsLoading(true);
     const tokenObj = await tokenRefresh(token);
     const url = BACKEND_API_URL + "/users/profile";
-    setIsLoading(true);
     fetch(url, {
       method: "GET",
       headers: {
@@ -73,10 +73,9 @@ export default Profile = ({ navigation, route }) => {
         setSwims(swimData);
         setFiltSwims(swimData);
         setIsLoading(false);
-        console.log("FETCHED PROFILE", json);
       })
       .catch((error) => {
-        console.log("PROFILE ERROR", error);
+        setIsLoading(false);
         simpleAlert("Profile", "Failed to load profile");
       });
   }
@@ -161,6 +160,11 @@ export default Profile = ({ navigation, route }) => {
                 <Text>...never?</Text>
               )}
             </Text>
+            {!expand && (
+              <TouchableOpacity>
+                <Text style={styles.seeMore}>See more...</Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View style={styles.stats__right}>
             <Text style={styles.stats__label}>
@@ -172,41 +176,45 @@ export default Profile = ({ navigation, route }) => {
               <Text style={styles.stats__stat}>{swimTheLakes(swims)}</Text>
             </Text>
           </View>
-          {expand && (
+          {expand && swims.length && (
             <View style={styles.stats__bottom}>
               {coldest(swims) && (
-                <Text style={styles.stats__stat}>
-                  Coldest:{"  "}
-                  <Text style={styles.stats__label}>{coldest(swims)}</Text>
+                <Text style={styles.stats__label}>
+                  Suffered{" "}
+                  <Text style={styles.stats__stat}>
+                    {coldest(swims).split(",")[0]}
+                  </Text>{" "}
+                  on{coldest(swims).split(",").slice(1).join(", ")}
                 </Text>
               )}
               {hottest(swims) && (
-                <Text style={styles.stats__stat}>
-                  Warmest:{"  "}
-                  <Text style={styles.stats__label}>{hottest(swims)}</Text>
+                <Text style={styles.stats__label}>
+                  Enjoyed{" "}
+                  <Text style={styles.stats__stat}>
+                    {hottest(swims).split(",")[0]}
+                  </Text>{" "}
+                  on{hottest(swims).split(",").slice(1).join(", ")}
                 </Text>
               )}
               {totalLocations(swims) && (
-                <Text style={styles.stats__stat}>
+                <Text style={styles.stats__label}>
                   Swam in{" "}
-                  <Text style={styles.stats__label}>
+                  <Text style={styles.stats__stat}>
                     {totalLocations(swims)}
                   </Text>{" "}
                   different locations
                 </Text>
               )}
               {totalMinutes(swims) && (
-                <Text style={styles.stats__stat}>
+                <Text style={styles.stats__label}>
                   Total immersion time:{"  "}
-                  <Text style={styles.stats__label}>{totalMinutes(swims)}</Text>
+                  <Text style={styles.stats__stat}>{totalMinutes(swims)}</Text>
                 </Text>
               )}
               {totalDistance(swims) && (
-                <Text style={styles.stats__stat}>
+                <Text style={styles.stats__label}>
                   Total distance swam:{"  "}
-                  <Text style={styles.stats__label}>
-                    {totalDistance(swims)}
-                  </Text>
+                  <Text style={styles.stats__stat}>{totalDistance(swims)}</Text>
                 </Text>
               )}
             </View>
@@ -322,6 +330,7 @@ const styles = StyleSheet.create({
   stats__stat: {
     fontFamily: "Poppins-Bold",
     color: colours.text,
+    overflow: "hidden",
   },
   loader: {
     height: "100%",
@@ -333,5 +342,10 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Light",
     color: colours.lightText,
     textAlign: "center",
+  },
+  seeMore: {
+    fontFamily: "Poppins-SemiBold",
+    color: colours.accent1,
+    fontSize: 12,
   },
 });
