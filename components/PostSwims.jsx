@@ -23,7 +23,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useSelector } from "react-redux";
 import { tokenRefresh } from "../firebaseConfig";
 
-import { CommonActions } from "@react-navigation/native";
+
 import { useFonts } from "expo-font";
 import { Stat } from "./reuse/Stat";
 
@@ -33,6 +33,7 @@ export default function PostSwims({
     params: { location },
   },
 }) {
+
   const [notes, onChangeNotesInput] = useState("");
   const [starRating, setStartRating] = useState(0);
   const [recordTemp, setRecordTemp] = useState(null);
@@ -52,8 +53,8 @@ export default function PostSwims({
     ImagePicker.useMediaLibraryPermissions();
   const [cameraPermission, requestCameraPermission] =
     ImagePicker.useCameraPermissions();
+  const {access_token} = useSelector((state) => state.refresh_token);
 
-  const refreshToken = useSelector((state) => state.refresh_token);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
@@ -134,6 +135,8 @@ export default function PostSwims({
     }
   }
 
+  
+
   function handleSubmit() {
     const body = {
       date: new Date(Date.now()).toISOString(),
@@ -152,13 +155,24 @@ export default function PostSwims({
     };
 
     if (!showTempWarning) {
-      tokenRefresh(refreshToken)
-        .then(({ access_token }) => {
-          return postSwimSpot(access_token, body);
+
+      postSwimSpot(access_token, body)
+      .then(() => {
+        navigation.navigate('SingleLocation',{uid: location.id})
+      })
+      .catch(err => {
+        console.log(err, 'first catch error in postSwims')
+        tokenRefresh(access_token)
+        .then(({access_token}) => {
+          return postSwimSpot(access_token, body)
         })
         .then(() => {
-          navigation.navigate("SingleLocation", { uid: location.id });
-        });
+          navigation.navigate('SingleLocation',{uid: location.id})
+        })
+        .catch(err => {
+          console.log(err, 'second catch error in postSwims')
+        })
+      })
     }
   }
 

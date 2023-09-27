@@ -67,6 +67,7 @@ async function getProfile(){
   const tokenObj = await tokenRefresh(token)
 
   const url = BACKEND_API_URL + "/users/profile"
+  dispatch(refreshToken({ refresh_token:tokenObj }))
   setIsLoading(true);
   fetch(url, {
     method: "GET",
