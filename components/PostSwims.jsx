@@ -20,7 +20,10 @@ import { takePhoto, pickImage } from "../scripts/image-picker";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
 
-export default function PostSwimSpot({
+import { useSelector } from "react-redux";
+import { tokenRefresh } from "../firebaseConfig";
+
+export default function PostSwims({
   navigation,
   route: {
     params: { location },
@@ -43,6 +46,8 @@ export default function PostSwimSpot({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [mediaPermission, requestMediaPermission] = ImagePicker.useMediaLibraryPermissions();
   const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
+  
+  const refreshToken = useSelector((state) => state.refresh_token);
 
   function handleFeelTempRef() {
     const feelTempRef = ["freezing", "cold", "average", "warm", "hot"];
@@ -118,8 +123,6 @@ export default function PostSwimSpot({
   }
 
   function handleSubmit() {
-    const token =
-      "eyJhbGciOiJSUzI1NiIsImtpZCI6ImFkNWM1ZTlmNTdjOWI2NDYzYzg1ODQ1YTA4OTlhOWQ0MTI5MmM4YzMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc3dpbXdpbGQtYzJjYTciLCJhdWQiOiJzd2ltd2lsZC1jMmNhNyIsImF1dGhfdGltZSI6MTY5NTczNjk2NCwidXNlcl9pZCI6IlVIYUtNUXg0TUxickVMbnk3NFVZTXlVQmNPbTIiLCJzdWIiOiJVSGFLTVF4NE1MYnJFTG55NzRVWU15VUJjT20yIiwiaWF0IjoxNjk1NzM2OTY0LCJleHAiOjE2OTU3NDA1NjQsImVtYWlsIjoidGVzdEBvdXRsb29rLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ0ZXN0QG91dGxvb2suY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.WdXDSAN9RV9SoyjV4dz_NK9t5Qg-Tg9kBF3Vi3i6kCFXO2cX7ukQ4dZ2QHpnr5hgSPxKpLn1d9WruX_ELtCroA9mioWH3xzQqieJDh-DyWv2oF1gU4o3BUGqua6VQljtBIrGTyVP3GP0i550_RBpSPjeY9PveZsbTHTrUQR574Xwku4YdQoTcBB3vPRKpoW-43EO6PRw4RP01B0wQUMcQqfy0J-zSarOE_zV6m9aKYh95UHV2TWAySR9DWDblO0U7Fg0AzUrReLgiJDYw4zut_Ek12HbZYFuMDo-bHYXk3q06mIhtu7ZSm0L4P4cMpfmwUyIAJN83Sr7WnZakG-nZQ";
 
     const body = {
       date: new Date(Date.now()).toISOString(),
@@ -136,9 +139,12 @@ export default function PostSwimSpot({
       km,
       imgUrls,
     };
-    console.log(body);
+
     if (!showTempWarning) {
-      postSwimSpot(token, body);
+      tokenRefresh(refreshToken)
+      .then(({access_token}) => {
+        postSwimSpot(access_token, body)
+      })
     }
   }
 
