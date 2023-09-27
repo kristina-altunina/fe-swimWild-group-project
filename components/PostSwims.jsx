@@ -23,7 +23,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useSelector } from "react-redux";
 import { tokenRefresh } from "../firebaseConfig";
 
-import { CommonActions } from "@react-navigation/native";
+
 
 export default function PostSwims({
   navigation,
@@ -31,6 +31,7 @@ export default function PostSwims({
     params: { location },
   },
 }) {
+
   const [notes, onChangeNotesInput] = useState("");
   const [starRating, setStartRating] = useState(0);
   const [recordTemp, setRecordTemp] = useState(null);
@@ -48,8 +49,8 @@ export default function PostSwims({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [mediaPermission, requestMediaPermission] = ImagePicker.useMediaLibraryPermissions();
   const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
-  
-  const refreshToken = useSelector((state) => state.refresh_token);
+
+  const {access_token} = useSelector((state) => state.refresh_token);
 
   const feelTempRef = ["freezing", "cold", "average", "warm", "hot"].map((item, i) => {
     return { value: i, label: item };
@@ -104,6 +105,8 @@ export default function PostSwims({
     }
   }
 
+  
+
   function handleSubmit() {
 
     const body = {
@@ -123,12 +126,23 @@ export default function PostSwims({
     };
 
     if (!showTempWarning) {
-      tokenRefresh(refreshToken)
-      .then(({access_token}) => {
-        return postSwimSpot(access_token, body)
-      })
+
+      postSwimSpot(access_token, body)
       .then(() => {
         navigation.navigate('SingleLocation',{uid: location.id})
+      })
+      .catch(err => {
+        console.log(err, 'first catch error in postSwims')
+        tokenRefresh(access_token)
+        .then(({access_token}) => {
+          return postSwimSpot(access_token, body)
+        })
+        .then(() => {
+          navigation.navigate('SingleLocation',{uid: location.id})
+        })
+        .catch(err => {
+          console.log(err, 'second catch error in postSwims')
+        })
       })
     }
   }
