@@ -130,6 +130,10 @@ export default function HomeScreen({ navigation }) {
       });
   }
 
+  if (!fontsLoaded) {
+    return <ActivityIndicator></ActivityIndicator>;
+  }
+
   return (
     <View style={styles.container}>
       <NavBar navigation={navigation} />
