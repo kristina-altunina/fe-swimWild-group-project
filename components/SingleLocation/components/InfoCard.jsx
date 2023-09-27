@@ -1,91 +1,67 @@
-import { useEffect, useState } from "react"
-import { View, TouchableWithoutFeedback, Text, LayoutAnimation, ActivityIndicator } from "react-native"
-import { styles } from "../../../styles/infoCard"
-import Ionicons from '@expo/vector-icons/Ionicons'
+import { useEffect, useState } from "react";
+import {
+  View,
+  TouchableWithoutFeedback,
+  Text,
+  LayoutAnimation,
+  ActivityIndicator,
+} from "react-native";
+import { styles } from "../../../styles/infoCard";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useFonts } from "expo-font";
 
 export default function InfoCard({ info }) {
-	const [expandData, setExpandData] = useState(false)
+  const [expandData, setExpandData] = useState(false);
+  const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require("../../../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Light": require("../../../assets/fonts/Poppins-Light.ttf"),
+    "Poppins-Regular": require("../../../assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-Regular_Italic": require("../../../assets/fonts/Poppins-Italic.ttf"),
+    "Poppins-Bold": require("../../../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-ExtraBold": require("../../../assets/fonts/Poppins-ExtraBold.ttf"),
+    "Poppins-Light": require("../../../assets/fonts/Poppins-Light.ttf"),
+    "Poppins-Medium": require("../../../assets/fonts/Poppins-Medium.ttf"),
+  });
 
-	function handleWarnings(data) {
-		return (
-			<>
-				{
-					data.map((item, i) => {
-						return (
-							<>
-								<Text style={styles.displayText}>
-									{item}
-								</Text>
-							</>
-						)
-					})
-				}
-			</>
-		)
-	}
-
-	return (
-		<>
-			<TouchableWithoutFeedback onPress={() => {
-				setExpandData(expandData => !expandData)
-				LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-			}}>
-				{
-					!Object.keys(info).length
-						? (
-							<ActivityIndicator size='large' />
-						)
-						: (
-							<View style={styles.infoData}>
-								<Text style={styles.titleText}>
-									Recommendations
-								</Text>
-								{
-									!expandData
-										? (
-											<>
-												<Text style={styles.displayText}>
-													{info.msg}
-												</Text>
-												<Text style={styles.displayText}>
-													Disclaimer:{`\n`}{info.disclaimer}
-												</Text>
-												{
-													info.warnings.length && (
-														<View style={styles.textWithInfoContainer}>
-															<Text style={styles.displayText}>
-																Warnings
-															</Text>
-															<Ionicons name="alert-circle-outline"
-																size={24} color="red" />
-														</View>
-													)
-												}
-											</>
-										)
-										: (
-											<>
-												{
-													info.warnings.length
-														? (
-															<>
-																{
-																	handleWarnings(info.warnings)
-																}
-															</>
-														)
-														: (
-															<Text>No warnings</Text>
-														)
-												}
-											</>
-										)
-								}
-							</View>
-						)
-				}
-
-			</TouchableWithoutFeedback>
-		</>
-	)
+  return (
+    <>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          setExpandData((expandData) => !expandData);
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        }}
+      >
+        {!Object.keys(info).length ? (
+          <ActivityIndicator size="large" />
+        ) : (
+          <View style={styles.infoData}>
+            <Text style={styles.titleText}>Recommendations</Text>
+            <View style={styles.textWithInfoContainer}>
+              <Ionicons
+                name="alert-circle-outline"
+                size={28}
+                color="red"
+                style={{ marginRight: 6, marginBottom: 3 }}
+              />
+              <Text style={styles.hazardText}>
+                {info.hazards.join(". ") ||
+                  "Always consult local rules and experience"}
+              </Text>
+            </View>
+            {expandData ? (
+              <>
+                <Text style={styles.displayText}>{info.msg}</Text>
+                <Text style={styles.displayText}>
+                  {info.warnings[Math.floor(Math.random() * 5)]}
+                </Text>
+                <Text style={styles.displayText}>{info.disclaimer}</Text>
+              </>
+            ) : (
+              <></>
+            )}
+          </View>
+        )}
+      </TouchableWithoutFeedback>
+    </>
+  );
 }

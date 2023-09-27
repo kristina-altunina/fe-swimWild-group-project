@@ -3,7 +3,6 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 
 export function takePhoto(progress) {
   return ImagePicker.launchCameraAsync({
-    allowsEditing: true,
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     quality: 1,
   }).then((cameraResponse) => {
@@ -27,8 +26,6 @@ export function takePhoto(progress) {
 export function pickImage(progress) {
   return ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
-    allowsEditing: true,
-    aspect: [4, 3],
     quality: 1,
   }).then((res) => {
     if (!res.cancelled) {
@@ -43,6 +40,26 @@ export function pickImage(progress) {
     }
   });
 }
+
+// export function pickMultipleImages(progress) {
+//   return ImagePicker.launchImageLibraryAsync({
+//     mediaTypes: ImagePicker.MediaTypeOptions.All,
+//     allowsMultipleSelection: true,
+//     quality: 1,
+//   }).then((res) => {
+//     if (!res.cancelled) {
+//       const { uri } = res.assets[0];
+//       const fileName = uri.split("/").at(-1);
+//       return uploadToFirebase(uri, fileName, (prog) => {
+// 		console.log(prog)
+// 		progress(prog)
+//       }).then((res) => {
+//         console.log(res)
+//         // return downloadURL
+//       });
+//     }
+//   });
+// }
 
 function uploadToFirebase(uri, name, onProgress) {
 	return fetch(uri)

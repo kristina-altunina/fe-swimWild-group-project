@@ -10,40 +10,40 @@ export const styles = StyleSheet.create({
   titleText: {
     fontSize: 20,
     color: "#84878d",
-    textShadowColor: "#b3b5b8",
-    textShadowOffset: { width: 10, height: 10 },
-    textShadowRadius: 20,
+    fontFamily: "Poppins-SemiBold",
   },
   starRatingDisplay: {
     display: "flex",
     flexDirection: "row",
     gap: 3,
+    marginBottom: 2,
   },
   swimReviewItem: {
-    padding: "2%",
-    backgroundColor: "white",
+    padding: 8,
+    backgroundColor: colours.accent2Weak,
     height: "auto",
     borderRadius: 20,
-    borderStyle: "solid",
-    borderColor: "white",
-    borderWidth: 1,
-    elevation: 10,
+    display: "flex",
+    flexDirection: "column",
+    width: "auto",
+  },
+  swimReviewItem__header: {
     display: "flex",
     flexDirection: "row",
-    gap: 10,
-    width: "auto",
+    flexWrap: "nowrap",
   },
   textContainer: {
     flex: 1,
   },
   nickname: {},
   notes: {
-    padding: "3%",
+    padding: 8,
+    fontFamily: "Poppins-Regular",
   },
   stars: {},
   showContent: {
-    color: "rgb(139, 83, 190)",
-    opacity: 1,
+    color: colours.blueAccent,
+    fontFamily: "Poppins-SemiBold",
   },
   hideContent: {
     opacity: 0,
@@ -54,12 +54,23 @@ export const styles = StyleSheet.create({
     height: 60,
     width: 60,
     borderRadius: 30,
+    margin: 8,
+    marginRight: 12,
+    marginBottom: 0,
     backgroundColor: "black",
   },
   flexRow: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  nickname: {
+    fontFamily: "Poppins-Bold",
+    color: colours.text,
+  },
+  date: {
+    fontFamily: "Poppins-Light",
+    marginRight: 8,
   },
 });
 
