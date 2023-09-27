@@ -33,7 +33,7 @@ export default function SwimReviewData({ swimsData, navigation }) {
           disabled={true}
           maxStars={5}
           starSize={18}
-          rating={4}
+          rating={num}
           fullStarColor="#FFC033"
           emptyStarColor="#DBDBDB"
         />

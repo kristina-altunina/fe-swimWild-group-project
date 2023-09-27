@@ -181,7 +181,7 @@ if (isLoading) {
       <ScrollView>
         {!filtSwims.length && <Text style={styles.empty}>Nothing here!</Text>}
         {filtSwims.map((swim) => {
-          return <SwimRecord swim={swim} key={swim._id} />;
+          return <SwimRecord swim={swim} key={swim._id} navigation={navigation} />;
         })}
       </ScrollView>
     </View>

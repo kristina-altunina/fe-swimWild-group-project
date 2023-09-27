@@ -1,12 +1,13 @@
 import StarRating from "react-native-star-rating";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View,TouchableOpacity } from "react-native";
 import { styles } from "../../styles/swimReviewData";
 import { colours } from "../../styles/base";
 import { useFonts } from "expo-font";
 import { Stat } from "../reuse/Stat";
 import { Stats } from "../reuse/Stats";
 
-export function SwimRecord({ swim }) {
+export function SwimRecord({ swim, navigation }) {
+  console.log(swim.location.id, 'look here')
   const [fontsLoaded] = useFonts({
     "Poppins-SemiBold": require("../../assets/fonts/Poppins-SemiBold.ttf"),
     "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
@@ -17,27 +18,32 @@ export function SwimRecord({ swim }) {
   }
 
   return (
-    <View style={changeMe.swimRecord}>
-      <View style={changeMe.swimRecord__text}>
-        <Text style={changeMe.swimRecord__name}>{swim.location.name}</Text>
-        <Text style={changeMe.swimRecord__date}>
-          {new Date(swim.date).toDateString()}
-        </Text>
-      </View>
-      <View style={changeMe.swimRecord__stats}>
-        <View style={styles.starRatingDisplay}>
-          <StarRating
-            disabled={true}
-            maxStars={5}
-            starSize={18}
-            rating={swim.stars}
-            fullStarColor="#FFC033"
-            emptyStarColor="#DBDBDB"
-          />
+    <TouchableOpacity
+    onPress={() => {
+      navigation.navigate('SingleLocation', {uid: swim.location.id})
+    }}>
+      <View style={changeMe.swimRecord}>
+        <View style={changeMe.swimRecord__text}>
+          <Text style={changeMe.swimRecord__name}>{swim.location.name}</Text>
+          <Text style={changeMe.swimRecord__date}>
+            {new Date(swim.date).toDateString()}
+          </Text>
         </View>
-        <Stats data={swim} />
+        <View style={changeMe.swimRecord__stats}>
+          <View style={styles.starRatingDisplay}>
+            <StarRating
+              disabled={true}
+              maxStars={5}
+              starSize={18}
+              rating={swim.stars}
+              fullStarColor="#FFC033"
+              emptyStarColor="#DBDBDB"
+            />
+          </View>
+          <Stats data={swim} />
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
