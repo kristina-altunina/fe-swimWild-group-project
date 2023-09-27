@@ -183,11 +183,13 @@ export default function PostSwims({
             style={{
               width: "100%",
               padding: 8,
+              backgroundColor: colours.accent5,
+              marginBottom: 4,
             }}
           >
             <Text
               style={{
-                color: colours.text,
+                color: colours.lightText,
                 textAlign: "center",
                 fontSize: 24,
                 fontFamily: "Poppins-Bold",
@@ -205,6 +207,9 @@ export default function PostSwims({
                 backgroundColor: "white",
                 margin: 8,
                 marginTop: 0,
+                marginBottom: 0,
+                borderWidth: 2,
+                borderColor: colours.accent2Weak,
               }}
             >
               <TextInput
@@ -273,6 +278,8 @@ export default function PostSwims({
                     width: "20%",
                     height: 35,
                     borderRadius: 10,
+                    borderColor: colours.accent2Weak,
+                    borderWidth: 2,
                     paddingLeft: 8,
                   }}
                 />
@@ -290,6 +297,8 @@ export default function PostSwims({
                     width: "20%",
                     height: 35,
                     borderRadius: 10,
+                    borderColor: colours.accent2Weak,
+                    borderWidth: 2,
                     paddingLeft: 8,
                   }}
                 />
@@ -307,6 +316,8 @@ export default function PostSwims({
                     width: "20%",
                     height: 35,
                     borderRadius: 10,
+                    borderColor: colours.accent2Weak,
+                    borderWidth: 2,
                     paddingLeft: 8,
                   }}
                 />
@@ -344,60 +355,72 @@ export default function PostSwims({
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={"Water temperature feels like..."}
+                  placeholder={"Water temperature feels..."}
                   onChange={(item) => {
                     setFeelTemp(item.label);
                   }}
                 />
               </View>
 
-              <View style={{ width: "50%" }}>
-                <Text style={styles.label}>Size:</Text>
+              <View style={styles.statInput}>
+                <Stat icon="sizeKey" val="" />
                 <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  itemTextStyle={styles.dropdownPlaceholder}
                   data={sizeRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={size}
+                  placeholder={"Size of the swimming area is..."}
                   onChange={(item) => {
                     setSize(item.label);
                   }}
                 />
               </View>
-              <View style={{ width: "50%" }}>
-                <Text style={styles.label}>Shore:</Text>
+              <View style={styles.statInput}>
+                <Stat icon="shore" val="" />
                 <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  itemTextStyle={styles.dropdownPlaceholder}
                   data={shoreRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={shore}
+                  placeholder={"Shore and surroundings were..."}
                   onChange={(item) => {
                     setShore(item.label);
                   }}
                 />
               </View>
-              <View style={{ width: "50%" }}>
-                <Text style={styles.label}>Bank Angle:</Text>
+              <View style={styles.statInput}>
+                <Stat icon="bankAngle" val="" />
                 <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  itemTextStyle={styles.dropdownPlaceholder}
                   data={bankAngleRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={bankAngle}
+                  placeholder={"The descent into the water was..."}
                   onChange={(item) => {
                     setBankAngle(item.label);
                   }}
                 />
               </View>
-              <View style={{ width: "50%" }}>
-                <Text style={styles.label}>Clarity:</Text>
+              <View style={styles.statInput}>
+                <Stat icon="clarity" val="" />
                 <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  itemTextStyle={styles.dropdownPlaceholder}
                   data={clarityRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={clarity}
+                  placeholder={"Water quality was..."}
                   onChange={(item) => {
                     setClarity(item.label);
                   }}
@@ -423,7 +446,7 @@ export default function PostSwims({
                   })}
                 </View>
               ) : (
-                <Text style={{ textAlign: "center" }}>No Pictures</Text>
+                <Text style={styles.noPictures}>No Pictures</Text>
               )}
 
               <View
@@ -437,13 +460,13 @@ export default function PostSwims({
                 <TouchableOpacity
                   style={{
                     flex: 1,
-                    marginRight: 15,
+                    margin: 12,
+                    marginTop: 0,
                     width: "40%",
                     alignItems: "center",
                     backgroundColor: colours.accent4,
                     padding: 10,
-                    borderRadius: 5,
-                    marginBottom: 5,
+                    borderRadius: 12,
                   }}
                   onPress={imageUploadFromGallery}
                 >
@@ -451,7 +474,7 @@ export default function PostSwims({
                     style={{
                       alignItems: "center",
                       color: "#fff",
-                      fontWeight: "bold",
+                      fontFamily: "Poppins-Bold",
                     }}
                   >
                     Select Photo
@@ -461,12 +484,13 @@ export default function PostSwims({
                 <TouchableOpacity
                   style={{
                     flex: 1,
+                    margin: 12,
+                    marginTop: 0,
                     width: "40%",
                     alignItems: "center",
                     backgroundColor: colours.accent4,
                     padding: 10,
-                    borderRadius: 5,
-                    marginBottom: 5,
+                    borderRadius: 12,
                   }}
                   onPress={imageUploadFromCamera}
                 >
@@ -474,7 +498,7 @@ export default function PostSwims({
                     style={{
                       alignItems: "center",
                       color: "#fff",
-                      fontWeight: "bold",
+                      fontFamily: "Poppins-Bold",
                     }}
                   >
                     Take a Photo
@@ -554,6 +578,12 @@ const styles = StyleSheet.create({
   dropdownPlaceholder: {
     fontFamily: "Poppins-Regular",
     fontSize: 14,
+  },
+  noPictures: {
+    textAlign: "center",
+    fontFamily: "Poppins-Regular",
+    color: colours.lightText,
+    marginTop: 8,
   },
   scroll: {
     padding: 50,
