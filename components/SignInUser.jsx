@@ -22,6 +22,7 @@ import { Formik, Field } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { refreshToken } from "../redux/reducers";
+import { useFonts } from "expo-font";
 
 export default SignInUser = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -30,6 +31,10 @@ export default SignInUser = ({ navigation }) => {
   const [isSignInClicked, setIsSignInClicked] = useState(false);
   const [firebaseError, setFirebaseError] = useState("");
   const [sending, setSending] = useState(false);
+  const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
+  });
 
   async function handleSignIn(values, callbackFunc) {
     setFirebaseError("");

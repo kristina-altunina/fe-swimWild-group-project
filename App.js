@@ -7,7 +7,7 @@ import ResetPassword from "./components/ResetPassword";
 import HomeScreen from "./components/HomeScreen";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { Image, Text, Alert } from "react-native";
+import { Image, Text, Alert, StyleSheet } from "react-native";
 import { useState } from "react";
 import { simpleAlert } from "./extentions";
 import {
@@ -29,6 +29,8 @@ import { auth, tokenRefresh } from "./firebaseConfig";
 import { Provider, useSelector, useDispatch } from "react-redux";
 import { logout } from "./redux/reducers";
 import store from "./redux/store";
+import { useFonts } from "expo-font";
+import { colours } from "./styles/base";
 
 const Drawer = createDrawerNavigator();
 
@@ -86,7 +88,10 @@ const createDeleteAccountAlert = (refresh_token, dispatch, props) =>
 function CustomDrawerContent(props) {
   const { isAuthenticated } = props;
   const { profileUrl, name, refresh_token } = useSelector((state) => state);
-
+  const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Regular": require("./assets/fonts/Poppins-Bold.ttf"),
+  });
   const dispatch = useDispatch();
   return (
     <DrawerContentScrollView {...props}>
@@ -102,10 +107,20 @@ function CustomDrawerContent(props) {
           }}
         />
       ) : null}
-      <Text style={{ marginLeft: 10 }}>{name}</Text>
+      <Text
+        style={{
+          margin: 10,
+          fontSize: 20,
+          fontFamily: "Poppins-Bold",
+          color: colours.text,
+        }}
+      >
+        {name}
+      </Text>
       <DrawerItemList {...props} />
       {isAuthenticated ? (
         <DrawerItem
+          labelStyle={styles.label}
           label="Sign Out"
           onPress={() => {
             handleSignOut(props.navigation, dispatch);
@@ -114,6 +129,7 @@ function CustomDrawerContent(props) {
       ) : null}
       {!isAuthenticated ? (
         <DrawerItem
+          labelStyle={styles.label}
           label="Sign In"
           onPress={() => {
             dispatch(logout());
@@ -123,6 +139,7 @@ function CustomDrawerContent(props) {
       ) : null}
       {isAuthenticated ? (
         <DrawerItem
+          labelStyle={styles.label}
           label="Delete Account"
           onPress={() => {
             createDeleteAccountAlert(refresh_token, dispatch, props);
@@ -155,7 +172,7 @@ function Root() {
       <Drawer.Screen
         name="Home"
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, drawerLabelStyle: styles.label }}
       />
       <Drawer.Screen
         name="Register"
@@ -164,7 +181,10 @@ function Root() {
           headerShown: false,
           gestureEnabled: true,
           drawerLabel: "Sign Up",
-          drawerItemStyle: { display: isAuthenticated ? "none" : "block" },
+          drawerLabelStyle: styles.label,
+          drawerItemStyle: {
+            display: isAuthenticated ? "none" : "block",
+          },
         }}
       />
       <Drawer.Screen
@@ -193,6 +213,7 @@ function Root() {
         options={{
           headerShown: false,
           gestureEnabled: true,
+          drawerLabelStyle: styles.label,
           drawerItemStyle: { display: !isAuthenticated ? "none" : "block" },
         }}
       />
@@ -238,3 +259,7 @@ export default function App() {
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  label: { fontFamily: "Poppins-SemiBold", fontSize: 16 },
+});
