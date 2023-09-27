@@ -21,6 +21,7 @@ import { colours } from "../styles/base";
 import { Dropdown } from "react-native-element-dropdown";
 import { useSelector } from "react-redux";
 import { tokenRefresh } from "../firebaseConfig";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function HomeScreen({ navigation }) {
   const [userLocation, setUserLocation] = useState({
@@ -40,6 +41,7 @@ export default function HomeScreen({ navigation }) {
   const [name, setName] = useState(null);
   const [postingLocation, setPostingLocation] = useState(false);
   const [tooClose, setTooClose] = useState(false);
+  const [hasPermission, setHasPermission] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
@@ -65,6 +67,7 @@ export default function HomeScreen({ navigation }) {
 
   const handlePermissionChange = (isGranted) => {
     if (isGranted) {
+      setHasPermission(true);
       Location.getCurrentPositionAsync({}).then(({ coords }) => {
         const { latitude, longitude } = coords;
         setUserLocation({
@@ -81,10 +84,15 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  function handleRegionChange({ latitude, longitude, latitudeDelta }) {
-    console.log(newLocation);
+  function handleRegionChange({
+    latitude,
+    longitude,
+    latitudeDelta,
+    longitudeDelta,
+  }) {
+    // setUserLocation({ latitude, longitude, latitudeDelta, longitudeDelta }); cannot controll the map view and add new pins without a loop. Maybe the pins cause the map to move? I can't stop this though.
     if (loadingLocations) return;
-    setLoadingLocations(() => true);
+    setLoadingLocations(true);
     setNewLocation({
       latitude,
       longitude,
@@ -94,8 +102,7 @@ export default function HomeScreen({ navigation }) {
       8 + Math.floor(10 * latitudeDelta)
     ).then((data) => {
       setLocations(() => [...data]);
-
-      setLoadingLocations(() => false);
+      setLoadingLocations(false);
     });
   }
 
@@ -116,7 +123,7 @@ export default function HomeScreen({ navigation }) {
         setPostingLocation(false);
         return navigation.navigate("SingleLocation", { uid: data._id });
       })
-      .catch((response) => {
+      .catch(() => {
         setPostingLocation(false);
         setTooClose(true);
         setTimeout(() => {
@@ -124,6 +131,22 @@ export default function HomeScreen({ navigation }) {
         }, 2000);
       });
   }
+
+  const handleMyLocationClick = () => {
+    Location.getCurrentPositionAsync({})
+      .then(({ coords }) => {
+        const { latitude, longitude } = coords;
+        setUserLocation({
+          latitude,
+          longitude,
+          latitudeDelta: 0.0922 * 2,
+          longitudeDelta: 0.0421 * 2,
+        });
+      })
+      .catch((error) => {
+        console.error("Error getting current position", error);
+      });
+  };
 
   if (!fontsLoaded) {
     return <ActivityIndicator></ActivityIndicator>;
@@ -143,6 +166,14 @@ export default function HomeScreen({ navigation }) {
           newLocation={newLocation}
           setNewLocation={setNewLocation}
         />
+        {hasPermission && (
+          <TouchableOpacity
+            style={styles.myLocationButtonStyle}
+            onPress={handleMyLocationClick}
+          >
+            <MaterialIcons name="my-location" size={24} color={colours.text} />
+          </TouchableOpacity>
+        )}
         {refreshToken && (
           <TouchableOpacity
             style={styles.postSwim}
@@ -338,5 +369,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 30,
     fontSize: 16,
+  },
+  myLocationButtonStyle: {
+    position: "absolute",
+    right: 10,
+    bottom: 10,
+    padding: 10,
+    backgroundColor: "white",
+    borderRadius: 5,
+    elevation: 5,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
   },
 });

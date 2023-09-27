@@ -25,6 +25,7 @@ export default function GoogleMapComponent({
       {showNewLocation && (
         <Marker
           key={"newLocation"}
+          tracksViewChanges={false}
           draggable
           coordinate={{
             latitude: newLocation.latitude,
@@ -45,6 +46,7 @@ export default function GoogleMapComponent({
       {locations &&
         locations.map((location) => (
           <Marker
+            tracksViewChanges={false}
             key={location._id}
             coordinate={{
               latitude: location.coords[0],
