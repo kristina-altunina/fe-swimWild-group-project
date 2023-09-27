@@ -64,7 +64,7 @@ export default function SingleLocation({
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [uid]);
 
   function formatCoords(coords) {
     return `${coords[0].toFixed(4)}°N, ${coords[0].toFixed(4)}°W`;

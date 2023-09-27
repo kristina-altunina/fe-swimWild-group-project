@@ -23,7 +23,6 @@ import { useSelector } from "react-redux";
 import { tokenRefresh } from "../firebaseConfig";
 
 export default function HomeScreen({ navigation }) {
-  const [noLocationsFound, setNoLocationsFound] = useState(false);
   const [userLocation, setUserLocation] = useState({
     latitude: 54.636,
     longitude: -3.3631,
@@ -62,7 +61,7 @@ export default function HomeScreen({ navigation }) {
       setLocations(() => [...data]);
       setLoadingLocations(false);
     });
-  }, []);
+  }, [refreshToken]);
 
   const handlePermissionChange = (isGranted) => {
     if (isGranted) {
@@ -81,10 +80,6 @@ export default function HomeScreen({ navigation }) {
       });
     }
   };
-
-  function handleClick(uid) {
-    return navigation.navigate("SingleLocation", { uid });
-  }
 
   function handleRegionChange({ latitude, longitude, latitudeDelta }) {
     console.log(newLocation);
@@ -148,14 +143,16 @@ export default function HomeScreen({ navigation }) {
           newLocation={newLocation}
           setNewLocation={setNewLocation}
         />
-        <TouchableOpacity
-          style={styles.postSwim}
-          onPress={showNewLocationMarker}
-        >
-          <Text style={styles.postSwim__text}>
-            {showNewLocation ? `Hide new swim spot` : `Post a new swim spot!`}
-          </Text>
-        </TouchableOpacity>
+        {refreshToken && (
+          <TouchableOpacity
+            style={styles.postSwim}
+            onPress={showNewLocationMarker}
+          >
+            <Text style={styles.postSwim__text}>
+              {showNewLocation ? `Hide new swim spot` : `Post a new swim spot!`}
+            </Text>
+          </TouchableOpacity>
+        )}
         <View style={styles.locationSearch}>
           <LocationSearch
             style={styles.locationSearch}
@@ -215,23 +212,19 @@ export default function HomeScreen({ navigation }) {
           <ScrollView>
             {locations &&
               locations.map((location) => (
-                <TouchableOpacity
-                  onPress={() => handleClick(location._id)}
+                <LocationPreview
                   key={location._id}
-                >
-                  <LocationPreview
-                    key={location._id}
-                    name={location.name}
-                    type={location.type}
-                    distance={location.distanceKm.toFixed(2)}
-                    avStars={location.avStars}
-                  />
-                </TouchableOpacity>
+                  _id={location._id}
+                  name={location.name}
+                  type={location.type}
+                  distance={location.distanceKm.toFixed(2)}
+                  avStars={location.avStars}
+                  navigation={navigation}
+                />
               ))}
           </ScrollView>
         )}
       </View>
-      {/* {noLocationsFound && <Text style={styles.noLocationsText}>No locations found nearby!</Text>} */}
     </View>
   );
 }
