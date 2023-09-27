@@ -24,6 +24,8 @@ import { useSelector } from "react-redux";
 import { tokenRefresh } from "../firebaseConfig";
 
 import { CommonActions } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stat } from "./reuse/Stat";
 
 export default function PostSwims({
   navigation,
@@ -31,46 +33,70 @@ export default function PostSwims({
     params: { location },
   },
 }) {
-  console.log(navigation, 'look here')
+  console.log(navigation, "look here");
   const [notes, onChangeNotesInput] = useState("");
   const [starRating, setStartRating] = useState(0);
   const [recordTemp, setRecordTemp] = useState(null);
   const [showTempWarning, setShowTempWarning] = useState(false);
-  const [feelTemp, setFeelTemp] = useState('Select Feels like');
+  const [feelTemp, setFeelTemp] = useState("Select Feels like");
   const [mins, onChangeMins] = useState("");
   const [outOfDepth, setOutOfDepth] = useState(false);
-  const [size, setSize] = useState('Select Size');
-  const [shore, setShore] = useState('Select Shore');
-  const [bankAngle, setBankAngle] = useState('Select Bank Angle');
-  const [clarity, setClarity] = useState('Select Clarity');
-  const [km, onChangeKm] = useState('');
+  const [size, setSize] = useState("Select Size");
+  const [shore, setShore] = useState("Select Shore");
+  const [bankAngle, setBankAngle] = useState("Select Bank Angle");
+  const [clarity, setClarity] = useState("Select Clarity");
+  const [km, onChangeKm] = useState("");
   const [imgUrls, setImgUrls] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [mediaPermission, requestMediaPermission] = ImagePicker.useMediaLibraryPermissions();
-  const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
-  
-  const refreshToken = useSelector((state) => state.refresh_token);
+  const [mediaPermission, requestMediaPermission] =
+    ImagePicker.useMediaLibraryPermissions();
+  const [cameraPermission, requestCameraPermission] =
+    ImagePicker.useCameraPermissions();
 
-  const feelTempRef = ["freezing", "cold", "average", "warm", "hot"].map((item, i) => {
-    return { value: i, label: item };
-  })
+  const refreshToken = useSelector((state) => state.refresh_token);
+  const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
+    "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-Regular_Italic": require("../assets/fonts/Poppins-Italic.ttf"),
+    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Bold_Italic": require("../assets/fonts/Poppins-BoldItalic.ttf"),
+    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
+  });
+
+  const feelTempRef = ["freezing", "cold", "average", "warm", "hot"].map(
+    (item, i) => {
+      return { value: i, label: item };
+    }
+  );
 
   const sizeRef = ["tiny", "small", "medium", "large"].map((item, i) => {
-    return { value: i, label: item }
-  });
-
-  const shoreRef = ["muddy", "rocky", "sandy", "pebbly", "grassy", "swampy"].map((item, i) => {
     return { value: i, label: item };
   });
 
-  const bankAngleRef = ["shallow", "medium", "steep", "jump-in"].map((item, i) => {
+  const shoreRef = [
+    "muddy",
+    "rocky",
+    "sandy",
+    "pebbly",
+    "grassy",
+    "swampy",
+  ].map((item, i) => {
     return { value: i, label: item };
   });
 
-  const clarityRef = ["muddy", "murky", "average", "clear", "perfect"].map((item, i) => {
-    return { value: i, label: item }
-  });
+  const bankAngleRef = ["shallow", "medium", "steep", "jump-in"].map(
+    (item, i) => {
+      return { value: i, label: item };
+    }
+  );
+
+  const clarityRef = ["muddy", "murky", "average", "clear", "perfect"].map(
+    (item, i) => {
+      return { value: i, label: item };
+    }
+  );
 
   function imageUploadFromGallery() {
     if (mediaPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
@@ -78,7 +104,9 @@ export default function PostSwims({
     }
     pickImage((progress) => {
       setUploadProgress(() => progress);
-      progress >= 100 ? setIsUploading(() => false) : setIsUploading(() => true);
+      progress >= 100
+        ? setIsUploading(() => false)
+        : setIsUploading(() => true);
     }).then((url) => {
       setImgUrls((imgUrls) => [...imgUrls, url]);
     });
@@ -90,7 +118,9 @@ export default function PostSwims({
     }
     takePhoto((progress) => {
       setUploadProgress(() => progress);
-      progress >= 100 ? setIsUploading(() => false) : setIsUploading(() => true);
+      progress >= 100
+        ? setIsUploading(() => false)
+        : setIsUploading(() => true);
     }).then((url) => {
       setImgUrls((imgUrls) => [...imgUrls, url]);
     });
@@ -106,7 +136,6 @@ export default function PostSwims({
   }
 
   function handleSubmit() {
-
     const body = {
       date: new Date(Date.now()).toISOString(),
       location,
@@ -125,12 +154,12 @@ export default function PostSwims({
 
     if (!showTempWarning) {
       tokenRefresh(refreshToken)
-      .then(({access_token}) => {
-        return postSwimSpot(access_token, body)
-      })
-      .then(() => {
-        navigation.navigate('SingleLocation',{uid: location.id})
-      })
+        .then(({ access_token }) => {
+          return postSwimSpot(access_token, body);
+        })
+        .then(() => {
+          navigation.navigate("SingleLocation", { uid: location.id });
+        });
     }
   }
 
@@ -139,24 +168,31 @@ export default function PostSwims({
       behavior={props.KeyboardAvoidingView.behavior}
       keyboardVerticalOffset={props.KeyboardAvoidingView.keyboardVerticalOffset}
     >
-        <ScrollView>
-      <NavBar navigation={navigation} />
-      
-      <View style={{ width: "100%", height: "auto", display: "flex", gap: 3, marginBottom: 10}}>
-       
+      <ScrollView>
+        <NavBar navigation={navigation} />
+
+        <View
+          style={{
+            width: "100%",
+            height: "auto",
+            display: "flex",
+            gap: 3,
+            marginBottom: 10,
+          }}
+        >
           <View
             style={{
               width: "100%",
-              backgroundColor: colours.accent2,
-              padding: "2%",
+              padding: 8,
             }}
           >
             <Text
               style={{
-                fontSize: 35,
-                fontWeight: "bold",
-                color: "white",
+                color: colours.text,
                 textAlign: "center",
+                fontSize: 24,
+                fontFamily: "Poppins-Bold",
+                height: "auto",
               }}
             >
               {location.name}
@@ -166,18 +202,17 @@ export default function PostSwims({
           <View>
             <View
               style={{
-                borderColor: "black",
-                borderWidth: 1,
                 borderRadius: 20,
-                backgroundColor: colours.bg,
-                margin: "1%",
+                backgroundColor: "white",
+                margin: 8,
+                marginTop: 0,
               }}
             >
               <TextInput
                 multiline={true}
                 numberOfLines={5}
                 maxLength={250}
-                placeholder="Enter Comments Here.."
+                placeholder="How did it go?"
                 onChangeText={(text) => onChangeNotesInput(text)}
                 value={notes}
                 style={{ padding: 10 }}
@@ -185,30 +220,49 @@ export default function PostSwims({
             </View>
             <View style={{ padding: "1%", display: "flex", gap: 5 }}>
               <View
-                style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}
-              ></View>
-              <View
-                style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
               ></View>
               <View
                 style={{
                   display: "flex",
                   flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              ></View>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "baseline",
                   gap: 3,
                 }}
               >
-                <Text>Rating:</Text>
+                <Text style={styles.label}>Rate it out of 5:</Text>
                 <StarRating
                   disabled={false}
                   maxStars={5}
-                  starSize={18}
+                  starSize={25}
                   rating={starRating}
-                  fullStarColor="yellow"
-                  selectedStar={(rating) => setStartRating((starRating) => rating)}
+                  fullStarColor="#FFC033"
+                  emptyStarColor="#DBDBDB"
+                  selectedStar={(rating) =>
+                    setStartRating((starRating) => rating)
+                  }
                 />
               </View>
-              <View style={{ display: "flex", flexDirection: "row", gap: 5 }}>
-                <Text>Temp:</Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 5,
+                  alignItems: "center",
+                }}
+              >
+                <Text style={styles.label}>Measured Temperature:</Text>
                 <TextInput
                   maxLength={2}
                   onChangeText={(num) => handleRecordTemp(num)}
@@ -216,16 +270,16 @@ export default function PostSwims({
                   inputMode="numeric"
                   keyboardType="numeric"
                   style={{
-                    borderColor: "black",
-                    borderWidth: 1,
-                    width: "15%",
+                    backgroundColor: "white",
+                    width: "20%",
+                    height: 35,
                     borderRadius: 10,
-                    paddingLeft: "5%",
+                    paddingLeft: 8,
                   }}
                 />
               </View>
               <View style={{ display: "flex", flexDirection: "row", gap: 5 }}>
-                <Text>Mins:</Text>
+                <Text style={styles.label}>Minutes spent in the water:</Text>
                 <TextInput
                   inputMode="numeric"
                   keyboardType="numeric"
@@ -233,16 +287,16 @@ export default function PostSwims({
                   onChangeText={(num) => onChangeMins(num)}
                   value={mins}
                   style={{
-                    borderColor: "black",
-                    borderWidth: 1,
-                    width: "15%",
+                    backgroundColor: "white",
+                    width: "20%",
+                    height: 35,
                     borderRadius: 10,
-                    paddingLeft: "5%",
+                    paddingLeft: 8,
                   }}
                 />
               </View>
               <View style={{ display: "flex", flexDirection: "row", gap: 5 }}>
-                <Text>km:</Text>
+                <Text style={styles.label}>Distance swam (km):</Text>
                 <TextInput
                   inputMode="numeric"
                   keyboardType="numeric"
@@ -250,33 +304,48 @@ export default function PostSwims({
                   onChangeText={(num) => onChangeKm(num)}
                   value={km}
                   style={{
-                    borderColor: "black",
-                    borderWidth: 1,
-                    width: "15%",
+                    backgroundColor: "white",
+                    width: "20%",
+                    height: 35,
                     borderRadius: 10,
-                    paddingLeft: "5%",
+                    paddingLeft: 8,
                   }}
                 />
               </View>
-              <View style={{ display: "flex", flexDirection: "row", gap: 5 }}>
-                <Text>Out of depth:</Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 5,
+                  alignItems: "center",
+                }}
+              >
+                <Text style={styles.label}>
+                  Was the water out of your depth at any point?{" "}
+                </Text>
                 <Checkbox
                   disabled={false}
                   value={outOfDepth}
+                  backgroundColor={"white"}
                   onValueChange={(val) => setOutOfDepth((outOfDepth) => val)}
                 />
               </View>
-              <Text style={showTempWarning ? { color: "black" } : { height: 0 }}>
+              <Text
+                style={showTempWarning ? { color: "black" } : { height: 0 }}
+              >
                 min : -5, max: 60, unit Celsius
               </Text>
-              <View style={{ width: "50%" }}>
-                <Text>Feel Temp:</Text>
+              <View style={styles.statInput}>
+                <Stat icon="feelTemp" val="" />
                 <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  itemTextStyle={styles.dropdownPlaceholder}
                   data={feelTempRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={feelTemp}
+                  placeholder={"Water temperature feels like..."}
                   onChange={(item) => {
                     setFeelTemp(item.label);
                   }}
@@ -284,7 +353,7 @@ export default function PostSwims({
               </View>
 
               <View style={{ width: "50%" }}>
-                <Text>Size:</Text>
+                <Text style={styles.label}>Size:</Text>
                 <Dropdown
                   data={sizeRef}
                   labelField="label"
@@ -297,7 +366,7 @@ export default function PostSwims({
                 />
               </View>
               <View style={{ width: "50%" }}>
-                <Text>Shore:</Text>
+                <Text style={styles.label}>Shore:</Text>
                 <Dropdown
                   data={shoreRef}
                   labelField="label"
@@ -310,7 +379,7 @@ export default function PostSwims({
                 />
               </View>
               <View style={{ width: "50%" }}>
-                <Text>Bank Angle:</Text>
+                <Text style={styles.label}>Bank Angle:</Text>
                 <Dropdown
                   data={bankAngleRef}
                   labelField="label"
@@ -323,7 +392,7 @@ export default function PostSwims({
                 />
               </View>
               <View style={{ width: "50%" }}>
-                <Text>Clarity:</Text>
+                <Text style={styles.label}>Clarity:</Text>
                 <Dropdown
                   data={clarityRef}
                   labelField="label"
@@ -336,10 +405,21 @@ export default function PostSwims({
                 />
               </View>
               {imgUrls.length ? (
-                <View style={{ display: "flex", flexDirection: "row", gap: 2, flexWrap: "wrap" }}>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 2,
+                    flexWrap: "wrap",
+                  }}
+                >
                   {imgUrls.map((item, i) => {
                     return (
-                      <Image key={i} style={{ width: 50, height: 50 }} source={{ uri: item }} />
+                      <Image
+                        key={i}
+                        style={{ width: 50, height: 50 }}
+                        source={{ uri: item }}
+                      />
                     );
                   })}
                 </View>
@@ -411,7 +491,12 @@ export default function PostSwims({
                       : styles.progressBarContainerHidden
                   }
                 >
-                  <View style={[styles.progressBar, { width: `${uploadProgress}%` }]} />
+                  <View
+                    style={[
+                      styles.progressBar,
+                      { width: `${uploadProgress}%` },
+                    ]}
+                  />
                 </View>
               </View>
             </View>
@@ -437,8 +522,7 @@ export default function PostSwims({
               <Text>Submit</Text>
             </TouchableOpacity>
           </View>
-        
-      </View>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -449,6 +533,28 @@ const styles = StyleSheet.create({
     backgroundColor: colours.bg,
     height: "100%",
     width: "100%",
+  },
+  label: {
+    margin: 8,
+    fontFamily: "Poppins-SemiBold",
+    color: colours.text,
+  },
+  statInput: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    justifyContent: "flex-start",
+  },
+  dropdownContainer: {
+    backgroundColor: "white",
+    width: "80%",
+    paddingLeft: 10,
+    borderRadius: 8,
+  },
+  dropdownPlaceholder: {
+    fontFamily: "Poppins-Regular",
+    fontSize: 14,
   },
   scroll: {
     padding: 50,
