@@ -15,7 +15,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { styles } from '../styles/layout';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { getFirebaseError } from "../extentions";
+import { getFirebaseError, generateGuid } from "../extentions";
 import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from 'yup';
@@ -43,7 +43,7 @@ export default SignInUser = ({ navigation }) => {
         dispatch(refreshToken({ refresh_token: user.stsTokenManager.refreshToken}))
         setSending(false)
         setIsSignInClicked(false)
-        navigation.navigate('Profile', {refresh_token: user.stsTokenManager.refreshToken})
+        navigation.navigate('Profile', {refresh_token: user.stsTokenManager.refreshToken, guid: generateGuid()})
     }
     catch(error) {
        console.log("ERROR", error)

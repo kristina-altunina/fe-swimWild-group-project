@@ -47,6 +47,7 @@ export default RegisterUser = ({ navigation }) => {
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [profileImgURL, setProfileImgURL] = useState("");
   const [firebaseError, setFirebaseError] = useState("");
+  const [nicknameError, setNicknameError] = useState("");
   const [sending, setSending] = useState(false);
   const [genericError, setGenericError] = useState("");
 
@@ -96,9 +97,13 @@ export default RegisterUser = ({ navigation }) => {
       console.log(body);
       if (response.status !== 400) {
         setGenericError("Something went wrong. Please try again later.");
+      } else {
+          // If here it is a 400 error
+          if(body.errorCode === 'duplicate-nickname'){
+              setNicknameError(body.msg);
+          }
       }
     } else {
-
       dispatch(refreshToken({ refresh_token:refresh_token }))
       await response.json();
       navigation.navigate("Profile", {refresh_token: refresh_token});
@@ -226,6 +231,15 @@ export default RegisterUser = ({ navigation }) => {
                           name="nickname"
                           placeholder="Nickname"
                         />
+                         <Text
+                          style={
+                            nicknameError.length === 0
+                              ? styles.textHide
+                              : styles.textShow
+                          }
+                        >
+                          {nicknameError}
+                        </Text>
                         <TextInput
                           style={[
                             styles.input,

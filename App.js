@@ -52,18 +52,18 @@ async function handleDeleteAccount(navigation,refresh_token, dispatch){
   }else {
     deleteCurrentUser(()=>{
       console.log('PROFILE DELETED FROM FIREBASE')
-      setIsAuthenticated(false)
     })
     navigation.toggleDrawer()
     navigation.navigate('Home')
     dispatch(logout())
   }
 }
-function handleSignOut(navigation) {
+function handleSignOut(navigation, dispatch) {
 
   signOut(auth)
     .then(() => {
-      setIsAuthenticated(false)
+      navigation.toggleDrawer()
+      dispatch(logout())
       navigation.navigate('Home')
     })
     .catch((error) => {
@@ -99,8 +99,7 @@ function CustomDrawerContent(props) {
       <DrawerItem
         label="Sign Out"
         onPress={() => {
-          handleSignOut(props.navigation)
-          dispatch(logout())
+          handleSignOut(props.navigation, dispatch)
         }}
       />: null}
       {!isAuthenticated ? 

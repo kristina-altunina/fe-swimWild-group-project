@@ -9,7 +9,6 @@ import {
   ScrollView,
 } from "react-native";
 
-import  { useFocusEffect } from '@react-navigation/native';
 import  { useCallback } from 'react';
 import { colours } from "../styles/base";
 import NavBar from "./NavBar";
@@ -29,11 +28,11 @@ import {
 import { SwimRecord } from "./Profile/SwimRecord";
 import { useFonts } from "expo-font";
 import { useAssets } from "expo-asset";
-
+import { generateGuid } from "../extentions";
 import { login, refreshToken} from '../redux/reducers'; // Import your slice and actions
 import { useSelector, useDispatch } from 'react-redux';
 export default Profile = ({ navigation, route }) => {
-  
+  console.log('ROUTE GUID', route.params.guid)
   const [isLoading, setIsLoading] = useState(false);
   const [profileData, setProfileData] = useState({});
   const [swims, setSwims] = useState([]);
@@ -52,6 +51,7 @@ export default Profile = ({ navigation, route }) => {
   const dispatch = useDispatch();
   
   const token = route.params.refresh_token;
+  const guid = route.params.guid;
 
 async function getProfile(){
   const tokenObj = await tokenRefresh(token)
@@ -79,17 +79,16 @@ async function getProfile(){
     setIsLoading(false);
   })
 }
-useFocusEffect(
-  useCallback(() => {
-    setIsLoading(true);
-    getProfile()
-  }, [])
-);
 
+useEffect(() => {
+  console.log('FETCH NEW PROFILE')
+  getProfile()
+}, [guid]);
 
-useEffect(() =>{
+useEffect(() => {
   dispatch(login({ profileUrl:profileData.profileImg, name: profileData.name }))
-},[profileData])
+}, [profileData]); 
+
 
 if (isLoading) {
   console.log('LOADIND', isLoading)
