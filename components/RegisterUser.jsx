@@ -26,7 +26,7 @@ import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
-import { refreshToken, logout } from "../redux/reducers";
+import { refreshToken, logout, userId } from "../redux/reducers";
 
 export default RegisterUser = ({ navigation }) => {
   
@@ -93,9 +93,7 @@ export default RegisterUser = ({ navigation }) => {
     setIsSignUpClicked(false);
     if (!response.ok) {
       deleteCurrentUser(()=> console.log('user deleted from firebase'));
-      console.log(response, "User----");
       const body = await response.json();
-      console.log(body);
       if (response.status !== 400) {
         setGenericError("Something went wrong. Please try again later.");
       } else {
@@ -105,10 +103,11 @@ export default RegisterUser = ({ navigation }) => {
           }
       }
     } else {
-      dispatch(refreshToken({ refresh_token:refresh_token }))
+      dispatch(refreshToken({ refresh_token:refresh_token, uid: uid }))
+      dispatch(userId({ uid: uid}));
       await response.json();
       callbackFunc();//The function passed from the formik onSumit event
-      navigation.navigate("Profile", {refresh_token: refresh_token, guid: generateGuid()});
+      navigation.navigate("Profile", {refresh_token: refresh_token, currentUserUid: uid, guid: generateGuid()});
     }
   }
 

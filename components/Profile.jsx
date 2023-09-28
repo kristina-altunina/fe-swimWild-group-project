@@ -55,25 +55,36 @@ export default Profile = ({ navigation, route }) => {
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
   });
   const dispatch = useDispatch();
-  
-   const token = route.params.refresh_token || useSelector((state) => state.refresh_token);
-  console.log('REFRESH TOKEN', token)
-  const guid = route.params.guid;
 
-  const [mediaPermission, requestMediaPermission] =
-  ImagePicker.useMediaLibraryPermissions();
+  console.log("PARAMS", route.params);
+  const currentUserUid = route.params.currentUserUid || useSelector((state) => state.uid);
+  const otherUserUid = route.params.uid;
+  console.log("OTHER USER", otherUserUid);
+  const token = route.params.refresh_token || useSelector((state) => state.refresh_token);
+  console.log('CURRENT USER', currentUserUid)
+  console.log('TOKENN USER', token)
+  const guid = route.params.guid;
+  console.log('GUID USER', guid)
+  const isCurrentUser = otherUserUid == undefined || otherUserUid === currentUserUid;
+
+  console.log('ISCURRENT USER', isCurrentUser)
+
+    const [mediaPermission, requestMediaPermission] =
+    ImagePicker.useMediaLibraryPermissions();
 
 async function getProfile(){
+  
   const tokenObj = await tokenRefresh(token)
-
-  const url = BACKEND_API_URL + "/users/profile"
-  dispatch(refreshToken({ refresh_token:tokenObj }))
+  console.log('TOKEN', tokenObj)
+  const url = BACKEND_API_URL + (isCurrentUser ? "/users/profile": ("/users/" + otherUserUid));
+  console.log('PROFILE URL', url)
+  dispatch(refreshToken({ refresh_token: tokenObj!=undefined ? tokenObj.access_token:'' }))
   setIsLoading(true);
   fetch(url, {
     method: "GET",
     headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${tokenObj.access_token}`,
+    Authorization: `Bearer ${tokenObj!= undefined? tokenObj.access_token:''}`,
     }
   })
   .then(response => response.json())
@@ -140,20 +151,26 @@ async function saveData(){
       simpleAlert('Profile','Failed to update profile')
     } else {
       setEditMode(false)
-      dispatch(login({ profileUrl:profileImg, name: profileData.name }))
+      if(isCurrentUser){
+        dispatch(login({ profileUrl:profileImg, name: profileData.name }))
+      }
       simpleAlert('Profile','Profile updated')
       await response.json();
     }
 }
-useEffect(() => {
+useEffect((guid) => {
+  console.log('CALLING GET PROFILE', guid)
   getProfile()
 }, [guid]);
 
 useEffect(() => {
-  dispatch(login({ profileUrl:profileData.profileImg, name: profileData.name }))
-  setMyLocation(profileData.home)
-  setBio(profileData.bio)
-  setProfileImg(profileData.profileImg)
+   if(isCurrentUser){ // only if user is authenticated, update the store and the state fields
+     dispatch(login({ profileUrl:profileData.profileImg, name: profileData.name }))
+   }
+    setMyLocation(profileData.home)
+    setBio(profileData.bio)
+    setProfileImg(profileData.profileImg)
+
 }, [profileData]); 
 
 
@@ -173,7 +190,7 @@ if (isLoading) {
         <View style={styles.profile__text}>
           <View style={styles.profile__header}>
             <Text style={styles.profile__name}>{profileData.name}</Text>
-            <TouchableOpacity onPress={()=>setEditMode(true)} style={[!editMode ? styles.textShow : styles.textHide]}> 
+            <TouchableOpacity onPress={()=>setEditMode(true)} style={[!editMode && isCurrentUser ? styles.textShow : styles.textHide]}> 
             <Image
               source={
                 {uri: PENCIL_ICON}
@@ -249,7 +266,7 @@ if (isLoading) {
       <View style={styles.stats}>
         <View style={styles.stats__left}>
           <Text style={styles.stats__label}>
-            <Text style={styles.stats__stat}>{swims.length}</Text> swims total
+            <Text style={styles.stats__stat}>{swims? swims.length: 0}</Text> swims total
           </Text>
           <Text style={styles.stats__label}>
             <Text style={styles.stats__stat}>{swimsThisMonth(swims)}</Text>{" "}
@@ -257,7 +274,7 @@ if (isLoading) {
           </Text>
           <Text style={styles.stats__label}>
             Last swam on{" "}
-            {swims.length > 0 ? <Text style={styles.stats__stat}>
+            {swims && swims.length > 0 ? <Text style={styles.stats__stat}>
               {new Date(swims[0].date)
                 .toDateString()
                 .split(" ")
@@ -268,21 +285,21 @@ if (isLoading) {
         </View>
         <View style={styles.stats__right}>
           <Text style={styles.stats__label}>
-            Loves <Text style={styles.stats__stat}>{favouriteSwim(swims)}</Text>
+            Loves <Text style={styles.stats__stat}>{favouriteSwim(!swims || [])}</Text>
           </Text>
           <Text style={styles.stats__challenge}>
             Swim the Lakes:{"  "}
-            <Text style={styles.stats__stat}>{swimTheLakes(swims)}</Text>
+            <Text style={styles.stats__stat}>{swimTheLakes(!swims || [])}</Text>
           </Text>
         </View>
         <View style={styles.stats__bottom}>
-          {coldest(swims) && (
+          {coldest(!swims||[]) && (
             <Text style={styles.stats__stat}>
               Coldest:{"  "}
-              <Text style={styles.stats__label}>{coldest(swims)}</Text>
+              <Text style={styles.stats__label}>{coldest(!swims||[])}</Text>
             </Text>
           )}
-          {hottest(swims) && (
+          {hottest(!swims||[]) && (
             <Text style={styles.stats__stat}>
               Warmest:{"  "}
               <Text style={styles.stats__label}>{hottest(swims)}</Text>
@@ -296,7 +313,7 @@ if (isLoading) {
         setFiltSwims={setFiltSwims}
       />
       <ScrollView>
-        {!filtSwims.length && <Text style={styles.empty}>Nothing here!</Text>}
+        {filtSwims!= undefined || !filtSwims.length && <Text style={styles.empty}>Nothing here!</Text>}
         {filtSwims.map((swim) => {
           return <SwimRecord swim={swim} key={swim._id} navigation={navigation} />;
         })}

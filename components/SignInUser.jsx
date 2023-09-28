@@ -21,7 +21,7 @@ import CustomInput from "./CustomInput";
 import { Formik, Field } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
-import { refreshToken } from "../redux/reducers";
+import { refreshToken, userId } from "../redux/reducers";
 
 export default SignInUser = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -44,14 +44,14 @@ export default SignInUser = ({ navigation }) => {
       );
       const user = response.user;
       console.log(user);
-      dispatch(
-        refreshToken({ refresh_token: user.stsTokenManager.refreshToken })
-      );
+      dispatch(refreshToken({ refresh_token: user.stsTokenManager.refreshToken}));
+      dispatch(userId({ uid: user.uid}));
       setSending(false);
       setIsSignInClicked(false);
-      callbackFunc();
+      callbackFunc(); //to clear the form
       navigation.navigate("Profile", {
         refresh_token: user.stsTokenManager.refreshToken,
+        currentUserUid: user.uid,
         guid: generateGuid(),
       });
     } catch (error) {
