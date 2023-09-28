@@ -51,6 +51,8 @@ export default function HomeScreen({ navigation }) {
     "Poppins-Bold_Italic": require("../assets/fonts/Poppins-BoldItalic.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
   });
+
+
   const refreshToken = useSelector((state) => state.refresh_token);
 
   useEffect(() => {
@@ -117,6 +119,7 @@ export default function HomeScreen({ navigation }) {
       type,
       coords: [newLocation.latitude, newLocation.longitude],
     };
+    console.log('Posting', body)
     const tokenObj = await tokenRefresh(refreshToken);
     postSwimLocation(tokenObj.access_token, body)
       .then((data) => {

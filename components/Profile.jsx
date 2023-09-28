@@ -71,6 +71,7 @@ export default Profile = ({ navigation, route }) => {
   const otherUserUid = route.params.uid;
   const token = route.params.refresh_token || stateToken;
   const guid = route.params.guid;
+  console.log('PROFILE GUIDO', guid)
   const isCurrentUser = otherUserUid == undefined || otherUserUid === currentUserUid;
 
     const [mediaPermission, requestMediaPermission] =
@@ -80,8 +81,9 @@ async function getProfile(){
   
   const tokenObj = await tokenRefresh(token)
   const url = BACKEND_API_URL + (isCurrentUser ? "/users/profile": ("/users/" + otherUserUid));
-  dispatch(refreshToken({ refresh_token: tokenObj!=undefined ? tokenObj.access_token || '':'' }))
+  dispatch(refreshToken({ refresh_token: tokenObj!=undefined ? tokenObj.refresh_token || '':'' }))
   setIsLoading(true);
+  console.log('TOKEN TOKEN',`Bearer ${tokenObj!= undefined? tokenObj.refresh_token|| '':''}`)
   fetch(url, {
     method: "GET",
     headers: {
@@ -91,6 +93,7 @@ async function getProfile(){
   })
   .then(response => response.json())
   .then((json)=> {
+    console.log('DAT DAT', json)
     json.dob = formatDate(json.dob.split('T')[0],'-')
     setProfileData(json)
     const swimData = addMonthToSwims(json.swims);

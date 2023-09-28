@@ -9,7 +9,7 @@ import HomeScreen from "./components/HomeScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { Image, Text, Alert, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
-import { simpleAlert } from "./extentions";
+import { generateGuid, simpleAlert } from "./extentions";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -222,6 +222,7 @@ function Root() {
       <Drawer.Screen
         name="Profile"
         component={Profile}
+        initialParams={{guid: generateGuid()}}
         options={{
           headerShown: false,
           gestureEnabled: true,

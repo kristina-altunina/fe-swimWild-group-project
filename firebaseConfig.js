@@ -22,7 +22,7 @@ const fbApp = getApp();
 const fbStorage = getStorage();
 
 async function tokenRefresh(token_refresh) {
-  console.log('called refresh token')
+  console.log('called refresh token', token_refresh)
   if(!token_refresh) return {};
 
  const url = "https://securetoken.googleapis.com/v1/token?key=" + FIREBASE_API_KEY
@@ -33,7 +33,7 @@ async function tokenRefresh(token_refresh) {
       body: JSON.stringify(body)
         })
 if (!response.ok) {
-  console.log(response.status + " Error refreshing token")
+  console.log("Error refreshing token", response)
   return {}
 }
 const data = await response.json()
