@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
   LayoutAnimation,
+  useWindowDimensions,
 } from "react-native";
 
 import { pickImage } from "../scripts/image-picker";
@@ -38,6 +39,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useAssets } from "expo-asset";
 
+
 export default Profile = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [profileData, setProfileData] = useState({});
@@ -50,8 +52,8 @@ export default Profile = ({ navigation, route }) => {
   const [profileImg, setProfileImg] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
-
   const [expand, setExpand] = useState(false);
+
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
@@ -62,28 +64,25 @@ export default Profile = ({ navigation, route }) => {
   const [assets, error] = useAssets([require("../assets/icons/pencil.png")]);
 
   const dispatch = useDispatch();
-
+  
   //Important: all userSelector need to be done first before accessing the variable
-  const stateUid = useSelector((state) => state.uid)
-  const stateToken = useSelector((state) => state.refresh_token)
+  const stateUid = useSelector((state) => state.uid);
+  const stateToken = useSelector((state) => state.refresh_token);
 
   const currentUserUid = route.params.currentUserUid || stateUid;
   const otherUserUid = route.params.uid;
   const token = route.params.refresh_token || stateToken;
   const guid = route.params.guid;
-  console.log('PROFILE GUIDO', guid)
   const isCurrentUser = otherUserUid == undefined || otherUserUid === currentUserUid;
-
-    const [mediaPermission, requestMediaPermission] =
+  const [mediaPermission, requestMediaPermission] =
     ImagePicker.useMediaLibraryPermissions();
 
+
 async function getProfile(){
-  
   const tokenObj = await tokenRefresh(token)
   const url = BACKEND_API_URL + (isCurrentUser ? "/users/profile": ("/users/" + otherUserUid));
   dispatch(refreshToken({ refresh_token: tokenObj!=undefined ? tokenObj.refresh_token || '':'' }))
   setIsLoading(true);
-  console.log('TOKEN TOKEN',`Bearer ${tokenObj!= undefined? tokenObj.refresh_token|| '':''}`)
   fetch(url, {
     method: "GET",
     headers: {
@@ -153,28 +152,33 @@ async function getProfile(){
       console.log(body);
       simpleAlert("Profile", "Failed to update profile");
     } else {
-      setEditMode(false)
-      if(isCurrentUser){
-        dispatch(login({ profileUrl:profileImg, name: profileData.name }))
+      setEditMode(false);
+      if (isCurrentUser) {
+        dispatch(login({ profileUrl: profileImg, name: profileData.name }));
       }
-      simpleAlert('Profile','Profile updated')
+      simpleAlert("Profile", "Profile updated");
       await response.json();
     }
-}
-useEffect((guid) => {
-  console.log('CALLING GET PROFILE', guid)
-  getProfile()
-}, [guid]);
+  }
+  useEffect(
+    (guid) => {
+      console.log("CALLING GET PROFILE", guid);
+      getProfile();
+    },
+    [guid]
+  );
 
-useEffect(() => {
-   if(isCurrentUser){ // only if user is authenticated, update the store and the state fields
-     dispatch(login({ profileUrl:profileData.profileImg, name: profileData.name }))
-   }
-    setMyLocation(profileData.home)
-    setBio(profileData.bio)
-    setProfileImg(profileData.profileImg)
-
-}, [profileData]); 
+  useEffect(() => {
+    if (isCurrentUser) {
+      // only if user is authenticated, update the store and the state fields
+      dispatch(
+        login({ profileUrl: profileData.profileImg, name: profileData.name })
+      );
+    }
+    setMyLocation(profileData.home);
+    setBio(profileData.bio);
+    setProfileImg(profileData.profileImg);
+  }, [profileData]);
 
   if (isLoading || !fontsLoaded) {
     return (
@@ -185,21 +189,25 @@ useEffect(() => {
     );
   }
 
+
   return (
     <View style={styles.app}>
       <NavBar navigation={navigation} />
       <View style={styles.profile}>
         <View style={styles.profile__text}>
-          <View style={styles.profile__header}>
-            <Text style={styles.profile__name}>{profileData.name}</Text>
-            <TouchableOpacity onPress={()=>setEditMode(true)} style={[!editMode && isCurrentUser ? styles.textShow : styles.textHide]}> 
-            <Image
-              source={
-                {uri: PENCIL_ICON}
-              }
-              resizeMode={"cover"}
-              style={styles.profile__edit}
-            ></Image>
+        <View style={styles.profile__nameContainer}>
+          <Text style={styles.profile__name}>{profileData.name}</Text>
+            <TouchableOpacity
+              onPress={() => setEditMode(true)}
+              style={[
+                !editMode && isCurrentUser ? styles.textShow : styles.textHide,
+              ]}
+            >
+              <Image
+                source={{ uri: PENCIL_ICON }}
+                resizeMode={"cover"}
+                style={styles.profile__edit}
+              ></Image>
             </TouchableOpacity>
           </View>
           <Text style={styles.profile__nickname}>{profileData.nickname}</Text>
@@ -248,7 +256,7 @@ useEffect(() => {
           </View>
         </View>
 
-        {profileImg ? (
+        <View style={styles.profile__imgContainer}> 
           <TouchableHighlight
             onPress={imageUploadFromGallery}
             disabled={!editMode}
@@ -262,34 +270,20 @@ useEffect(() => {
               ]}
               resizeMode={"cover"}
               source={{
-                uri: profileImg,
+                uri: profileImg || DEFAULT_IMAGE_URL, 
               }}
             />
           </TouchableHighlight>
-        ) : (
-          <TouchableHighlight onPress={() => simpleAlert()}>
-            <Image
-              style={[
-                styles.profileImg,
-                editMode
-                  ? { borderWidth: 3, borderColor: colours.accent4 }
-                  : {},
-              ]}
-              source={{ uri: DEFAULT_IMAGE_URL }}
-            />
-          </TouchableHighlight>
-        )}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.upload__button}
           onPress={imageUploadFromGallery}
         >
-          <Text style={styles.button__text}>
+          <Text style={styles.uploading}>
             {uploadProgress < 100 ? "Uploading..." : "Edit Photo"}
           </Text>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={[
+        </TouchableOpacity> */}
+        
+      <View style={[
           styles.button__container,
           editMode ? styles.textShow : styles.textHide,
         ]}
@@ -303,6 +297,8 @@ useEffect(() => {
           <Text style={styles.button__text}>Cancel</Text>
         </TouchableOpacity>
       </View>
+      </View>
+      </View>
       <TouchableWithoutFeedback
         onPress={() => {
           setExpand((bool) => !bool);
@@ -312,7 +308,8 @@ useEffect(() => {
         <View style={styles.stats}>
           <View style={styles.stats__left}>
             <Text style={styles.stats__label}>
-              <Text style={styles.stats__stat}>{swims? swims.length: 0}</Text> swims total
+              <Text style={styles.stats__stat}>{swims ? swims.length : 0}</Text>{" "}
+              swims total
             </Text>
             <Text style={styles.stats__label}>
               <Text style={styles.stats__stat}>{swimsThisMonth(swims)}</Text>{" "}
@@ -341,16 +338,20 @@ useEffect(() => {
           <View style={styles.stats__right}>
             <Text style={styles.stats__label}>
               Loves{" "}
-              <Text style={styles.stats__stat}>{favouriteSwim(swims || [])}</Text>
+              <Text style={styles.stats__stat}>
+                {favouriteSwim(swims || [])}
+              </Text>
             </Text>
             <Text style={styles.stats__challenge}>
               Swim the Lakes:{"  "}
-              <Text style={styles.stats__stat}>{swimTheLakes(swims || [])}</Text>
+              <Text style={styles.stats__stat}>
+                {swimTheLakes(swims || [])}
+              </Text>
             </Text>
           </View>
           {expand && swims && swims.length && (
             <View style={styles.stats__bottom}>
-              {coldest(!swims||[]) && (
+              {coldest(!swims || []) && (
                 <Text style={styles.stats__label}>
                   Suffered{" "}
                   <Text style={styles.stats__stat}>
@@ -399,7 +400,10 @@ useEffect(() => {
         setFiltSwims={setFiltSwims}
       />
       <ScrollView>
-        {filtSwims!= undefined || !filtSwims.length && <Text style={styles.empty}>Nothing here!</Text>}
+        {filtSwims != undefined ||
+          (!filtSwims.length && (
+            <Text style={styles.empty}>Nothing here!</Text>
+          ))}
         {filtSwims.map((swim) => {
           return (
             <SwimRecord swim={swim} key={swim._id} navigation={navigation} />
@@ -420,26 +424,28 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     flexWrap: "nowrap",
-    padding: 12,
+    padding: 8,
+    paddingLeft: 6, 
+    marginTop: -25,
   },
   profile__text: {
     minWidth: 0,
     width: "60%",
-    margin: 2,
-    padding: 0,
+    marginRight: 0,
+    padding: 5,
     color: colours.text,
-  },
-  profile__header: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
+  }, 
+   profile__nameContainer: {
+    flexDirection: 'row', 
+    alignItems: 'flex-start',
+    width: 200, 
   },
   profile__name: {
     fontSize: 22,
     fontFamily: "Poppins-Bold",
     color: colours.text,
-    height: 28,
+    overflowWrap: 'break-word', 
+    maxWidth: '100%',  
   },
   profile__edit: {
     minHeight: 0,
@@ -447,29 +453,37 @@ const styles = StyleSheet.create({
     width: 20,
     margin: 0,
     padding: 0,
-    marginLeft: 7,
+    marginLeft: 3,
+    marginTop: 3,
+  },
+  profile__imgContainer: {
+    marginRight: 10,
+    marginTop: 15,
+    alignItems: "center",
+    width: 143,
   },
   button__container: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    marginBottom: 5,
-    alignItems: "center",
+  flexDirection: "row",
+  alignItems: "center",
+  width: 140,
+  justifyContent: "center",
+  padding: 3,
   },
   button: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "20%",
-    backgroundColor: colours.accent2,
-    padding: 8,
-    borderRadius: 5,
-    marginBottom: 10,
-    marginRight: 10,
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  width: 63, 
+  margin: 2,
+  backgroundColor: colours.accent2,
+  padding: 3,
+  borderRadius: 5,
   },
   button__text: {
     alignItems: "center",
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 13,
   },
   textHide: {
     width: 0,
@@ -486,7 +500,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Poppins-Regular",
     color: colours.lightText,
-    height: 20,
+    height: 22,
   },
   profile__home: {
     fontSize: 12,
@@ -522,13 +536,18 @@ const styles = StyleSheet.create({
   profile__img: {
     aspectRatio: 1,
     minWidth: 0,
-    width: "62.5%",
+    width: "100%",
     overflow: "hidden",
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
     borderColor: colours.accent3,
-    marginBottom: 0,
+  },
+  uploading: {
+    alignItems: "center",
+    color: colours.accent2,
+    fontWeight: "bold",
+    fontSize: 13,
   },
   stats: {
     display: "flex",

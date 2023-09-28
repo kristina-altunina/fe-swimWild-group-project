@@ -53,7 +53,7 @@ export default function HomeScreen({ navigation }) {
   });
 
 
-  const refreshToken = useSelector((state) => state.refresh_token);
+  const refresh_token = useSelector((state) => state.refresh_token);
 
   useEffect(() => {
     console.log(userLocation);
@@ -65,7 +65,7 @@ export default function HomeScreen({ navigation }) {
       setLocations(() => [...data]);
       setLoadingLocations(false);
     });
-  }, [refreshToken]);
+  }, [refresh_token]);
 
   const handlePermissionChange = (isGranted) => {
     if (isGranted) {
@@ -126,7 +126,8 @@ export default function HomeScreen({ navigation }) {
         setPostingLocation(false);
         return navigation.navigate("SingleLocation", { uid: data._id });
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         setPostingLocation(false);
         setTooClose(true);
         setTimeout(() => {
@@ -177,7 +178,7 @@ export default function HomeScreen({ navigation }) {
             <MaterialIcons name="my-location" size={24} color={colours.text} />
           </TouchableOpacity>
         )}
-        {refreshToken && (
+        {refresh_token && (
           <TouchableOpacity
             style={styles.postSwim}
             onPress={showNewLocationMarker}

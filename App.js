@@ -93,7 +93,7 @@ function CustomDrawerContent(props) {
   const refresh_token  = useSelector((state) => state.refresh_token);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Regular": require("./assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });
   const dispatch = useDispatch();
 
@@ -160,7 +160,7 @@ function Root() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Regular": require("./assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });
 
   isCurrentUserAuthenticated((isAuth) => {

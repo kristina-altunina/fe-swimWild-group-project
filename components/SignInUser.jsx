@@ -91,8 +91,8 @@ export default SignInUser = ({ navigation }) => {
                 <Formik
                   validationSchema={signUpValidationSchema}
                   initialValues={{
-                    email: "",
-                    password: "",
+                    email: "example2@test.com",
+                    password: "password",
                   }}
                   onSubmit={async (values, { resetForm }) => {
                     handleSignIn(values, function () {
