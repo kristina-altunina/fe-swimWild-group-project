@@ -30,7 +30,7 @@ export default function ApiDataSeaCard({
   const [siteData, setSiteData] = useState([]);
   const [selectedSite, setSelectedSite] = useState(0);
   const [popupArr, setPopupArr] = useState([]);
-  const daysRef = ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"];
+  const daysRef = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../../../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-SemiBold": require("../../../assets/fonts/Poppins-SemiBold.ttf"),
