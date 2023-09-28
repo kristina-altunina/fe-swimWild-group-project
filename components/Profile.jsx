@@ -4,16 +4,18 @@ import {
   TextInput,
   View,
   TouchableOpacity,
+  TouchableHighlight,
   Image,
   ActivityIndicator,
   ScrollView,
   LayoutAnimation,
 } from "react-native";
 
+import { pickImage } from "../scripts/image-picker";
 import { colours } from "../styles/base";
 import NavBar from "./NavBar";
 import { tokenRefresh } from "../firebaseConfig";
-import { BACKEND_API_URL, DEFAULT_IMAGE_URL } from "@env";
+import { BACKEND_API_URL, DEFAULT_IMAGE_URL, PENCIL_ICON } from "@env";
 import { useState, useEffect } from "react";
 import { formatDate, simpleAlert } from "../extentions";
 import SwimFilter from "./Profile/SwimFilter";
@@ -29,8 +31,8 @@ import {
   totalMinutes,
 } from "../scripts/swims";
 import { SwimRecord } from "./Profile/SwimRecord";
+import * as ImagePicker from "expo-image-picker";
 import { useFonts } from "expo-font";
-import { useAssets } from "expo-asset";
 import { login, refreshToken } from "../redux/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
@@ -39,6 +41,14 @@ export default Profile = ({ navigation, route }) => {
   const [profileData, setProfileData] = useState({});
   const [swims, setSwims] = useState([]);
   const [filtSwims, setFiltSwims] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [bio, setBio] = useState("");
+  const [myLocation, setMyLocation] = useState("");
+  const [profileImg, setProfileImg] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+
   const [expand, setExpand] = useState(false);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -51,13 +61,20 @@ export default Profile = ({ navigation, route }) => {
 
   const dispatch = useDispatch();
 
-  const token = route.params.refresh_token;
+  const token =
+    route.params.refresh_token || useSelector((state) => state.refresh_token);
+  console.log("REFRESH TOKEN", token);
   const guid = route.params.guid;
 
+  const [mediaPermission, requestMediaPermission] =
+    ImagePicker.useMediaLibraryPermissions();
+
   async function getProfile() {
-    setIsLoading(true);
     const tokenObj = await tokenRefresh(token);
+
     const url = BACKEND_API_URL + "/users/profile";
+    dispatch(refreshToken({ refresh_token: tokenObj }));
+    setIsLoading(true);
     fetch(url, {
       method: "GET",
       headers: {
@@ -75,11 +92,64 @@ export default Profile = ({ navigation, route }) => {
         setIsLoading(false);
       })
       .catch((error) => {
-        setIsLoading(false);
+        console.log("PROFILE ERROR", error);
         simpleAlert("Profile", "Failed to load profile");
       });
   }
 
+  function imageUploadFromGallery() {
+    if (mediaPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
+      return requestMediaPermission();
+    }
+    pickImage((progress) => {
+      setUploadProgress(() => progress);
+      progress >= 100
+        ? setIsUploading(() => false)
+        : setIsUploading(() => true);
+    }).then((url) => {
+      setProfileImg(url);
+    });
+  }
+
+  function handleCancel() {
+    setEditMode(false);
+    setBio(profileData.bio);
+    setProfileImg(profileData.profileImg);
+    setMyLocation(profileData.home);
+  }
+
+  async function saveData() {
+    const tokenObj = await tokenRefresh(token);
+    const data = {
+      nickname: profileData.nickname,
+      profileImg: profileImg,
+      home: myLocation,
+      bio: bio,
+    };
+    console.log(data);
+
+    setSaving(true);
+    const url = BACKEND_API_URL + "/users";
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenObj.access_token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    setSaving(false);
+    if (!response.ok) {
+      const body = await response.json();
+      console.log(body);
+      simpleAlert("Profile", "Failed to update profile");
+    } else {
+      setEditMode(false);
+      dispatch(login({ profileUrl: profileImg, name: profileData.name }));
+      simpleAlert("Profile", "Profile updated");
+      await response.json();
+    }
+  }
   useEffect(() => {
     getProfile();
   }, [guid]);
@@ -88,6 +158,9 @@ export default Profile = ({ navigation, route }) => {
     dispatch(
       login({ profileUrl: profileData.profileImg, name: profileData.name })
     );
+    setMyLocation(profileData.home);
+    setBio(profileData.bio);
+    setProfileImg(profileData.profileImg);
   }, [profileData]);
 
   if (isLoading || !fontsLoaded) {
@@ -106,30 +179,105 @@ export default Profile = ({ navigation, route }) => {
         <View style={styles.profile__text}>
           <View style={styles.profile__header}>
             <Text style={styles.profile__name}>{profileData.name}</Text>
-            <Image
-              source={assets[0]}
-              resizeMode={"cover"}
-              style={styles.profile__edit}
-            ></Image>
+            <TouchableOpacity
+              onPress={() => setEditMode(true)}
+              style={[!editMode ? styles.textShow : styles.textHide]}
+            >
+              <Image
+                source={{ uri: PENCIL_ICON }}
+                resizeMode={"cover"}
+                style={styles.profile__edit}
+              ></Image>
+            </TouchableOpacity>
           </View>
           <Text style={styles.profile__nickname}>{profileData.nickname}</Text>
-          <Text style={styles.profile__home}>{profileData.home || ""}</Text>
-          <Text style={styles.profile__bio}>{profileData.bio || ""}</Text>
+          <Text style={styles.profile__home}>{profileData.dob}</Text>
+          <TextInput
+            onChangeText={(value) => setMyLocation(value)}
+            editable={editMode}
+            placeholder={editMode ? "Your location" : ""}
+            style={[
+              styles.profile__myLocation,
+              editMode
+                ? { borderWidth: 2, borderColor: colours.accent4 }
+                : { borderWidth: 0 },
+            ]}
+          >
+            {profileData.home}
+          </TextInput>
         </View>
-        {profileData.profileImg ? (
-          <Image
-            style={styles.profile__img}
-            resizeMode={"cover"}
-            source={{
-              uri: profileData.profileImg,
-            }}
-          />
+
+        {profileImg ? (
+          <TouchableHighlight
+            onPress={imageUploadFromGallery}
+            disabled={!editMode}
+          >
+            <Image
+              style={[
+                styles.profile__img,
+                editMode
+                  ? { borderWidth: 3, borderColor: colours.accent4 }
+                  : {},
+              ]}
+              resizeMode={"cover"}
+              source={{
+                uri: profileImg,
+              }}
+            />
+          </TouchableHighlight>
         ) : (
-          <Image
-            style={styles.profileImg}
-            source={{ uri: DEFAULT_IMAGE_URL }}
-          />
+          <TouchableHighlight onPress={() => simpleAlert()}>
+            <Image
+              style={[
+                styles.profileImg,
+                editMode
+                  ? { borderWidth: 3, borderColor: colours.accent4 }
+                  : {},
+              ]}
+              source={{ uri: DEFAULT_IMAGE_URL }}
+            />
+          </TouchableHighlight>
         )}
+        <TouchableOpacity
+          style={styles.upload__button}
+          onPress={imageUploadFromGallery}
+        >
+          <Text style={styles.button__text}>
+            {uploadProgress < 100 ? "Uploading..." : "Edit Photo"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <TextInput
+          placeholder="About me"
+          editable={editMode}
+          value={bio}
+          selectTextOnFocus={editMode}
+          multiline={true}
+          numberOfLines={10}
+          onChangeText={(value) => setBio(value)}
+          style={[
+            styles.profile__bio,
+            editMode
+              ? { borderWidth: 2, borderColor: colours.accent4 }
+              : { borderWidth: 2 },
+          ]}
+        />
+      </View>
+      <View
+        style={[
+          styles.button__container,
+          editMode ? styles.textShow : styles.textHide,
+        ]}
+      >
+        <TouchableOpacity onPress={saveData} style={[styles.button]}>
+          <Text style={styles.button__text}>
+            {saving ? "Saving..." : "Save"}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleCancel} style={[styles.button]}>
+          <Text style={styles.button__text}>Cancel</Text>
+        </TouchableOpacity>
       </View>
       <TouchableWithoutFeedback
         onPress={() => {
@@ -277,6 +425,39 @@ const styles = StyleSheet.create({
     padding: 0,
     marginLeft: 7,
   },
+  button__container: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: 5,
+    alignItems: "center",
+  },
+  button: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "20%",
+    backgroundColor: colours.accent2,
+    padding: 8,
+    borderRadius: 5,
+    marginBottom: 10,
+    marginRight: 10,
+  },
+  button__text: {
+    alignItems: "center",
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  textHide: {
+    width: 0,
+    height: 0,
+    overflow: "hidden",
+    opacity: 0,
+  },
+  textShow: {
+    overflow: "hidden",
+    fontSize: 10,
+    marginBottom: 10,
+  },
   profile__nickname: {
     fontSize: 16,
     fontFamily: "Poppins-Regular",
@@ -287,19 +468,40 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Light",
     color: colours.lightText,
   },
+  profile__myLocation: {
+    borderColor: colours.accent3,
+    borderWidth: 1,
+    borderRadius: 3,
+    marginRight: 60,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 5,
+  },
   profile__bio: {
     fontSize: 16,
-    marginTop: 8,
+    marginBottom: 12,
+    marginRight: 10,
+    marginLeft: 10,
+    paddingBottom: 6,
+    paddingLeft: 10,
     fontFamily: "Poppins-Regular_Italic",
     color: colours.text,
-    marginRight: 6,
+    borderColor: colours.accent3,
+    borderWidth: 1,
+    borderRadius: 5,
+    height: 70,
+    textAlignVertical: "top",
   },
   profile__img: {
+    aspectRatio: 1,
     minWidth: 0,
-    width: "38%",
-    height: "auto",
+    width: "60%",
     overflow: "hidden",
     borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: colours.accent3,
+    borderWidth: 2,
   },
   stats: {
     display: "flex",

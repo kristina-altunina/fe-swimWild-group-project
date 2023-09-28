@@ -51,8 +51,8 @@ export default function PostSwims({
     ImagePicker.useMediaLibraryPermissions();
   const [cameraPermission, requestCameraPermission] =
     ImagePicker.useCameraPermissions();
+  const { access_token } = useSelector((state) => state.refresh_token);
 
-  const refreshToken = useSelector((state) => state.refresh_token);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
@@ -146,12 +146,22 @@ export default function PostSwims({
     };
 
     if (!showTempWarning) {
-      tokenRefresh(refreshToken)
-        .then(({ access_token }) => {
-          return postSwimSpot(access_token, body);
-        })
+      postSwimSpot(access_token, body)
         .then(() => {
           navigation.navigate("SingleLocation", { uid: location.id });
+        })
+        .catch((err) => {
+          console.log(err, "first catch error in postSwims");
+          tokenRefresh(access_token)
+            .then(({ access_token }) => {
+              return postSwimSpot(access_token, body);
+            })
+            .then(() => {
+              navigation.navigate("SingleLocation", { uid: location.id });
+            })
+            .catch((err) => {
+              console.log(err, "second catch error in postSwims");
+            });
         });
     }
   }
