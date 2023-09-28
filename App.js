@@ -5,17 +5,9 @@ import SignInUser from "./components/SignInUser";
 import Profile from "./components/Profile";
 import ResetPassword from "./components/ResetPassword";
 import HomeScreen from "./components/HomeScreen";
-import {
-  useFonts,
-  Poppins_600SemiBold,
-  Poppins_900Black,
-  Poppins_500Medium,
-  Poppins_300Light_Italic,
-  Poppins_200ExtraLight,
-} from "@expo-google-fonts/poppins";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { StyleSheet, Image, Text, Alert } from "react-native";
+import { Image, Text, Alert, StyleSheet } from "react-native";
 import { useState } from "react";
 import { simpleAlert } from "./extentions";
 import {
@@ -37,6 +29,8 @@ import { auth, tokenRefresh } from "./firebaseConfig";
 import { Provider, useSelector, useDispatch } from "react-redux";
 import { logout } from "./redux/reducers";
 import store from "./redux/store";
+import { useFonts } from "expo-font";
+import { colours } from "./styles/base";
 
 const Drawer = createDrawerNavigator();
 
@@ -97,8 +91,14 @@ function CustomDrawerContent(props) {
   const  profileUrl  = useSelector((state) => state.profileUrl);
   const  name  = useSelector((state) => state.name);
   const refresh_token  = useSelector((state) => state.refresh_token);
-
+  const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Regular": require("./assets/fonts/Poppins-Bold.ttf"),
+  });
   const dispatch = useDispatch();
+
+  if (!fontsLoaded) return <></>;
+
   return (
     <DrawerContentScrollView {...props}>
       {profileUrl ? (
@@ -113,10 +113,20 @@ function CustomDrawerContent(props) {
           }}
         />
       ) : null}
-      <Text style={{ marginLeft: 10 }}>{name}</Text>
+      <Text
+        style={{
+          margin: 10,
+          fontSize: 20,
+          fontFamily: "Poppins-Bold",
+          color: colours.text,
+        }}
+      >
+        {name}
+      </Text>
       <DrawerItemList {...props} />
       {isAuthenticated ? (
         <DrawerItem
+          labelStyle={styles.label}
           label="Sign Out"
           onPress={() => {
             handleSignOut(props.navigation, dispatch);
@@ -125,6 +135,7 @@ function CustomDrawerContent(props) {
       ) : null}
       {!isAuthenticated ? (
         <DrawerItem
+          labelStyle={styles.label}
           label="Sign In"
           onPress={() => {
             dispatch(logout());
@@ -134,6 +145,7 @@ function CustomDrawerContent(props) {
       ) : null}
       {isAuthenticated ? (
         <DrawerItem
+          labelStyle={styles.label}
           label="Delete Account"
           onPress={() => {
             createDeleteAccountAlert(refresh_token, dispatch, props);
@@ -166,7 +178,7 @@ function Root() {
       <Drawer.Screen
         name="Home"
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, drawerLabelStyle: styles.label }}
       />
       <Drawer.Screen
         name="Register"
@@ -175,7 +187,10 @@ function Root() {
           headerShown: false,
           gestureEnabled: true,
           drawerLabel: "Sign Up",
-          drawerItemStyle: { display: isAuthenticated ? "none" : "block" },
+          drawerLabelStyle: styles.label,
+          drawerItemStyle: {
+            display: isAuthenticated ? "none" : "block",
+          },
         }}
       />
       <Drawer.Screen
@@ -204,6 +219,7 @@ function Root() {
         options={{
           headerShown: false,
           gestureEnabled: true,
+          drawerLabelStyle: styles.label,
           drawerItemStyle: { display: !isAuthenticated ? "none" : "block" },
         }}
       />
@@ -214,7 +230,7 @@ function Root() {
           headerShown: false,
           gestureEnabled: true,
           drawerItemStyle: { display: "none" },
-          unmountOnBlur: true
+          unmountOnBlur: true,
         }}
       />
       <Drawer.Screen
@@ -233,7 +249,7 @@ function Root() {
           headerShown: false,
           gestureEnabled: true,
           drawerItemStyle: { display: "none" },
-          unmountOnBlur: true
+          unmountOnBlur: true,
         }}
       />
     </Drawer.Navigator>
@@ -241,18 +257,6 @@ function Root() {
 }
 
 export default function App() {
-  let [fontsLoaded] = useFonts({
-    Poppins_600SemiBold,
-    Poppins_900Black,
-    Poppins_500Medium,
-    Poppins_300Light_Italic,
-    Poppins_200ExtraLight,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -261,3 +265,7 @@ export default function App() {
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  label: { fontFamily: "Poppins-SemiBold", fontSize: 16 },
+});

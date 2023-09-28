@@ -5,6 +5,7 @@ import { colours } from "../../styles/base";
 
 export function Stat({ icon, val, big }) {
   const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-SemiBold": require("../../assets/fonts/Poppins-SemiBold.ttf"),
     "Poppins-Regular": require("../../assets/fonts/Poppins-Regular.ttf"),
   });

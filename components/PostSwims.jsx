@@ -23,7 +23,6 @@ import * as ImagePicker from "expo-image-picker";
 import { useSelector } from "react-redux";
 import { tokenRefresh } from "../firebaseConfig";
 
-
 import { useFonts } from "expo-font";
 import { Stat } from "./reuse/Stat";
 
@@ -33,7 +32,6 @@ export default function PostSwims({
     params: { location },
   },
 }) {
-
   const [notes, onChangeNotesInput] = useState("");
   const [starRating, setStartRating] = useState(0);
   const [recordTemp, setRecordTemp] = useState(null);
@@ -53,16 +51,11 @@ export default function PostSwims({
     ImagePicker.useMediaLibraryPermissions();
   const [cameraPermission, requestCameraPermission] =
     ImagePicker.useCameraPermissions();
-  const {access_token} = useSelector((state) => state.refresh_token);
+  const { access_token } = useSelector((state) => state.refresh_token);
 
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Regular_Italic": require("../assets/fonts/Poppins-Italic.ttf"),
-    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Bold_Italic": require("../assets/fonts/Poppins-BoldItalic.ttf"),
-    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
   });
 
   const feelTempRef = ["freezing", "cold", "average", "warm", "hot"].map(
@@ -135,8 +128,6 @@ export default function PostSwims({
     }
   }
 
-  
-
   function handleSubmit() {
     const body = {
       date: new Date(Date.now()).toISOString(),
@@ -155,24 +146,23 @@ export default function PostSwims({
     };
 
     if (!showTempWarning) {
-
       postSwimSpot(access_token, body)
-      .then(() => {
-        navigation.navigate('SingleLocation',{uid: location.id})
-      })
-      .catch(err => {
-        console.log(err, 'first catch error in postSwims')
-        tokenRefresh(access_token)
-        .then(({access_token}) => {
-          return postSwimSpot(access_token, body)
-        })
         .then(() => {
-          navigation.navigate('SingleLocation',{uid: location.id})
+          navigation.navigate("SingleLocation", { uid: location.id });
         })
-        .catch(err => {
-          console.log(err, 'second catch error in postSwims')
-        })
-      })
+        .catch((err) => {
+          console.log(err, "first catch error in postSwims");
+          tokenRefresh(access_token)
+            .then(({ access_token }) => {
+              return postSwimSpot(access_token, body);
+            })
+            .then(() => {
+              navigation.navigate("SingleLocation", { uid: location.id });
+            })
+            .catch((err) => {
+              console.log(err, "second catch error in postSwims");
+            });
+        });
     }
   }
 
@@ -197,11 +187,13 @@ export default function PostSwims({
             style={{
               width: "100%",
               padding: 8,
+              backgroundColor: colours.accent5,
+              marginBottom: 4,
             }}
           >
             <Text
               style={{
-                color: colours.text,
+                color: colours.lightText,
                 textAlign: "center",
                 fontSize: 24,
                 fontFamily: "Poppins-Bold",
@@ -219,6 +211,9 @@ export default function PostSwims({
                 backgroundColor: "white",
                 margin: 8,
                 marginTop: 0,
+                marginBottom: 0,
+                borderWidth: 2,
+                borderColor: colours.accent2Weak,
               }}
             >
               <TextInput
@@ -287,6 +282,8 @@ export default function PostSwims({
                     width: "20%",
                     height: 35,
                     borderRadius: 10,
+                    borderColor: colours.accent2Weak,
+                    borderWidth: 2,
                     paddingLeft: 8,
                   }}
                 />
@@ -304,6 +301,8 @@ export default function PostSwims({
                     width: "20%",
                     height: 35,
                     borderRadius: 10,
+                    borderColor: colours.accent2Weak,
+                    borderWidth: 2,
                     paddingLeft: 8,
                   }}
                 />
@@ -321,6 +320,8 @@ export default function PostSwims({
                     width: "20%",
                     height: 35,
                     borderRadius: 10,
+                    borderColor: colours.accent2Weak,
+                    borderWidth: 2,
                     paddingLeft: 8,
                   }}
                 />
@@ -358,60 +359,72 @@ export default function PostSwims({
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={"Water temperature feels like..."}
+                  placeholder={"Water temperature feels..."}
                   onChange={(item) => {
                     setFeelTemp(item.label);
                   }}
                 />
               </View>
 
-              <View style={{ width: "50%" }}>
-                <Text style={styles.label}>Size:</Text>
+              <View style={styles.statInput}>
+                <Stat icon="sizeKey" val="" />
                 <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  itemTextStyle={styles.dropdownPlaceholder}
                   data={sizeRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={size}
+                  placeholder={"Size of the swimming area is..."}
                   onChange={(item) => {
                     setSize(item.label);
                   }}
                 />
               </View>
-              <View style={{ width: "50%" }}>
-                <Text style={styles.label}>Shore:</Text>
+              <View style={styles.statInput}>
+                <Stat icon="shore" val="" />
                 <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  itemTextStyle={styles.dropdownPlaceholder}
                   data={shoreRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={shore}
+                  placeholder={"Shore and surroundings were..."}
                   onChange={(item) => {
                     setShore(item.label);
                   }}
                 />
               </View>
-              <View style={{ width: "50%" }}>
-                <Text style={styles.label}>Bank Angle:</Text>
+              <View style={styles.statInput}>
+                <Stat icon="bankAngle" val="" />
                 <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  itemTextStyle={styles.dropdownPlaceholder}
                   data={bankAngleRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={bankAngle}
+                  placeholder={"The descent into the water was..."}
                   onChange={(item) => {
                     setBankAngle(item.label);
                   }}
                 />
               </View>
-              <View style={{ width: "50%" }}>
-                <Text style={styles.label}>Clarity:</Text>
+              <View style={styles.statInput}>
+                <Stat icon="clarity" val="" />
                 <Dropdown
+                  style={styles.dropdownContainer}
+                  placeholderStyle={styles.dropdownPlaceholder}
+                  itemTextStyle={styles.dropdownPlaceholder}
                   data={clarityRef}
                   labelField="label"
                   valueField="value"
                   iconColor="black"
-                  placeholder={clarity}
+                  placeholder={"Water quality was..."}
                   onChange={(item) => {
                     setClarity(item.label);
                   }}
@@ -437,7 +450,7 @@ export default function PostSwims({
                   })}
                 </View>
               ) : (
-                <Text style={{ textAlign: "center" }}>No Pictures</Text>
+                <Text style={styles.noPictures}>No Pictures</Text>
               )}
 
               <View
@@ -451,13 +464,13 @@ export default function PostSwims({
                 <TouchableOpacity
                   style={{
                     flex: 1,
-                    marginRight: 15,
+                    margin: 12,
+                    marginTop: 0,
                     width: "40%",
                     alignItems: "center",
                     backgroundColor: colours.accent4,
                     padding: 10,
-                    borderRadius: 5,
-                    marginBottom: 5,
+                    borderRadius: 12,
                   }}
                   onPress={imageUploadFromGallery}
                 >
@@ -465,7 +478,7 @@ export default function PostSwims({
                     style={{
                       alignItems: "center",
                       color: "#fff",
-                      fontWeight: "bold",
+                      fontFamily: "Poppins-Bold",
                     }}
                   >
                     Select Photo
@@ -475,12 +488,13 @@ export default function PostSwims({
                 <TouchableOpacity
                   style={{
                     flex: 1,
+                    margin: 12,
+                    marginTop: 0,
                     width: "40%",
                     alignItems: "center",
                     backgroundColor: colours.accent4,
                     padding: 10,
-                    borderRadius: 5,
-                    marginBottom: 5,
+                    borderRadius: 12,
                   }}
                   onPress={imageUploadFromCamera}
                 >
@@ -488,7 +502,7 @@ export default function PostSwims({
                     style={{
                       alignItems: "center",
                       color: "#fff",
-                      fontWeight: "bold",
+                      fontFamily: "Poppins-Bold",
                     }}
                   >
                     Take a Photo
@@ -568,6 +582,12 @@ const styles = StyleSheet.create({
   dropdownPlaceholder: {
     fontFamily: "Poppins-Regular",
     fontSize: 14,
+  },
+  noPictures: {
+    textAlign: "center",
+    fontFamily: "Poppins-Regular",
+    color: colours.lightText,
+    marginTop: 8,
   },
   scroll: {
     padding: 50,

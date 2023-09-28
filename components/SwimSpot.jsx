@@ -17,13 +17,8 @@ export default function SwimSpot({
 }) {
   const [curImagePage, setCurImagePage] = useState(0);
   const [fontsLoaded] = useFonts({
-    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
+    "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
     "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Regular_Italic": require("../assets/fonts/Poppins-Italic.ttf"),
-    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Bold_Italic": require("../assets/fonts/Poppins-BoldItalic.ttf"),
-    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
   });
 
   function StarRatingDisplay({ num }) {
@@ -40,7 +35,7 @@ export default function SwimSpot({
           disabled={true}
           maxStars={5}
           starSize={18}
-          rating={swim.stars}
+          rating={num}
           fullStarColor="#FFC033"
           emptyStarColor="#DBDBDB"
         />

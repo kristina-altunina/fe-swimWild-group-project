@@ -35,12 +35,10 @@ export const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
-  nickname: {},
   notes: {
     padding: 8,
     fontFamily: "Poppins-Regular",
   },
-  stars: {},
   showContent: {
     color: colours.blueAccent,
     fontFamily: "Poppins-SemiBold",
@@ -76,6 +74,36 @@ export const styles = StyleSheet.create({
     fontFamily: "Poppins-SemiBold",
     fontSize: 14,
     color: colours.accent2,
+  },
+  swimRecord: {
+    margin: 12,
+    marginTop: 6,
+    marginBottom: 6,
+    backgroundColor: colours.accent2Weak,
+    padding: 8,
+    paddingTop: 4,
+    borderRadius: 8,
+  },
+  swimRecord__text: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    justifyContent: "space-between",
+    alignItems: "top",
+    width: "100%",
+  },
+  swimRecord__name: {
+    fontSize: 16,
+    fontFamily: "Poppins-SemiBold",
+    color: colours.text,
+  },
+  swimRecord__date: {
+    fontSize: 12,
+    fontFamily: "Poppins-Light",
+    color: colours.text,
+  },
+  swimRecord__locationLink: {
+    width: "65%",
   },
 });
 

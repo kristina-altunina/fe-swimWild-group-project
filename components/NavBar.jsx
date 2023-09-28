@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import { colours } from "../styles/base";
 import { Entypo } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
@@ -19,50 +19,52 @@ export default NavBar = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.header}>
-      <View style={styles.header__titleContainer}>
-        <Text
-          style={styles.header__title}
-          onPress={() => {
-            navigation.navigate("Home");
-          }}
-        >
-          Swim{" "}
+    <SafeAreaView>
+      <View style={styles.header}>
+        <View style={styles.header__titleContainer}>
           <Text
-            style={styles.header__titleAccent}
+            style={styles.header__title}
             onPress={() => {
               navigation.navigate("Home");
             }}
           >
-            Wild
-          </Text>
-        </Text>
-      </View>
-      <View>
-        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-          {profileUrl ? (
-            <Image
-              source={{ uri: profileUrl }}
-              style={{
-                width: 45,
-                height: 45,
-                borderRadius: 40,
-                marginRight: 10,
-                borderColor: colours.accent4,
-                borderWidth: 1,
+            Swim{" "}
+            <Text
+              style={styles.header__titleAccent}
+              onPress={() => {
+                navigation.navigate("Home");
               }}
-            />
-          ) : (
-            <Entypo
-              style={{ marginRight: 10 }}
-              name={"dots-three-vertical"}
-              size={25}
-              color={colours.accent4}
-            />
-          )}
-        </TouchableOpacity>
+            >
+              Wild
+            </Text>
+          </Text>
+        </View>
+        <View>
+          <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+            {profileUrl ? (
+              <Image
+                source={{ uri: profileUrl }}
+                style={{
+                  width: 45,
+                  height: 45,
+                  borderRadius: 40,
+                  marginRight: 10,
+                  borderColor: colours.accent4,
+                  borderWidth: 1,
+                }}
+              />
+            ) : (
+              <Entypo
+                style={{ marginRight: 10 }}
+                name={"dots-three-vertical"}
+                size={25}
+                color={colours.accent4}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -81,7 +83,6 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 40,
   },
   header__titleContainer: {
     margin: 10,

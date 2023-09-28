@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
 import { colours } from "../../styles/base";
 import { useFonts } from "expo-font";
 import StarRating from "react-native-star-rating";
@@ -15,12 +14,7 @@ export function LocationPreview({
 }) {
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
     "Poppins-Regular": require("../../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Regular_Italic": require("../../assets/fonts/Poppins-Italic.ttf"),
-    "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-Bold_Italic": require("../../assets/fonts/Poppins-BoldItalic.ttf"),
-    "Poppins-Light": require("../../assets/fonts/Poppins-Light.ttf"),
   });
   return (
     <TouchableOpacity
