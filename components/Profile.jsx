@@ -36,6 +36,7 @@ import { useFonts } from "expo-font";
 import { login, refreshToken } from "../redux/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useAssets } from "expo-asset";
 export default Profile = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [profileData, setProfileData] = useState({});
@@ -62,19 +63,18 @@ export default Profile = ({ navigation, route }) => {
   const dispatch = useDispatch();
 
   const token =
-    route.params.refresh_token || useSelector((state) => state.refresh_token);
+    route?.params?.refresh_token || useSelector((state) => state.refresh_token);
   console.log("REFRESH TOKEN", token);
-  const guid = route.params.guid;
+  // const guid = route?.params?.guid;
 
   const [mediaPermission, requestMediaPermission] =
     ImagePicker.useMediaLibraryPermissions();
 
   async function getProfile() {
+    setIsLoading(true);
     const tokenObj = await tokenRefresh(token);
-
     const url = BACKEND_API_URL + "/users/profile";
     dispatch(refreshToken({ refresh_token: tokenObj }));
-    setIsLoading(true);
     fetch(url, {
       method: "GET",
       headers: {
@@ -84,6 +84,7 @@ export default Profile = ({ navigation, route }) => {
     })
       .then((response) => response.json())
       .then((json) => {
+        console.log("the json", json);
         json.dob = formatDate(json.dob.split("T")[0], "-");
         setProfileData(json);
         const swimData = addMonthToSwims(json.swims);
@@ -150,9 +151,14 @@ export default Profile = ({ navigation, route }) => {
       await response.json();
     }
   }
-  useEffect(() => {
-    getProfile();
-  }, [guid]);
+  useEffect(
+    () => {
+      getProfile();
+    },
+    [
+      //  guid
+    ]
+  );
 
   useEffect(() => {
     dispatch(
@@ -191,7 +197,7 @@ export default Profile = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
           <Text style={styles.profile__nickname}>{profileData.nickname}</Text>
-          <Text style={styles.profile__home}>{profileData.dob}</Text>
+          {/* <Text style={styles.profile__home}>{profileData.dob}</Text> */}
           <TextInput
             onChangeText={(value) => setMyLocation(value)}
             editable={editMode}
@@ -199,12 +205,41 @@ export default Profile = ({ navigation, route }) => {
             style={[
               styles.profile__myLocation,
               editMode
-                ? { borderWidth: 2, borderColor: colours.accent4 }
+                ? {
+                    borderWidth: 2,
+                    borderColor: colours.accent4,
+                    paddingLeft: 8,
+                    marginTop: 8,
+                  }
                 : { borderWidth: 0 },
             ]}
           >
             {profileData.home}
           </TextInput>
+          <View>
+            <TextInput
+              placeholder="About me"
+              editable={editMode}
+              value={bio}
+              selectTextOnFocus={editMode}
+              multiline={true}
+              numberOfLines={10}
+              onChangeText={(value) => setBio(value)}
+              style={[
+                styles.profile__bio,
+                editMode
+                  ? {
+                      borderWidth: 2,
+                      borderColor: colours.accent4,
+                      padding: 8,
+                      paddingLeft: 8,
+                      fontSize: 14,
+                      marginTop: 3,
+                    }
+                  : { borderWidth: 0 },
+              ]}
+            />
+          </View>
         </View>
 
         {profileImg ? (
@@ -246,23 +281,6 @@ export default Profile = ({ navigation, route }) => {
             {uploadProgress < 100 ? "Uploading..." : "Edit Photo"}
           </Text>
         </TouchableOpacity>
-      </View>
-      <View>
-        <TextInput
-          placeholder="About me"
-          editable={editMode}
-          value={bio}
-          selectTextOnFocus={editMode}
-          multiline={true}
-          numberOfLines={10}
-          onChangeText={(value) => setBio(value)}
-          style={[
-            styles.profile__bio,
-            editMode
-              ? { borderWidth: 2, borderColor: colours.accent4 }
-              : { borderWidth: 2 },
-          ]}
-        />
       </View>
       <View
         style={[
@@ -462,46 +480,49 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Poppins-Regular",
     color: colours.lightText,
+    height: 20,
   },
   profile__home: {
     fontSize: 12,
-    fontFamily: "Poppins-Light",
+    fontFamily: "Poppins-Regular",
     color: colours.lightText,
   },
   profile__myLocation: {
-    borderColor: colours.accent3,
+    borderColor: colours.lightText,
     borderWidth: 1,
     borderRadius: 3,
     marginRight: 60,
-    paddingTop: 5,
+    paddingTop: 0,
+    marginBottom: 0,
     paddingBottom: 5,
-    paddingLeft: 5,
+    paddingLeft: 0,
+    fontFamily: "Poppins-Light",
   },
   profile__bio: {
     fontSize: 16,
-    marginBottom: 12,
     marginRight: 10,
-    marginLeft: 10,
     paddingBottom: 6,
-    paddingLeft: 10,
+    paddingBottom: 0,
+    paddingLeft: 0,
     fontFamily: "Poppins-Regular_Italic",
     color: colours.text,
     borderColor: colours.accent3,
     borderWidth: 1,
     borderRadius: 5,
-    height: 70,
+    marginTop: 0,
+    height: 100,
     textAlignVertical: "top",
   },
   profile__img: {
     aspectRatio: 1,
     minWidth: 0,
-    width: "60%",
+    width: "62.5%",
     overflow: "hidden",
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
     borderColor: colours.accent3,
-    borderWidth: 2,
+    marginBottom: 0,
   },
   stats: {
     display: "flex",
@@ -511,6 +532,7 @@ const styles = StyleSheet.create({
     backgroundColor: colours.accent3Weak,
     padding: 12,
     rowGap: 12,
+    marginTop: 0,
   },
   stats__left: {
     width: "48%",

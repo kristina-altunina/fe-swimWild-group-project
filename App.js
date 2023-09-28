@@ -93,6 +93,9 @@ function CustomDrawerContent(props) {
     "Poppins-Regular": require("./assets/fonts/Poppins-Bold.ttf"),
   });
   const dispatch = useDispatch();
+
+  if (!fontsLoaded) return <></>;
+
   return (
     <DrawerContentScrollView {...props}>
       {profileUrl ? (
