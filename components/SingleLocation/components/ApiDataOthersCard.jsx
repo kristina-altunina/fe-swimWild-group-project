@@ -15,7 +15,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useFonts } from "expo-font";
 import { colours } from "../../../styles/base";
 
-export default function ApiDataSeaCard({ apiData, uid }) {
+export default function ApiDataSeaCard({ apiData, uid, setReload }) {
   const [showForecast, setShowForecast] = useState(false);
   const [selectedForecastDate, setSelectedForecastDate] = useState("Today");
   const [dataToDisplay, setDataToDisplay] = useState({});
@@ -81,6 +81,7 @@ export default function ApiDataSeaCard({ apiData, uid }) {
   }, []);
 
   useEffect(() => {
+    setReload(prev => !prev)
     setIsLoading((isLoading) => !isLoading);
     getLocationByID(uid, dayBar.indexOf(selectedForecastDate), selectedSite)
       .then(({ apiData }) => {
