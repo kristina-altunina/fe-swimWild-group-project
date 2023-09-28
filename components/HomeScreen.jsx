@@ -51,7 +51,8 @@ export default function HomeScreen({ navigation }) {
     "Poppins-Bold_Italic": require("../assets/fonts/Poppins-BoldItalic.ttf"),
     "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
   });
-  const refreshToken = useSelector((state) => state.refresh_token);
+  const refresh_token = useSelector((state) => state.refresh_token);
+  // const { access_token } = useSelector((state) => state.refresh_token);
 
   useEffect(() => {
     console.log(userLocation);
@@ -63,7 +64,7 @@ export default function HomeScreen({ navigation }) {
       setLocations(() => [...data]);
       setLoadingLocations(false);
     });
-  }, [refreshToken]);
+  }, [refresh_token]);
 
   const handlePermissionChange = (isGranted) => {
     if (isGranted) {
@@ -117,13 +118,18 @@ export default function HomeScreen({ navigation }) {
       type,
       coords: [newLocation.latitude, newLocation.longitude],
     };
-    const tokenObj = await tokenRefresh(refreshToken);
-    postSwimLocation(tokenObj.access_token, body)
+    console.log(refresh_token);
+    // const tokenObj = await tokenRefresh(refresh_token);
+    // console.log(tokenObj);
+    const tempToken =
+      "eyJhbGciOiJSUzI1NiIsImtpZCI6ImFkNWM1ZTlmNTdjOWI2NDYzYzg1ODQ1YTA4OTlhOWQ0MTI5MmM4YzMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc3dpbXdpbGQtYzJjYTciLCJhdWQiOiJzd2ltd2lsZC1jMmNhNyIsImF1dGhfdGltZSI6MTY5NTkwMjY3NSwidXNlcl9pZCI6IlVIYUtNUXg0TUxickVMbnk3NFVZTXlVQmNPbTIiLCJzdWIiOiJVSGFLTVF4NE1MYnJFTG55NzRVWU15VUJjT20yIiwiaWF0IjoxNjk1OTAyNjc1LCJleHAiOjE2OTU5MDYyNzUsImVtYWlsIjoidGVzdEBvdXRsb29rLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ0ZXN0QG91dGxvb2suY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.MSMw8rQaoGvqQpsdx8TS4M_yB0zZJ06ptcv49hSXIjnpUly0w8VV08XbxknKr0J3T-v_Ifgn_ZOkywTbdB7MXaW2IgMWsMlM4iFBAmYrwqrrMj9tIy-J-KY8ANlDb5oeppvANaOtvcOXQL5OUHiLOO6S27EgHNUjc0yJ2GSBlPCn-qALGdsvm4qfiSvWMBWs0y_G-XiZSLzRyg6wRGtTyRcW07PKGSjfSdlJyxVqRAvW0UV8JSWkeCGOuMkegEKt34JF4j_PG7UpW5TilAQ8IIo8Xycq0zP8jFYMM1GeYKWlyU8opKlppKHiL41HPKU70lnVAPQTL2lSE7nvCFCsPA";
+    postSwimLocation(tempToken, body)
       .then((data) => {
         setPostingLocation(false);
         return navigation.navigate("SingleLocation", { uid: data._id });
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         setPostingLocation(false);
         setTooClose(true);
         setTimeout(() => {
@@ -174,7 +180,7 @@ export default function HomeScreen({ navigation }) {
             <MaterialIcons name="my-location" size={24} color={colours.text} />
           </TouchableOpacity>
         )}
-        {refreshToken && (
+        {refresh_token && (
           <TouchableOpacity
             style={styles.postSwim}
             onPress={showNewLocationMarker}

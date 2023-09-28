@@ -15,7 +15,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useFonts } from "expo-font";
 import { colours } from "../../../styles/base";
 
-export default function ApiDataSeaCard({ apiData, uid, setReload, setStationForInfo, setDayForInfo }) {
+export default function ApiDataSeaCard({
+  apiData,
+  uid,
+  setReload,
+  setStationForInfo,
+  setDayForInfo,
+}) {
   const [showForecast, setShowForecast] = useState(false);
   const [selectedForecastDate, setSelectedForecastDate] = useState("Today");
   const [dataToDisplay, setDataToDisplay] = useState({});
@@ -81,9 +87,9 @@ export default function ApiDataSeaCard({ apiData, uid, setReload, setStationForI
   }, []);
 
   useEffect(() => {
-    setReload(prev => !prev)
-    setStationForInfo(() => selectedSite)
-    setDayForInfo(() => dayBar.indexOf(selectedForecastDate))
+    setReload((prev) => !prev);
+    setStationForInfo(() => selectedSite);
+    setDayForInfo(() => dayBar.indexOf(selectedForecastDate));
     setIsLoading((isLoading) => !isLoading);
     getLocationByID(uid, dayBar.indexOf(selectedForecastDate), selectedSite)
       .then(({ apiData }) => {
@@ -130,7 +136,7 @@ export default function ApiDataSeaCard({ apiData, uid, setReload, setStationForI
     >
       <View style={styles.swimBot}>
         <View style={styles.textWithInfoContainerCentered}>
-          <Text style={styles.titleText}>Forecast</Text>
+          <Text style={styles.titleText}>Forecast and Hydrology</Text>
           <TouchableOpacity
             onPress={() => setPopupArr((popupArr) => [...popupArr, "forecast"])}
           >
@@ -155,7 +161,7 @@ export default function ApiDataSeaCard({ apiData, uid, setReload, setStationForI
             style={styles.popupContainerSetup}
           >
             <View style={styles.popupContainer}>
-              <Text style={styles.popupTitle}>Forecast</Text>
+              <Text style={styles.popupTitle}>Forecast and Hyrdology</Text>
               <Text style={styles.popupDetails}>
                 These forecasts are based on publically available hydrology data
                 from the UK's Environmental Agency. By default we analyse data
@@ -197,7 +203,7 @@ export default function ApiDataSeaCard({ apiData, uid, setReload, setStationForI
                   ).toDateString()}
                 </Text>
                 <Text style={styles.expandedDataText}>
-                  Temperature:{" "}
+                  Water Temperature:{" "}
                   <Text style={styles.expandedDataTextHighlight}>
                     {dataToDisplay?.hydrologyData.data[0]?.maxSurfaceTemp} °C
                   </Text>
@@ -309,13 +315,7 @@ export default function ApiDataSeaCard({ apiData, uid, setReload, setStationForI
                   }}
                 />
                 <Text style={styles.displayText}>
-                  Site Id:{"  "}
-                  <Text style={styles["displayText--highlight"]}>
-                    {dataToDisplay?.hydrologyData.siteId}
-                  </Text>
-                </Text>
-                <Text style={styles.displayText}>
-                  Temperature:{"  "}
+                  Water Temperature:{"  "}
                   <Text style={styles["displayText--highlight"]}>
                     {dataToDisplay?.hydrologyData.data[0]?.maxSurfaceTemp} °C
                   </Text>
