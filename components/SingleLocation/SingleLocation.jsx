@@ -43,6 +43,8 @@ export default function SingleLocation({
   });
   const [reload, setReload] = useState(false)
   const [isInfoLoading, setIsInfoLoading] = useState(false)
+  const [dayForInfo, setDayForInfo] = useState(0)
+  const [stationForInfo, setStationForInfo] = useState(0)
 
   useEffect(() => {
     setIsLoading(true);
@@ -71,7 +73,7 @@ export default function SingleLocation({
 
   useEffect(() => {
     setIsInfoLoading(isInfoLoading => true)
-    getLocationByID(uid)
+    getLocationByID(uid, dayForInfo, stationForInfo)
       .then((data) => {
         const {  info } = data;
         const requestInfoData = info;
@@ -155,7 +157,12 @@ export default function SingleLocation({
               ) : locationData.type === "sea" ? (
                 <ApiDataSeaCard apiData={apiData} uid={uid} />
               ) : (
-                <ApiDataOthersCard apiData={apiData} uid={uid} setReload={setReload} />
+                <ApiDataOthersCard
+                apiData={apiData}
+                uid={uid}
+                setReload={setReload}
+                setStationForInfo={setStationForInfo}
+                setDayForInfo={setDayForInfo} />
               )}
               
               {
