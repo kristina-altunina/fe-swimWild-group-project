@@ -41,6 +41,8 @@ export default function SingleLocation({
     "Poppins-Bold": require("../../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-ExtraBold": require("../../assets/fonts/Poppins-ExtraBold.ttf"),
   });
+  const [reload, setReload] = useState(false)
+  const [isInfoLoading, setIsInfoLoading] = useState(false)
 
   useEffect(() => {
     setIsLoading(true);
@@ -66,6 +68,20 @@ export default function SingleLocation({
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    setIsInfoLoading(isInfoLoading => true)
+    getLocationByID(uid)
+      .then((data) => {
+        const {  info } = data;
+        const requestInfoData = info;
+        setInfoData((infoData) => requestInfoData);
+        setIsInfoLoading(isInfoLoading => false)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [reload]);
 
   function formatCoords(coords) {
     return `${coords[0].toFixed(4)}°N, ${coords[0].toFixed(4)}°W`;
@@ -139,10 +155,17 @@ export default function SingleLocation({
               ) : locationData.type === "sea" ? (
                 <ApiDataSeaCard apiData={apiData} uid={uid} />
               ) : (
-                <ApiDataOthersCard apiData={apiData} uid={uid} />
+                <ApiDataOthersCard apiData={apiData} uid={uid} setReload={setReload} />
               )}
-
-              <InfoCard info={infoData} api={apiData} />
+              
+              {
+                isInfoLoading ? (
+                  <ActivityIndicator size="large" />
+                ) : (
+                  <InfoCard info={infoData} api={apiData} />
+                )
+              }
+              
               <TouchableWithoutFeedback onPress={() => checkUserIfLoggedIn()}>
                 <View>
                   <Text style={styles.postButton}>Record a swim!</Text>

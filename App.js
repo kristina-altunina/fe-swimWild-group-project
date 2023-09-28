@@ -8,7 +8,7 @@ import HomeScreen from "./components/HomeScreen";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { Image, Text, Alert, StyleSheet } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { simpleAlert } from "./extentions";
 import {
   createDrawerNavigator,
@@ -158,10 +158,16 @@ function CustomDrawerContent(props) {
 
 function Root() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-Regular": require("./assets/fonts/Poppins-Bold.ttf"),
+  });
 
   isCurrentUserAuthenticated((isAuth) => {
     setIsAuthenticated(isAuth);
   });
+
+  if (!fontsLoaded) return <></>;
 
   return (
     <Drawer.Navigator
