@@ -10,6 +10,8 @@ import {
 import { styles } from "../../../styles/swimReviewData";
 import StarRating from "react-native-star-rating";
 import { useFonts } from "expo-font";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { simpleAlert,generateGuid } from "../../../extentions";
 
 export default function SwimReviewData({ swimsData, navigation }) {
   const [fontsLoaded] = useFonts({
@@ -54,17 +56,11 @@ export default function SwimReviewData({ swimsData, navigation }) {
         ) : (
           swimsData.map((swim, i) => {
             return (
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  handleExpandSwimReview(swim);
-                  LayoutAnimation.configureNext(
-                    LayoutAnimation.Presets.easeInEaseOut
-                  );
-                }}
-                key={i}
-              >
                 <View style={styles.swimReviewItem}>
                   <View style={styles.swimReviewItem__header}>
+                    <TouchableOpacity onPress={() => {
+                      navigation.navigate('Profile', {uid: swim.uid, guid: generateGuid()})
+                      }}> 
                     <Image
                       style={styles.profileImage}
                       source={{
@@ -73,6 +69,7 @@ export default function SwimReviewData({ swimsData, navigation }) {
                           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
                       }}
                     />
+                    </TouchableOpacity>
                     <View style={styles.textContainer}>
                       <View style={styles.flexRow}>
                         <Text style={styles.nickname}>{swim.nickname}</Text>
@@ -83,12 +80,22 @@ export default function SwimReviewData({ swimsData, navigation }) {
                       <View>
                         <StarRatingDisplay num={swim.stars} />
                       </View>
+                      <TouchableWithoutFeedback
+                            onPress={() => {
+                              handleExpandSwimReview(swim);
+                              LayoutAnimation.configureNext(
+                                LayoutAnimation.Presets.easeInEaseOut
+                              );
+                            }}
+                            key={i}
+                          >
                       <Text style={styles.showContent}>See review</Text>
+                      </TouchableWithoutFeedback>
                     </View>
                   </View>
                   <Text style={styles.notes}>{swim.notes}</Text>
                 </View>
-              </TouchableWithoutFeedback>
+              
             );
           })
         )}

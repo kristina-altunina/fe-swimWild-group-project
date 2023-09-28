@@ -87,7 +87,10 @@ const createDeleteAccountAlert = (refresh_token, dispatch, props) =>
 
 function CustomDrawerContent(props) {
   const { isAuthenticated } = props;
-  const { profileUrl, name, refresh_token } = useSelector((state) => state);
+  
+  const  profileUrl  = useSelector((state) => state.profileUrl);
+  const  name  = useSelector((state) => state.name);
+  const refresh_token  = useSelector((state) => state.refresh_token);
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),

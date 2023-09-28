@@ -5,7 +5,8 @@ const initialState = {
   profileUrl: '',
   refresh_token: '',
   name:'',
-  loggedIn: false
+  loggedIn: false,
+  uid: ''
 };
 
 const profileSlice = createSlice({
@@ -20,15 +21,18 @@ const profileSlice = createSlice({
     logout: (state) => {
       state.profileUrl = '';
       state.refresh_token = '';
-      state.name = '',
-      state.loggedIn = false
+      state.name = '';
+      state.loggedIn = false;
+      state.uid = ''
     },
     refreshToken: (state, action) =>{
         state.refresh_token = action.payload.refresh_token
-        console.log('STORE TOKEN', state.refresh_token)
+    },
+    userId:(state, action) =>{
+      state.uid = action.payload.uid
     }
   }
 });
 
-export const { login, logout, refreshToken } = profileSlice.actions;
+export const { login, logout, refreshToken, userId } = profileSlice.actions;
 export default profileSlice.reducer;

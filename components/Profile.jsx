@@ -37,6 +37,7 @@ import { login, refreshToken } from "../redux/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useAssets } from "expo-asset";
+
 export default Profile = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [profileData, setProfileData] = useState({});
@@ -62,41 +63,45 @@ export default Profile = ({ navigation, route }) => {
 
   const dispatch = useDispatch();
 
-  const token =
-    route?.params?.refresh_token || useSelector((state) => state.refresh_token);
-  console.log("REFRESH TOKEN", token);
-  // const guid = route?.params?.guid;
+  //Important: all userSelector need to be done first before accessing the variable
+  const stateUid = useSelector((state) => state.uid)
+  const stateToken = useSelector((state) => state.refresh_token)
 
-  const [mediaPermission, requestMediaPermission] =
+  const currentUserUid = route.params.currentUserUid || stateUid;
+  const otherUserUid = route.params.uid;
+  const token = route.params.refresh_token || stateToken;
+  const guid = route.params.guid;
+  const isCurrentUser = otherUserUid == undefined || otherUserUid === currentUserUid;
+
+    const [mediaPermission, requestMediaPermission] =
     ImagePicker.useMediaLibraryPermissions();
 
-  async function getProfile() {
-    setIsLoading(true);
-    const tokenObj = await tokenRefresh(token);
-    const url = BACKEND_API_URL + "/users/profile";
-    dispatch(refreshToken({ refresh_token: tokenObj }));
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${tokenObj.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("the json", json);
-        json.dob = formatDate(json.dob.split("T")[0], "-");
-        setProfileData(json);
-        const swimData = addMonthToSwims(json.swims);
-        setSwims(swimData);
-        setFiltSwims(swimData);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.log("PROFILE ERROR", error);
-        simpleAlert("Profile", "Failed to load profile");
-      });
-  }
+async function getProfile(){
+  
+  const tokenObj = await tokenRefresh(token)
+  const url = BACKEND_API_URL + (isCurrentUser ? "/users/profile": ("/users/" + otherUserUid));
+  dispatch(refreshToken({ refresh_token: tokenObj!=undefined ? tokenObj.access_token || '':'' }))
+  setIsLoading(true);
+  fetch(url, {
+    method: "GET",
+    headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${tokenObj!= undefined? tokenObj.access_token|| '':''}`,
+    }
+  })
+  .then(response => response.json())
+  .then((json)=> {
+    json.dob = formatDate(json.dob.split('T')[0],'-')
+    setProfileData(json)
+    const swimData = addMonthToSwims(json.swims);
+    setSwims(swimData);
+    setFiltSwims(swimData);
+    setIsLoading(false);
+  }).catch((error)=>{
+    console.log('PROFILE ERROR', error)
+    simpleAlert("Profile", "Failed to load profile");
+  })
+}
 
   function imageUploadFromGallery() {
     if (mediaPermission?.status !== ImagePicker.PermissionStatus.GRANTED) {
@@ -145,29 +150,28 @@ export default Profile = ({ navigation, route }) => {
       console.log(body);
       simpleAlert("Profile", "Failed to update profile");
     } else {
-      setEditMode(false);
-      dispatch(login({ profileUrl: profileImg, name: profileData.name }));
-      simpleAlert("Profile", "Profile updated");
+      setEditMode(false)
+      if(isCurrentUser){
+        dispatch(login({ profileUrl:profileImg, name: profileData.name }))
+      }
+      simpleAlert('Profile','Profile updated')
       await response.json();
     }
-  }
-  useEffect(
-    () => {
-      getProfile();
-    },
-    [
-      //  guid
-    ]
-  );
+}
+useEffect((guid) => {
+  console.log('CALLING GET PROFILE', guid)
+  getProfile()
+}, [guid]);
 
-  useEffect(() => {
-    dispatch(
-      login({ profileUrl: profileData.profileImg, name: profileData.name })
-    );
-    setMyLocation(profileData.home);
-    setBio(profileData.bio);
-    setProfileImg(profileData.profileImg);
-  }, [profileData]);
+useEffect(() => {
+   if(isCurrentUser){ // only if user is authenticated, update the store and the state fields
+     dispatch(login({ profileUrl:profileData.profileImg, name: profileData.name }))
+   }
+    setMyLocation(profileData.home)
+    setBio(profileData.bio)
+    setProfileImg(profileData.profileImg)
+
+}, [profileData]); 
 
   if (isLoading || !fontsLoaded) {
     return (
@@ -185,15 +189,14 @@ export default Profile = ({ navigation, route }) => {
         <View style={styles.profile__text}>
           <View style={styles.profile__header}>
             <Text style={styles.profile__name}>{profileData.name}</Text>
-            <TouchableOpacity
-              onPress={() => setEditMode(true)}
-              style={[!editMode ? styles.textShow : styles.textHide]}
-            >
-              <Image
-                source={{ uri: PENCIL_ICON }}
-                resizeMode={"cover"}
-                style={styles.profile__edit}
-              ></Image>
+            <TouchableOpacity onPress={()=>setEditMode(true)} style={[!editMode && isCurrentUser ? styles.textShow : styles.textHide]}> 
+            <Image
+              source={
+                {uri: PENCIL_ICON}
+              }
+              resizeMode={"cover"}
+              style={styles.profile__edit}
+            ></Image>
             </TouchableOpacity>
           </View>
           <Text style={styles.profile__nickname}>{profileData.nickname}</Text>
@@ -306,7 +309,7 @@ export default Profile = ({ navigation, route }) => {
         <View style={styles.stats}>
           <View style={styles.stats__left}>
             <Text style={styles.stats__label}>
-              <Text style={styles.stats__stat}>{swims.length}</Text> swims total
+              <Text style={styles.stats__stat}>{swims? swims.length: 0}</Text> swims total
             </Text>
             <Text style={styles.stats__label}>
               <Text style={styles.stats__stat}>{swimsThisMonth(swims)}</Text>{" "}
@@ -314,7 +317,7 @@ export default Profile = ({ navigation, route }) => {
             </Text>
             <Text style={styles.stats__label}>
               Last swam on{" "}
-              {swims.length > 0 ? (
+              {swims && swims.length > 0 ? (
                 <Text style={styles.stats__stat}>
                   {new Date(swims[0].date)
                     .toDateString()
@@ -335,16 +338,16 @@ export default Profile = ({ navigation, route }) => {
           <View style={styles.stats__right}>
             <Text style={styles.stats__label}>
               Loves{" "}
-              <Text style={styles.stats__stat}>{favouriteSwim(swims)}</Text>
+              <Text style={styles.stats__stat}>{favouriteSwim(swims || [])}</Text>
             </Text>
             <Text style={styles.stats__challenge}>
               Swim the Lakes:{"  "}
-              <Text style={styles.stats__stat}>{swimTheLakes(swims)}</Text>
+              <Text style={styles.stats__stat}>{swimTheLakes(swims || [])}</Text>
             </Text>
           </View>
-          {expand && swims.length && (
+          {expand && swims && swims.length && (
             <View style={styles.stats__bottom}>
-              {coldest(swims) && (
+              {coldest(!swims||[]) && (
                 <Text style={styles.stats__label}>
                   Suffered{" "}
                   <Text style={styles.stats__stat}>
@@ -393,7 +396,7 @@ export default Profile = ({ navigation, route }) => {
         setFiltSwims={setFiltSwims}
       />
       <ScrollView>
-        {!filtSwims.length && <Text style={styles.empty}>Nothing here!</Text>}
+        {filtSwims!= undefined || !filtSwims.length && <Text style={styles.empty}>Nothing here!</Text>}
         {filtSwims.map((swim) => {
           return (
             <SwimRecord swim={swim} key={swim._id} navigation={navigation} />
