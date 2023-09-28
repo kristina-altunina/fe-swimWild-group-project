@@ -1,7 +1,9 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import { colours } from "../../styles/base";
+import { useFonts } from "expo-font";
+import StarRating from "react-native-star-rating";
 
 export default function GoogleMapComponent({
   onRegionChange,
@@ -12,10 +14,14 @@ export default function GoogleMapComponent({
   newLocation,
   setNewLocation,
 }) {
+  const [fontsLoaded] = useFonts({
+    "Poppins-SemiBold": require("../../assets/fonts/Poppins-SemiBold.ttf"),
+    "Poppins-Regular": require("../../assets/fonts/Poppins-Regular.ttf"),
+  });
+
   function handleClick(id) {
     return navigation.navigate("SingleLocation", { uid: id });
   }
-
   return (
     <MapView
       style={{ width: "100%", height: "100%", padding: 100 }}
@@ -57,11 +63,20 @@ export default function GoogleMapComponent({
           >
             <Callout onPress={() => handleClick(location._id)}>
               <TouchableOpacity activeOpacity={0.8}>
-                <Text>
+                <Text style={styles.text}>
                   {location.name} - {location.type}
                 </Text>
-                <Text>Stars: {location.avStars}</Text>
-                <Text>Distance: {location.distanceKm} km</Text>
+                <View style={styles.starRatingDisplay}>
+                  <StarRating
+                    disabled={true}
+                    maxStars={5}
+                    starSize={18}
+                    rating={location.avStars}
+                    fullStarColor="#FFC033"
+                    emptyStarColor="#DBDBDB"
+                  />
+                </View>
+                <Text style={styles.distance}>{location.distanceKm} km</Text>
               </TouchableOpacity>
             </Callout>
           </Marker>
@@ -72,4 +87,19 @@ export default function GoogleMapComponent({
 
 const styles = StyleSheet.create({
   mapContainer: {},
+  text: {
+    fontFamily: "Poppins-Regular",
+    color: colours.text,
+  },
+  starRatingDisplay: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 3,
+    marginBottom: 2,
+  },
+  distance: {
+    color: colours.accent1,
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 14,
+  },
 });
