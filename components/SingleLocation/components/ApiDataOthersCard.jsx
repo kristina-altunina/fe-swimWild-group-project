@@ -61,31 +61,31 @@ export default function ApiDataSeaCard({
     );
   }, [selectedForecastDate, setDataToDisplay]);
 
-  useEffect(() => {
-    if (dayBar.length !== 7) {
-      setDayBar((dayBar) => {
-        console.log("log of arr", apiData);
-        let currentDay = daysRef.indexOf(
-          new Date(apiData.weather.values.datetimeStr)
-            .toDateString()
-            .split(" ")[0]
-        );
-        const arr = [];
-console.log("log of arr", arr);
-        while (arr.length !== 6) {
-          if (currentDay < 6) {
-            currentDay++;
-            arr.push(daysRef[currentDay]);
-          } else {
-            currentDay = 0;
-            arr.push(daysRef[currentDay]);
-          }
-        }
+//   useEffect(() => {
+//     if (dayBar.length !== 7) {
+//       setDayBar((dayBar) => {
+//         console.log("log of arr", apiData);
+//         let currentDay = daysRef.indexOf(
+//           new Date(apiData.weather.values.datetimeStr)
+//             .toDateString()
+//             .split(" ")[0]
+//         );
+//         const arr = [];
+// console.log("log of arr", arr);
+//         while (arr.length !== 6) {
+//           if (currentDay < 6) {
+//             currentDay++;
+//             arr.push(daysRef[currentDay]);
+//           } else {
+//             currentDay = 0;
+//             arr.push(daysRef[currentDay]);
+//           }
+//         }
 
-        return [...dayBar, ...arr];
-      });
-    }
-  }, []);
+//         return [...dayBar, ...arr];
+//       });
+//     }
+//   }, []);
 
   useEffect(() => {
     setReload((prev) => !prev);
